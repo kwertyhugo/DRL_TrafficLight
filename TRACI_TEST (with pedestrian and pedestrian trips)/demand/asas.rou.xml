@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-09-30 17:49:26 by Eclipse SUMO netedit Version 1.24.0
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- Vehicles, persons and containers (sorted by depart) -->
+    <vType id="ped" vClass="pedestrian" jmDriveAfterRedTime="0.5" guiShape="pedestrian"/>
+
+    <!-- Person flow using that type -->
+    <personFlow id="pf_0" type="ped" begin="0.00" end="3600.00" personsPerHour="1800">
+        <personTrip from="E1" to="-E3"/>
+    </personFlow>
+</routes>
