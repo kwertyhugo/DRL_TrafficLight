@@ -17,7 +17,7 @@ Sumo_config = [
     'sumo-gui',
     '-c', 'map.sumocfg',
     '--step-length', '0.05',
-    '--delay', '1000',
+    '--delay', '100',
     '--lateral-resolution', '0.1'
 ]
 
@@ -25,33 +25,34 @@ Sumo_config = [
 traci.start(Sumo_config)
 
 # Step 6: Define Variables
-vehicle_speed = 0
-total_speed = 0
+stepLength = 0.05
+currentPhase = 0
+currentPhaseDuration = 30+stepLength
 
 while traci.simulation.getMinExpectedNumber() > 0:
-    traci.simulationStep()
+    currentPhaseDuration -= 1*stepLength
+    if currentPhaseDuration <= 0:
+        lane1 = traci.lanearea.getLastStepVehicleNumber("e2_6")
+        print(f"{lane1}")
+    
+        lane2 = traci.lanearea.getLastStepVehicleNumber("e2_4")
+        print(f"{lane2}")
+        
+        currentPhase += 1
+        currentPhase = currentPhase%10
+        print("PHASE: ", currentPhase)
+        
+        traci.trafficlight.setPhase("cluster_295373794_3477931123_7465167861", currentPhase)
+        if currentPhase == 2 or currentPhase == 4:
+            currentPhaseDuration = 15 + stepLength
+        elif currentPhase%2 == 0:
+            currentPhaseDuration = 30 + stepLength
+        else:
+            currentPhaseDuration = 3 + stepLength
 
-    # # Get and print current traffic light state of J1
-    # tls_state = traci.trafficlight.getRedYellowGreenState("cluster_295373794_3477931123_7465167861")
-    # print(f"Current TLS state at TLS: {tls_state}")
+        traci.trafficlight.setPhaseDuration("cluster_295373794_3477931123_7465167861", currentPhaseDuration)
     
-    traci.trafficlight.setPhase("cluster_295373794_3477931123_7465167861", 0)
-    traci.trafficlight.setPhaseDuration("cluster_295373794_3477931123_7465167861", 3)
-    
-    traci.trafficlight.setPhase("cluster_295373794_3477931123_7465167861", 1)
-    traci.trafficlight.setPhaseDuration("cluster_295373794_3477931123_7465167861", 3)
-    
-    traci.trafficlight.setPhase("cluster_295373794_3477931123_7465167861", 2)
-    traci.trafficlight.setPhaseDuration("cluster_295373794_3477931123_7465167861", 3)
-    
-    tls_state = traci.trafficlight.getPhase("cluster_295373794_3477931123_7465167861")
-    print(f"Current TLS state at main TLS: {tls_state}")
-    
-    lane1 = traci.lanearea.getLastStepVehicleNumber("e2_6")
-    print(f"{lane1}")
-    
-    lane2 = traci.lanearea.getLastStepVehicleNumber("e2_4")
-    print(f"{lane2}")
+    traci.simulationStep()
 
 # Step 7: Close connection
 
