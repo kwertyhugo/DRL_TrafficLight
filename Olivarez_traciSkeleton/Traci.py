@@ -29,6 +29,15 @@ stepLength = 0.05
 currentPhase = 0
 currentPhaseDuration = 30+stepLength
 
+def _compute_queue(self, detector_ids):
+    queue = 0
+    for det_id in detector_ids:
+        results = traci.lanearea.getSubscriptionResults(det_id)
+        if results is not None:
+            halted = results[traci.constants.LAST_STEP_HALTING_NUMBER]
+            queue += halted
+    return queue
+
 while traci.simulation.getMinExpectedNumber() > 0:
     currentPhaseDuration -= 1*stepLength
     if currentPhaseDuration <= 0:
