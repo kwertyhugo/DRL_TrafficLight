@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-10-07 15:40:43 by Eclipse SUMO netedit Version 1.24.0
+<!-- generated on 2025-10-17 18:03:46 by Eclipse SUMO netedit Version 1.24.0
 <neteditConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/neteditConfiguration.xsd">
 
     <input>
-        <sumo-net-file value="K:\Kurt\THESIS\map.net.xml"/>
+        <additional-files value="K:\Kurt\THESIS\DRL_TrafficLight\Olivarez_traciSkeleton\additionals\detectors.add.xml"/>
+        <sumo-net-file value="K:\Kurt\THESIS\DRL_TrafficLight\Olivarez_traciSkeleton\network\map.net.xml"/>
     </input>
 
     <output>
-        <output-file value="K:\Kurt\THESIS\map.net.xml"/>
+        <output-file value="K:\Kurt\THESIS\DRL_TrafficLight\Olivarez_traciSkeleton\network\map.net.xml"/>
     </output>
 
     <processing>
@@ -5622,15 +5623,16 @@
     </edge>
 
     <tlLogic id="3285696417" type="static" programID="0" offset="0">
-        <phase duration="30" state="GGGGGGr"/>
-        <phase duration="3"  state="yyGGyyr"/>
-        <phase duration="15" state="rrGGrrG"/>
+        <phase duration="30" state="GGggGGr"/>
+        <phase duration="3"  state="yyggyyy"/>
+        <phase duration="15" state="rrggrrG"/>
+        <phase duration="6"  state="yyggyyy"/>
     </tlLogic>
     <tlLogic id="6401523012" type="static" programID="0" offset="0">
-        <phase duration="79" state="GGGGr"/>
-        <phase duration="6"  state="yyyyr"/>
+        <phase duration="30" state="GGGGr"/>
+        <phase duration="6"  state="yyyyy"/>
         <phase duration="15" state="rrrrG"/>
-        <phase duration="5"  state="rrrry"/>
+        <phase duration="5"  state="yyyyy"/>
     </tlLogic>
     <tlLogic id="660909495" type="static" programID="0" offset="0">
         <phase duration="79" state="G"/>
@@ -5639,15 +5641,15 @@
     </tlLogic>
     <tlLogic id="cluster_295373794_3477931123_7465167861" type="static" programID="0" offset="0">
         <phase duration="30" state="rrrrrrrrrrGGGrrrrrrr"/>
-        <phase duration="3"  state="rrrrrrrrrryyyrrrrrrr"/>
+        <phase duration="3"  state="rrrrrryyyryyyrrrrrry"/>
         <phase duration="15" state="rrrrrrGGGrrrrrrrrrrG"/>
         <phase duration="5"  state="rrrrrrGGGrrrrrrrrrry"/>
         <phase duration="10" state="rrrrrGGGGrrrrrrrrrrr"/>
-        <phase duration="3"  state="rrrrryyyyrrrrrrrrrrr"/>
+        <phase duration="3"  state="yyyyryyyyrrrrrrrrrrr"/>
         <phase duration="30" state="GGGGrrrrrrrrrrrrrrrr"/>
-        <phase duration="3"  state="yyyyrrrrrrrrrrrrrrrr"/>
+        <phase duration="3"  state="yyyyrrrrrrrrrryyyyrr"/>
         <phase duration="30" state="rrrrrrrrrrrrrrGGGGrr"/>
-        <phase duration="3"  state="rrrrrrrrrrrrrryyyyrr"/>
+        <phase duration="3"  state="rrrrrrrrrryyyryyyyrr"/>
     </tlLogic>
 
     <junction id="10055679231" type="priority" x="1832.77" y="950.85" incLanes="1098227082_0" intLanes=":10055679231_0_0" shape="1832.77,950.85 1830.22,948.91 1832.77,950.85">

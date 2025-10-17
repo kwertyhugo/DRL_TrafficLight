@@ -1,68 +1,131 @@
-# Step 1: Add modules to provide access to specific libraries and functions
-import os # Module provides functions to handle file paths, directories, environment variables
-import sys # Module provides access to Python-specific system parameters and functions
+import os
+import sys 
+import traci
 
-# Step 2: Establish path to SUMO (SUMO_HOME)
+from models.DQN import dqnClass as dqn
+
+#Select DRL Agent
+mainIntersectionAgent = dqn()
+swPedXingAgent = dqn()
+sePedXingAgent = dqn()
+
+
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
     sys.path.append(tools)
 else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
-# Step 3: Add Traci module to provide access to specific libraries and functions
-import traci # Static network information (such as reading and analyzing network files)
-
-# Step 4: Define Sumo configuration
 Sumo_config = [
     'sumo-gui',
-    '-c', 'map.sumocfg',
+    '-c', 'Olivarez_traciSkeleton\map.sumocfg',
     '--step-length', '0.05',
     '--delay', '100',
     '--lateral-resolution', '0.1'
 ]
 
-# Step 5: Open connection between SUMO and Traci
-traci.start(Sumo_config)
-
-# Step 6: Define Variables
+#Simulation Variables
 stepLength = 0.05
 currentPhase = 0
-currentPhaseDuration = 30+stepLength
+currentPhaseDuration = 30
 
-def _compute_queue(self, detector_ids):
-    queue = 0
-    for det_id in detector_ids:
-        results = traci.lanearea.getSubscriptionResults(det_id)
-        if results is not None:
-            halted = results[traci.constants.LAST_STEP_HALTING_NUMBER]
-            queue += halted
-    return queue
+#Inputs to the Model
+def _mainIntersection_queue():
+    #vehicle detectors
+    southwest = traci.lanearea.getLastStepVehicleNumber("e2_4") + traci.lanearea.getLastStepVehicleNumber("e2_5")
+    southeast = traci.lanearea.getLastStepVehicleNumber("e2_6") + traci.lanearea.getLastStepVehicleNumber("e2_7")
+    northeast = traci.lanearea.getLastStepVehicleNumber("e2_8")
+    northwest = traci.lanearea.getLastStepVehicleNumber("e2_9") + traci.lanearea.getLastStepVehicleNumber("e2_10")
+    
+    #pedestrian detectors
+    pedestrian = 0
+    
 
+    return (southwest, southeast, northeast, northwest, pedestrian)
+
+def _swPedXing_queue():
+    north = traci.lanearea.getLastStepVehicleNumber("e2_0") + traci.lanearea.getLastStepVehicleNumber("e2_1")
+    south = traci.lanearea.getLastStepVehicleNumber("e2_4") + traci.lanearea.getLastStepVehicleNumber("e2_5")
+    pedestrian = 0
+    
+    return (north, south, pedestrian)
+
+def _sePedXing_queue():
+    west = traci.lanearea.getLastStepVehicleNumber("e2_2") + traci.lanearea.getLastStepVehicleNumber("e2_3")
+    east = traci.lanearea.getLastStepVehicleNumber("e2_6") + traci.lanearea.getLastStepVehicleNumber("e2_7")
+    pedestrian = 0
+    
+    return (west, east, pedestrian)
+    
+
+
+#Output of the model
+def _mainIntersection_phase():
+    global currentPhase, currentPhaseDuration
+    
+    currentPhase += 1
+    currentPhase = currentPhase%10
+    print("MAIN PHASE: ", currentPhase)
+        
+    #Placeholder logic for now, fixed time logic
+    traci.trafficlight.setPhase("cluster_295373794_3477931123_7465167861", currentPhase)
+    if currentPhase == 2 or currentPhase == 4:
+        currentPhaseDuration = 15
+    elif currentPhase%2 == 0:
+        currentPhaseDuration = 30
+    else:
+        currentPhaseDuration = 3
+
+    traci.trafficlight.setPhaseDuration("cluster_295373794_3477931123_7465167861", currentPhaseDuration)
+    
+def _swPedXing_phase():
+    global currentPhase, currentPhaseDuration
+    
+    currentPhase += 1
+    currentPhase = currentPhase%4
+    print("SW PHASE: ", currentPhase)
+        
+    #Placeholder logic for now, fixed time logic
+    traci.trafficlight.setPhase("6401523012", currentPhase)
+    if currentPhase%2 == 1:
+        currentPhaseDuration = 5
+    elif currentPhase%2 == 0:
+        currentPhaseDuration = 30
+
+    traci.trafficlight.setPhaseDuration("6401523012", currentPhaseDuration)
+    
+def _sePedXing_phase():
+    global currentPhase, currentPhaseDuration
+    
+    currentPhase += 1
+    currentPhase = currentPhase%4
+    print("SE PHASE: ", currentPhase)
+        
+    #Placeholder logic for now, fixed time logic
+    traci.trafficlight.setPhase("3285696417", currentPhase)
+    if currentPhase%2 == 1:
+        currentPhaseDuration = 5
+    elif currentPhase%2 == 0:
+        currentPhaseDuration = 30
+
+    traci.trafficlight.setPhaseDuration("3285696417", currentPhaseDuration)
+
+
+
+traci.start(Sumo_config)
+detector_ids = traci.lanearea.getIDList()
+    
+#Simulation Loop
 while traci.simulation.getMinExpectedNumber() > 0:
     currentPhaseDuration -= 1*stepLength
     if currentPhaseDuration <= 0:
-        lane1 = traci.lanearea.getLastStepVehicleNumber("e2_6")
-        print(f"{lane1}")
+        _mainIntersection_phase()
     
-        lane2 = traci.lanearea.getLastStepVehicleNumber("e2_4")
-        print(f"{lane2}")
-        
-        currentPhase += 1
-        currentPhase = currentPhase%10
-        print("PHASE: ", currentPhase)
-        
-        traci.trafficlight.setPhase("cluster_295373794_3477931123_7465167861", currentPhase)
-        if currentPhase == 2 or currentPhase == 4:
-            currentPhaseDuration = 15 + stepLength
-        elif currentPhase%2 == 0:
-            currentPhaseDuration = 30 + stepLength
-        else:
-            currentPhaseDuration = 3 + stepLength
-
-        traci.trafficlight.setPhaseDuration("cluster_295373794_3477931123_7465167861", currentPhaseDuration)
+    #agent reward
+    total = sum(_mainIntersection_queue, _swPedXing_queue, _sePedXing_queue)
+    
     
     traci.simulationStep()
 
-# Step 7: Close connection
 
 traci.close()
