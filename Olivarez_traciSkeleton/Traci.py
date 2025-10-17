@@ -24,6 +24,14 @@ Sumo_config = [
     '--lateral-resolution', '0.1'
 ]
 
+def _junctionSubscription(junction_id):
+    traci.junction.subscribeContext(
+        junction_id,
+        traci.constants.CMD_GET_PERSON_VARIABLE,
+        10.0,
+        [traci.constants.VAR_SPEED]
+    )
+
 #Simulation Variables
 stepLength = 0.05
 currentPhase = 0
@@ -47,16 +55,38 @@ def _swPedXing_queue():
     north = traci.lanearea.getLastStepVehicleNumber("e2_0") + traci.lanearea.getLastStepVehicleNumber("e2_1")
     south = traci.lanearea.getLastStepVehicleNumber("e2_4") + traci.lanearea.getLastStepVehicleNumber("e2_5")
     pedestrian = 0
+    junction_id = "6401523012"
     
-    return (north, south, pedestrian)
+    _junctionSubscription(junction_id)
+    junction_subscription = traci.junction.getContextSubscriptionResults(junction_id)
+    print("Subscription result:", junction_subscription)
+
+    if junction_subscription:
+        for pid, data in junction_subscription.items():
+            speed = data.get(traci.constants.VAR_SPEED, 0)
+            if speed <= 0.5:
+                pedestrian += 1 
+            
+    return (south, north, pedestrian)
 
 def _sePedXing_queue():
     west = traci.lanearea.getLastStepVehicleNumber("e2_2") + traci.lanearea.getLastStepVehicleNumber("e2_3")
     east = traci.lanearea.getLastStepVehicleNumber("e2_6") + traci.lanearea.getLastStepVehicleNumber("e2_7")
     pedestrian = 0
+    junction_id = "3285696417"
     
+    _junctionSubscription(junction_id)
+    junction_subscription = traci.junction.getContextSubscriptionResults(junction_id)
+    print("Subscription result:", junction_subscription)
+
+    if junction_subscription:
+        for pid, data in junction_subscription.items():
+            speed = data.get(traci.constants.VAR_SPEED, 0)
+            if speed == 0:
+                pedestrian += 1 
+ 
+                   
     return (west, east, pedestrian)
-    
 
 
 #Output of the model
@@ -114,15 +144,21 @@ def _sePedXing_phase():
 
 traci.start(Sumo_config)
 detector_ids = traci.lanearea.getIDList()
-    
+
+
 #Simulation Loop
 while traci.simulation.getMinExpectedNumber() > 0:
     currentPhaseDuration -= 1*stepLength
     if currentPhaseDuration <= 0:
         _mainIntersection_phase()
+        
+        #pedestrian queue
+        result = _swPedXing_queue()
+        print(result)
     
     #agent reward
-    total = sum(_mainIntersection_queue, _swPedXing_queue, _sePedXing_queue)
+    #total = sum(_mainIntersection_queue, _swPedXing_queue, _sePedXing_queue)
+    
     
     
     traci.simulationStep()
