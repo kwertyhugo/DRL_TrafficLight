@@ -15,4 +15,3 @@
     <flow id="car2" type="car" begin="0.00" end="3600.00" number="600" from="1119486610#0" to="440471861#6" departLane="best" departSpeed="max"/>
 
 </routes>
-

@@ -51,7 +51,7 @@ sePrevAction = None
 
 # Batch training parameters
 BATCH_SIZE = 32
-TRAIN_FREQUENCY = 100  # Train every 100 steps
+TRAIN_FREQUENCY = 1000  # Train every 1000 steps / 50 seconds
 step_counter = 0
 
 # Inputs to the Model

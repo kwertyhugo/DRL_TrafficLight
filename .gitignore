@@ -1,0 +1,10 @@
+thesis/
+.venv/
+env/
+
+__pycache__/
+*.pyc
+*.pyo
+
+.env
+.env.*
