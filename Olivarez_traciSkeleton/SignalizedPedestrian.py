@@ -1,6 +1,7 @@
 import os
 import sys 
 import traci
+import numpy as np
 
 from models.DQN import DQNAgent as dqn
 
@@ -207,7 +208,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
     mainCurrentPhaseDuration -= stepLength
     if mainCurrentPhaseDuration <= 0:
         # Get current state
-        mainCurrentState = _mainIntersection_queue()
+        mainCurrentState = np.array(_mainIntersection_queue(), dtype=np.float32)
         
         # Calculate reward from previous action
         mainReward = calculate_reward(mainCurrentState, mainPrevState)
@@ -234,7 +235,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
     swCurrentPhaseDuration -= stepLength
     if swCurrentPhaseDuration <= 0:
         # Get current state
-        swCurrentState = _swPedXing_queue()
+        swCurrentState = np.array(_swPedXing_queue(), dtype=np.float32)
         
         # Calculate reward
         swReward = calculate_reward(swCurrentState, swPrevState)
@@ -260,7 +261,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
     seCurrentPhaseDuration -= stepLength
     if seCurrentPhaseDuration <= 0:
         # Get current state
-        seCurrentState = _sePedXing_queue()
+        seCurrentState = np.array(_sePedXing_queue(), dtype=np.float32)
         
         # Calculate reward
         seReward = calculate_reward(seCurrentState, sePrevState)

@@ -2,11 +2,11 @@ import os
 import random
 from collections import deque
 import numpy as np
+import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense, GRU
 from keras.optimizers import Adam
 
-import tensorflow as tf
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -35,16 +35,17 @@ class DQNAgent:
         # Create a sequntial model (a sequential model is a linear stack of layers)
         model = Sequential()
 
+        
         model.add(Dense(512, input_dim=self.state_size, activation='relu'))
         model.add(Dense(256, activation='relu'))
         model.add(Dense(128, activation='relu'))
         model.add(Dense(64, activation='relu'))
         model.add(Dense(32, activation='relu'))
-        model.add(Dense(self.action_size, activation='relu'))
+        model.add(Dense(self.action_size, activation='linear'))
 
         model.compile(
             # optimizer=SGD(lr=self.learning_rate),
-            optimizer=Adam(lr=self.learning_rate),
+            optimizer=Adam(learning_rate=self.learning_rate),
             loss='mse',
             metrics=['accuracy']
         )
