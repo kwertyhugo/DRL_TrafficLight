@@ -17,4 +17,15 @@
         <end value="10000"/>
     </time>
 
+    <processing>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <!-- Suppress all collision warnings -->
+        <no-warnings value="true"/>
+    </report>
+
 </sumoConfiguration>

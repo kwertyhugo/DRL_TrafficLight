@@ -17,10 +17,10 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', 'Olivarez_traciSkeleton\map.sumocfg',
     '--step-length', '0.05',
-    '--delay', '100',
+    '--delay', '0',
     '--lateral-resolution', '0.1'
 ]
 
@@ -127,7 +127,6 @@ def _mainIntersection_phase(action_index):
     
     mainCurrentPhase += 1
     mainCurrentPhase = mainCurrentPhase % 10
-    print("MAIN PHASE: ", mainCurrentPhase)
     
     # Apply action to adjust duration
     duration_adjustment = actionSpace[action_index]
@@ -153,7 +152,6 @@ def _swPedXing_phase(action_index):
     
     swCurrentPhase += 1
     swCurrentPhase = swCurrentPhase % 4
-    print("SW PHASE: ", swCurrentPhase)
     
     # Apply action to adjust duration
     duration_adjustment = actionSpace[action_index]
@@ -177,7 +175,6 @@ def _sePedXing_phase(action_index):
     
     seCurrentPhase += 1
     seCurrentPhase = seCurrentPhase % 4
-    print("SE PHASE: ", seCurrentPhase)
     
     # Apply action to adjust duration
     duration_adjustment = actionSpace[action_index]
