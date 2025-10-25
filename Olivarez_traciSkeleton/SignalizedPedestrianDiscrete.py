@@ -17,7 +17,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', 'Olivarez_traciSkeleton\map.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',

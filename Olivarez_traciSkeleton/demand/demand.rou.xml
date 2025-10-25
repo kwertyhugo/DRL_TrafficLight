@@ -4,14 +4,30 @@
     <vType id="ped" vClass="pedestrian" impatience="0.2" mDriveAfterRedTime="-1" guiShape="pedestrian"/>
     <vType id="jeepney" vClass="bus" guiShape="bus"/>
 
-    
-    <personFlow id="pf_0" type="ped" begin="0.00" end="3600.00" personsPerHour="1800" departPos="25">
+    <!-- Pedestrian Flow -->
+    <personFlow id="pf_0" type="ped" begin="0.00" end="3600.00" personsPerHour="100" departPos="25">
         <personTrip from="-440471861#7" to="1119486610#0"/>
-        <personTrip from="-440471861#7" via="-440471861#8" to="1119486610#0"/>
-        <personTrip from="-440471861#7" to="1119486605"/>
     </personFlow>
 
-    <flow id="car1" type="car" begin="0.00" end="3600.00" number="600" from="440471861#6" to="-1119486610#0" departLane="best" departSpeed="max"/>
-    <flow id="car2" type="car" begin="0.00" end="3600.00" number="600" from="1119486610#0" to="440471861#6" departLane="best" departSpeed="max"/>
+    <!-- Vehicle Flows (each group sums to 0.05) -->
 
+    <!-- From -361256298#1 -->
+    <flow id="car_A1" type="car" begin="0.00" end="3600.00" probability="0.025" from="-361256298#1" to="939610874" departLane="best" departSpeed="max"/>
+    <flow id="car_A2" type="car" begin="0.00" end="3600.00" probability="0.015" from="-361256298#1" to="-440471861#6" departLane="best" departSpeed="max"/>
+    <flow id="car_A3" type="car" begin="0.00" end="3600.00" probability="0.010" from="-361256298#1" to="-140483224#12" departLane="best" departSpeed="max"/>
+
+    <!-- From 939610874 -->
+    <flow id="car_B1" type="car" begin="0.00" end="3600.00" probability="0.0167" from="939610874" to="-361256298#1" departLane="best" departSpeed="max"/>
+    <flow id="car_B2" type="car" begin="0.00" end="3600.00" probability="0.0208" from="939610874" to="-440471861#6" departLane="best" departSpeed="max"/>
+    <flow id="car_B3" type="car" begin="0.00" end="3600.00" probability="0.0125" from="939610874" to="-140483224#12" departLane="best" departSpeed="max"/>
+
+    <!-- From 440471861#6 -->
+    <flow id="car_C1" type="car" begin="0.00" end="3600.00" probability="0.0167" from="440471861#6" to="-361256298#1" departLane="best" departSpeed="max"/>
+    <flow id="car_C2" type="car" begin="0.00" end="3600.00" probability="0.0083" from="440471861#6" to="939610874" departLane="best" departSpeed="max"/>
+    <flow id="car_C3" type="car" begin="0.00" end="3600.00" probability="0.0250" from="440471861#6" to="-140483224#12" departLane="best" departSpeed="max"/>
+
+    <!-- From 140483224#12 -->
+    <flow id="car_D1" type="car" begin="0.00" end="3600.00" probability="0.0208" from="140483224#12" to="-361256298#1" departLane="best" departSpeed="max"/>
+    <flow id="car_D2" type="car" begin="0.00" end="3600.00" probability="0.0167" from="140483224#12" to="939610874" departLane="best" departSpeed="max"/>
+    <flow id="car_D3" type="car" begin="0.00" end="3600.00" probability="0.0125" from="140483224#12" to="-440471861#6" departLane="best" departSpeed="max"/>
 </routes>

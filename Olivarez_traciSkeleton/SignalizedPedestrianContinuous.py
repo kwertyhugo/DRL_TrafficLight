@@ -67,7 +67,7 @@ else:
 # Build sumo command; make path handling robust
 sumo_cfg_path = os.path.join('Olivarez_traciSkeleton', 'map.sumocfg')
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', sumo_cfg_path,
     '--step-length', '0.05',
     '--delay', '0',

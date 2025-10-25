@@ -95,8 +95,8 @@ class DQNAgent:
 
     # Load a pre-trained model
     def load(self):
-        self.model.load_weights('agent_weights/' + self.name)
+        self.model.load_weights('agent_weights/' + self.name + '.weights.h5')
 
     # Load save the current model
     def save(self):
-        self.model.save_weights('agent_weights/' + self.name)
+        self.model.save_weights('agent_weights/' + self.name + '.weights.h5')
