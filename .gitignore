@@ -1,10 +1,46 @@
-thesis/
+# Virtual environments
+venv/
 .venv/
 env/
+ENV/
+venvvenv/
 
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
+# Environment variables
 .env
 .env.*
+
+# Logs and checkpoints
+*.log
+*.ckpt
+*.h5
+*.pth
+
+# Jupyter / temporary files
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+*.tmp
+*.bak
+
+# macOS / Windows system files
+.DS_Store
+Thumbs.db
+
+# SUMO or simulation files (if applicable)
+*.sumocfg
+*.net.xml
+*.rou.xml
+*.trip.xml
+
+# VSCode / IDE settings
+.vscode/
+.idea/
+
+# TensorBoard / training outputs
+logs/
+runs/
