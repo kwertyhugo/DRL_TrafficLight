@@ -17,7 +17,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', 'Olivarez_traciSkeleton\map.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
@@ -31,6 +31,24 @@ def _junctionSubscription(junction_id):
         10.0,
         [traci.constants.VAR_WAITING_TIME]
     )
+    
+def _subscribe_all_detectors():
+    # List of all your vehicle detectors
+    detector_ids = [
+        "e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10",
+        "e2_0", "e2_1", "e2_2", "e2_3"
+    ]
+    
+    # The variables we want from each vehicle inside the detector
+    vehicle_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    
+    for det_id in detector_ids:
+        traci.lanearea.subscribeContext(
+            det_id,
+            traci.constants.CMD_GET_VEHICLE_VARIABLE,  # We want vehicle data
+            0,  # Radius (0 means only vehicles *inside* the detector)
+            vehicle_vars
+        )
 
 # Simulation Variables
 stepLength = 0.05
@@ -52,16 +70,26 @@ sePrevAction = None
 
 # Batch training parameters
 BATCH_SIZE = 32
-TRAIN_FREQUENCY = 1000  # Train every 1000 steps / 50 seconds
+TRAIN_FREQUENCY = 100  # Train every 100 steps / 5 seconds
 step_counter = 0
 
+
+
 # Inputs to the Model
-def _weighted_waits(idList):
+def _weighted_waits(detector_id):
     sumWait = 0
+    # This ONE call gets all vehicle data (Type and Wait Time)
+    vehicle_data = traci.lanearea.getContextSubscriptionResults(detector_id)
     
-    for vehicleId in idList:
-        type = traci.vehicle.getTypeID(vehicleId)
-        waitTime = traci.vehicle.getWaitingTime(vehicleId)
+    if not vehicle_data:
+        return 0
+
+    # Loop over the results dictionary (fast, all in Python)
+    for data in vehicle_data.values():
+        type = data.get(traci.constants.VAR_TYPE, "car")
+        waitTime = data.get(traci.constants.VAR_WAITING_TIME, 0)
+        
+        # Your custom weighting logic
         if type == "car":
             sumWait += waitTime
         elif type == "jeep":
@@ -214,6 +242,7 @@ def _sePedXing_phase(action_index):
 
 
 traci.start(Sumo_config)
+_subscribe_all_detectors()
 _junctionSubscription("cluster_295373794_3477931123_7465167861")
 _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
