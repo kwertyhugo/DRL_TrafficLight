@@ -29,7 +29,7 @@ def _junctionSubscription(junction_id):
         junction_id,
         traci.constants.CMD_GET_PERSON_VARIABLE,
         10.0,
-        [traci.constants.VAR_SPEED]
+        [traci.constants.VAR_WAITING_TIME]
     )
 
 # Simulation Variables
@@ -56,50 +56,69 @@ TRAIN_FREQUENCY = 1000  # Train every 1000 steps / 50 seconds
 step_counter = 0
 
 # Inputs to the Model
+def _weighted_waits(idList):
+    sumWait = 0
+    
+    for vehicleId in idList:
+        type = traci.vehicle.getTypeID(vehicleId)
+        waitTime = traci.vehicle.getWaitingTime(vehicleId)
+        if type == "car":
+            sumWait += waitTime
+        elif type == "jeep":
+            sumWait += waitTime * 1.5
+        elif type == "bus":
+            sumWait += waitTime * 2.2
+        elif type == "truck":
+            sumWait += waitTime * 2.5
+        elif type == "motorcycle":
+            sumWait += waitTime * 0.3
+        elif type == "tricycle":
+            sumWait += waitTime * 0.5
+    
+    return sumWait
+
 def _mainIntersection_queue():
     # vehicle detectors
-    southwest = traci.lanearea.getLastStepVehicleNumber("e2_4") + traci.lanearea.getLastStepVehicleNumber("e2_5")
-    southeast = traci.lanearea.getLastStepVehicleNumber("e2_6") + traci.lanearea.getLastStepVehicleNumber("e2_7")
-    northeast = traci.lanearea.getLastStepVehicleNumber("e2_8")
-    northwest = traci.lanearea.getLastStepVehicleNumber("e2_9") + traci.lanearea.getLastStepVehicleNumber("e2_10")
+    southwest = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_4")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_5"))
+    southeast = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_6")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_7"))
+    northeast = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_8"))
+    northwest = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_9")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_10"))
     
-    # pedestrian detectors
     pedestrian = 0
+    
+    junction_subscription = traci.junction.getContextSubscriptionResults("cluster_295373794_3477931123_7465167861")
+    
+    if junction_subscription:
+        for pid, data in junction_subscription.items():
+            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
+            
     
     return (southwest, southeast, northeast, northwest, pedestrian)
 
 def _swPedXing_queue():
-    north = traci.lanearea.getLastStepVehicleNumber("e2_0") + traci.lanearea.getLastStepVehicleNumber("e2_1")
-    south = traci.lanearea.getLastStepVehicleNumber("e2_4") + traci.lanearea.getLastStepVehicleNumber("e2_5")
+    north = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_0")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_1"))
+    south = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_4")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_5"))
     pedestrian = 0
-    junction_id = "6401523012"
     
-    _junctionSubscription(junction_id)
-    junction_subscription = traci.junction.getContextSubscriptionResults(junction_id)
+    junction_subscription = traci.junction.getContextSubscriptionResults("6401523012")
     
     if junction_subscription:
         for pid, data in junction_subscription.items():
-            speed = data.get(traci.constants.VAR_SPEED, 0)
-            if speed <= 0.5:
-                pedestrian += 1 
+            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
             
     return (south, north, pedestrian)
 
 def _sePedXing_queue():
-    west = traci.lanearea.getLastStepVehicleNumber("e2_2") + traci.lanearea.getLastStepVehicleNumber("e2_3")
-    east = traci.lanearea.getLastStepVehicleNumber("e2_6") + traci.lanearea.getLastStepVehicleNumber("e2_7")
+    west = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_2")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_3"))
+    east = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_6")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_7"))
     pedestrian = 0
-    junction_id = "3285696417"
     
-    _junctionSubscription(junction_id)
-    junction_subscription = traci.junction.getContextSubscriptionResults(junction_id)
+    junction_subscription = traci.junction.getContextSubscriptionResults("3285696417")
     
     if junction_subscription:
         for pid, data in junction_subscription.items():
-            speed = data.get(traci.constants.VAR_SPEED, 0)
-            if speed == 0:
-                pedestrian += 1 
-                   
+            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
+
     return (west, east, pedestrian)
 
 # Calculate reward based on queue reduction
@@ -195,6 +214,10 @@ def _sePedXing_phase(action_index):
 
 
 traci.start(Sumo_config)
+_junctionSubscription("cluster_295373794_3477931123_7465167861")
+_junctionSubscription("6401523012")
+_junctionSubscription("3285696417")
+
 detector_ids = traci.lanearea.getIDList()
 
 # Simulation Loop
