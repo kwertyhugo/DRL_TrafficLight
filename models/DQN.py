@@ -86,12 +86,14 @@ class DQNAgent:
             current_q_values[action] = reward + self.gamma * np.amax(next_state_q_values)
 
         # Train the model
-        self.model.fit(
+        history = self.model.fit(
             x=states,
             y=currents_q_values,
             epochs=1,
             verbose=0
         )
+
+        return history.history['loss'][0]
 
     # Load a pre-trained model
     def load(self):

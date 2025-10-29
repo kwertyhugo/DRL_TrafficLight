@@ -4,6 +4,8 @@ venv/
 env/
 ENV/
 venvvenv/
+thesis/
+.thesis/
 
 # Python cache
 __pycache__/

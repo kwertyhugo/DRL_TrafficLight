@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-10-29 15:07:35 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Olivarez_traci\network/map.net.xml"/>
+        <route-files value="Olivarez_traci\demand/demand.rou.xml"/>
+        <additional-files value="Olivarez_traci\additionals/map.poly.xml,Olivarez_traci\ additionals/detectors.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="10000"/>
+        <step-length value="0.05"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="51670"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e2_file.xsd">
+   <interval begin="0.00" end="300.00" id="e2_7" sampledSeconds="445.87" nVehEntered="9" nVehLeft="6" nVehSeen="9" meanSpeed="1.84" meanTimeLoss="46.09" meanOccupancy="8.63" maxOccupancy="27.21" meanMaxJamLengthInVehicles="1.16" meanMaxJamLengthInMeters="11.33" maxJamLengthInVehicles="3" maxJamLengthInMeters="48.83" jamLengthInVehiclesSum="6962" jamLengthInMetersSum="67997.19" meanHaltingDuration="35.74" maxHaltingDuration="108.45" haltingDurationSum="357.40" meanIntervalHaltingDuration="35.74" maxIntervalHaltingDuration="108.45" intervalHaltingDurationSum="357.40" startedHalts="11.00" meanVehicleNumber="1.49" maxVehicleNumber="4" />
+</detector>

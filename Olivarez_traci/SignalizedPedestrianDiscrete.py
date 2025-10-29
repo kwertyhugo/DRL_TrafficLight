@@ -2,6 +2,7 @@ import os
 import sys 
 import traci
 import numpy as np
+import csv
 
 from models.DQN import DQNAgent as dqn
 
@@ -18,12 +19,54 @@ else:
 
 Sumo_config = [
     'sumo',
-    '-c', 'Olivarez_traciSkeleton\map.sumocfg',
+    '-c', 'Olivarez_traci\map.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1'
 ]
 
+# Simulation Variables
+stepLength = 0.05
+mainCurrentPhase = 0
+mainCurrentPhaseDuration = 30
+swCurrentPhase = 0
+swCurrentPhaseDuration = 30
+seCurrentPhase = 0
+seCurrentPhaseDuration = 30
+actionSpace = (-15, -10, -5, 0, 5, 10, 15)
+
+# Store previous states and actions for learning
+mainPrevState = None
+mainPrevAction = None
+swPrevState = None
+swPrevAction = None
+sePrevState = None
+sePrevAction = None
+
+# Batch training parameters
+BATCH_SIZE = 32
+TRAIN_FREQUENCY = 100  # Train every 100 steps / 5 seconds
+step_counter = 0
+
+# -- Data storage for plotting --
+main_reward_history = []
+main_loss_history = []
+main_epsilon_history = []
+
+sw_reward_history = []
+sw_loss_history = []
+sw_epsilon_history = []
+
+se_reward_history = []
+se_loss_history = []
+se_epsilon_history = []
+
+# -- Variables to accumulate reward between training steps --
+total_main_reward = 0
+total_sw_reward = 0
+total_se_reward = 0
+
+#Object Context Subscription in SUMO
 def _junctionSubscription(junction_id):
     traci.junction.subscribeContext(
         junction_id,
@@ -49,31 +92,6 @@ def _subscribe_all_detectors():
             0,  # Radius (0 means only vehicles *inside* the detector)
             vehicle_vars
         )
-
-# Simulation Variables
-stepLength = 0.05
-mainCurrentPhase = 0
-mainCurrentPhaseDuration = 30
-swCurrentPhase = 0
-swCurrentPhaseDuration = 30
-seCurrentPhase = 0
-seCurrentPhaseDuration = 30
-actionSpace = (-15, -10, -5, 0, 5, 10, 15)
-
-# Store previous states and actions for learning
-mainPrevState = None
-mainPrevAction = None
-swPrevState = None
-swPrevAction = None
-sePrevState = None
-sePrevAction = None
-
-# Batch training parameters
-BATCH_SIZE = 32
-TRAIN_FREQUENCY = 100  # Train every 100 steps / 5 seconds
-step_counter = 0
-
-
 
 # Inputs to the Model
 def _weighted_waits(detector_id):
@@ -240,6 +258,13 @@ def _sePedXing_phase(action_index):
     
     traci.trafficlight.setPhaseDuration("3285696417", seCurrentPhaseDuration)
 
+def save_history(filename, headers, reward_hist, loss_hist, epsilon_hist, train_frequency):
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        for i in range(len(reward_hist)):
+            # Save the simulation step number (i * frequency)
+            writer.writerow([i * train_frequency, reward_hist[i], loss_hist[i], epsilon_hist[i]])
 
 traci.start(Sumo_config)
 _subscribe_all_detectors()
@@ -261,6 +286,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
         # Calculate reward from previous action
         mainReward = calculate_reward(mainCurrentState, mainPrevState)
+        total_main_reward += mainReward
         
         # Store experience if we have previous state/action
         if mainPrevState is not None and mainPrevAction is not None:
@@ -288,6 +314,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
         # Calculate reward
         swReward = calculate_reward(swCurrentState, swPrevState)
+        total_sw_reward += swReward
         
         # Store experience
         if swPrevState is not None and swPrevAction is not None:
@@ -314,6 +341,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
         # Calculate reward
         seReward = calculate_reward(seCurrentState, sePrevState)
+        total_se_reward += seReward
         
         # Store experience
         if sePrevState is not None and sePrevAction is not None:
@@ -336,20 +364,31 @@ while traci.simulation.getMinExpectedNumber() > 0:
     if step_counter % TRAIN_FREQUENCY == 0:
         # Train main intersection agent
         if len(mainIntersectionAgent.memory) >= BATCH_SIZE:
-            mainIntersectionAgent.replay(BATCH_SIZE)
+            loss = mainIntersectionAgent.replay(BATCH_SIZE)
+            main_loss_history.append(loss)
+            main_reward_history.append(total_main_reward)
+            main_epsilon_history.append(mainIntersectionAgent.epsilon)
+            total_main_reward = 0
             mainIntersectionAgent.epsilon = max(mainIntersectionAgent.epsilon_min, 
                                                mainIntersectionAgent.epsilon * mainIntersectionAgent.epsilon_decay_rate)
-            print(f"Main Agent trained - Epsilon: {mainIntersectionAgent.epsilon:.4f}")
         
         # Train SW pedestrian crossing agent
         if len(swPedXingAgent.memory) >= BATCH_SIZE:
-            swPedXingAgent.replay(BATCH_SIZE)
+            loss = swPedXingAgent.replay(BATCH_SIZE)
+            sw_loss_history.append(loss)
+            sw_reward_history.append(total_sw_reward)
+            sw_epsilon_history.append(swPedXingAgent.epsilon)
+            total_sw_reward = 0
             swPedXingAgent.epsilon = max(swPedXingAgent.epsilon_min,
                                         swPedXingAgent.epsilon * swPedXingAgent.epsilon_decay_rate)
         
         # Train SE pedestrian crossing agent
         if len(sePedXingAgent.memory) >= BATCH_SIZE:
-            sePedXingAgent.replay(BATCH_SIZE)
+            loss = sePedXingAgent.replay(BATCH_SIZE)
+            se_loss_history.append(loss)
+            se_reward_history.append(total_se_reward)
+            se_epsilon_history.append(sePedXingAgent.epsilon)
+            total_se_reward = 0
             sePedXingAgent.epsilon = max(sePedXingAgent.epsilon_min,
                                         sePedXingAgent.epsilon * sePedXingAgent.epsilon_decay_rate)
     
@@ -361,5 +400,17 @@ mainIntersectionAgent.save()
 swPedXingAgent.save()
 sePedXingAgent.save()
 print("Models saved successfully!")
+
+print("Saving training history...")
+save_history('main_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
+             main_reward_history, main_loss_history, main_epsilon_history, TRAIN_FREQUENCY)
+             
+save_history('sw_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
+             sw_reward_history, sw_loss_history, sw_epsilon_history, TRAIN_FREQUENCY)
+             
+save_history('se_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
+             se_reward_history, se_loss_history, se_epsilon_history, TRAIN_FREQUENCY)
+
+print("History saved successfully!")
 
 traci.close()
