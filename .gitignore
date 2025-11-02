@@ -33,12 +33,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# SUMO or simulation files (if applicable)
-*.sumocfg
-*.net.xml
-*.rou.xml
-*.trip.xml
-
 # VSCode / IDE settings
 .vscode/
 .idea/

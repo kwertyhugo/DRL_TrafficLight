@@ -3,13 +3,18 @@ import sys
 import traci
 import numpy as np
 import csv
+from keras.utils import to_categorical
 
 from models.DQN import DQNAgent as dqn
 
 # Select DRL Agent
-mainIntersectionAgent = dqn(state_size=5, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='ReLU_DQNAgent')
-swPedXingAgent = dqn(state_size=3, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SW_PedXing_Agent')
-sePedXingAgent = dqn(state_size=3, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SE_PedXing_Agent')
+mainIntersectionAgent = dqn(state_size=15, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='ReLU_DQNAgent')
+swPedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SW_PedXing_Agent')
+sePedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SE_PedXing_Agent')
+
+mainIntersectionAgent.load()
+swPedXingAgent.load()
+sePedXingAgent.load()
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -89,7 +94,7 @@ def _subscribe_all_detectors():
         traci.lanearea.subscribeContext(
             det_id,
             traci.constants.CMD_GET_VEHICLE_VARIABLE,  # We want vehicle data
-            0,  # Radius (0 means only vehicles *inside* the detector)
+            3,  # Radius (0 means only vehicles *inside* the detector)
             vehicle_vars
         )
 
@@ -98,7 +103,7 @@ def _weighted_waits(detector_id):
     sumWait = 0
     # This ONE call gets all vehicle data (Type and Wait Time)
     vehicle_data = traci.lanearea.getContextSubscriptionResults(detector_id)
-    
+
     if not vehicle_data:
         return 0
 
@@ -120,52 +125,47 @@ def _weighted_waits(detector_id):
             sumWait += waitTime * 0.3
         elif type == "tricycle":
             sumWait += waitTime * 0.5
-    
     return sumWait
 
 def _mainIntersection_queue():
     # vehicle detectors
-    southwest = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_4")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_5"))
-    southeast = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_6")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_7"))
-    northeast = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_8"))
-    northwest = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_9")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_10"))
+    southwest = _weighted_waits("e2_4") + _weighted_waits("e2_5")
+    southeast = _weighted_waits("e2_6") + _weighted_waits("e2_7")
+    northeast = _weighted_waits("e2_8")
+    northwest = _weighted_waits("e2_9") + _weighted_waits("e2_10")
     
     pedestrian = 0
-    
     junction_subscription = traci.junction.getContextSubscriptionResults("cluster_295373794_3477931123_7465167861")
     
     if junction_subscription:
         for pid, data in junction_subscription.items():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
             
-    
-    return (southwest, southeast, northeast, northwest, pedestrian)
+    return [southwest, southeast, northeast, northwest, pedestrian]
 
 def _swPedXing_queue():
-    north = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_0")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_1"))
-    south = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_4")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_5"))
+    north = _weighted_waits("e2_0") + _weighted_waits("e2_1")
+    south = _weighted_waits("e2_4") + _weighted_waits("e2_5")
     pedestrian = 0
-    
     junction_subscription = traci.junction.getContextSubscriptionResults("6401523012")
     
     if junction_subscription:
         for pid, data in junction_subscription.items():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
             
-    return (south, north, pedestrian)
+    return [south, north, pedestrian]
 
 def _sePedXing_queue():
-    west = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_2")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_3"))
-    east = _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_6")) + _weighted_waits(traci.lanearea.getLastStepVehicleIDs("e2_7"))
+    west = _weighted_waits("e2_2") + _weighted_waits("e2_3")
+    east = _weighted_waits("e2_6") + _weighted_waits("e2_7")
     pedestrian = 0
-    
     junction_subscription = traci.junction.getContextSubscriptionResults("3285696417")
     
     if junction_subscription:
         for pid, data in junction_subscription.items():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
 
-    return (west, east, pedestrian)
+    return [west, east, pedestrian]
 
 # Calculate reward based on queue reduction
 def calculate_reward(current_state, prev_state):
@@ -282,7 +282,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
     mainCurrentPhaseDuration -= stepLength
     if mainCurrentPhaseDuration <= 0:
         # Get current state
-        mainCurrentState = np.array(_mainIntersection_queue(), dtype=np.float32)
+        state_list = _mainIntersection_queue()
+        state_vector = to_categorical(mainCurrentPhase, num_classes=10).flatten()
+        mainCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
         
         # Calculate reward from previous action
         mainReward = calculate_reward(mainCurrentState, mainPrevState)
@@ -290,7 +292,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
         # Store experience if we have previous state/action
         if mainPrevState is not None and mainPrevAction is not None:
-            # Check if episode is done (could add custom logic here)
             done = False
             mainIntersectionAgent.remember(mainPrevState, mainPrevAction, mainReward, mainCurrentState, done)
         
@@ -310,7 +311,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
     swCurrentPhaseDuration -= stepLength
     if swCurrentPhaseDuration <= 0:
         # Get current state
-        swCurrentState = np.array(_swPedXing_queue(), dtype=np.float32)
+        state_list = _swPedXing_queue()
+        state_vector = to_categorical(swCurrentPhase, num_classes=4).flatten()
+        swCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
         
         # Calculate reward
         swReward = calculate_reward(swCurrentState, swPrevState)
@@ -337,7 +340,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
     seCurrentPhaseDuration -= stepLength
     if seCurrentPhaseDuration <= 0:
         # Get current state
-        seCurrentState = np.array(_sePedXing_queue(), dtype=np.float32)
+        state_list = _sePedXing_queue()
+        state_vector = to_categorical(seCurrentPhase, num_classes=4).flatten()
+        seCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
         
         # Calculate reward
         seReward = calculate_reward(seCurrentState, sePrevState)
