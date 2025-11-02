@@ -8,9 +8,9 @@ from keras.utils import to_categorical
 from models.DQN import DQNAgent as dqn
 
 # Select DRL Agent
-mainIntersectionAgent = dqn(state_size=15, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='ReLU_DQNAgent')
-swPedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SW_PedXing_Agent')
-sePedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SE_PedXing_Agent')
+mainIntersectionAgent = dqn(state_size=15, action_size=7, memory_size=200, gamma=0.95, epsilon=0.2, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='ReLU_DQNAgent')
+swPedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.2, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SW_PedXing_Agent')
+sePedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.2, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SE_PedXing_Agent')
 
 mainIntersectionAgent.load()
 swPedXingAgent.load()
