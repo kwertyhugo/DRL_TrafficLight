@@ -99,9 +99,19 @@ for origin_taz, destinations in od_matrix.items():
         dest_edges = taz_edges[dest_taz]
         time_rates = od_data.get('time_based_rates', {})
         
+        # Traffic demand mapping (override calculated insertion rates)
+        TRAFFIC_DEMAND = {
+            'normal': 50,       # veh/hr
+            'slow': 120,        # veh/hr
+            'traffic_jam': 200  # veh/hr
+        }
+        
         for time_str, rate_data in time_rates.items():
             hour = int(time_str.split(':')[0])
-            insertion_rate = rate_data.get('insertion_rate', 0)
+            
+            # Use traffic condition from Google Maps but apply realistic insertion rates
+            traffic_condition = rate_data.get('condition', 'normal')
+            insertion_rate = TRAFFIC_DEMAND.get(traffic_condition, 50)
             
             if insertion_rate > 0:
                 # Calculate begin time

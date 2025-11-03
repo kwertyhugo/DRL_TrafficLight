@@ -55,11 +55,11 @@ SIMULATION_DURATION = (SIMULATION_END_TIME - SIMULATION_START_TIME) * 3600  # 18
 # Sample only key hours to reduce API calls (comment out to sample all hours)
 MAX_DISTANCE_KM = 10  # Maximum distance between OD pairs to consider
 
-# Traffic density based on Google Maps traffic conditions (vehicles/km)
-TRAFFIC_DENSITY = {
-    'normal': 50,      # Light traffic - normal flow
-    'slow': 120,       # Moderate traffic - slower than normal
-    'traffic_jam': 200 # Heavy traffic - congested
+# Traffic demand based on Google Maps traffic conditions (vehicles/hour)
+TRAFFIC_DEMAND = {
+    'normal': 50,       # veh/hr
+    'slow': 120,        # veh/hr
+    'traffic_jam': 200  # veh/hr
 }
 
 # Road capacity estimates by road type (vehicles/km)
@@ -218,34 +218,30 @@ class ODTrafficGenerator:
         """
         return ROAD_CAPACITY['default']
     
-    def calculate_insertion_rate(self, traffic_condition, route_length_km, trip_duration_hours):
+    def calculate_insertion_rate(self, traffic_condition, route_length_km=None, trip_duration_hours=None):
         """
-        Calculate insertion rate using your formula:
-        (traffic_density * road_capacity * route_length) / trip_duration
-        
+        Return vehicles per hour based on traffic condition label from Google Maps.
+        SUMO insertion rate should be a demand (veh/hr).
+
         Args:
-            traffic_condition: 'normal', 'slow', or 'traffic_jam'
-            route_length_km: Route length in kilometers
-            trip_duration_hours: Trip duration in hours
-            
+            traffic_condition: 'normal', 'slow', or 'traffic_jam' (from Google Maps)
+            route_length_km: optional (kept for API compatibility)
+            trip_duration_hours: optional (kept for API compatibility)
+
         Returns:
-            insertion_rate: Vehicles per hour for this OD pair
+            float: insertion rate (vehicles per hour)
         """
-        # Get traffic density based on condition
-        traffic_density = TRAFFIC_DENSITY[traffic_condition]
-        
-        # Get road capacity (vehicles/km)
-        road_capacity = self.get_road_capacity(route_length_km)
-        
-        # Apply your formula: (traffic_density * road_capacity * route_length) / trip_duration
-        # Ensure minimum trip duration to avoid division by zero
-        safe_trip_duration_hours = max(trip_duration_hours, 0.01)  # Minimum 36 seconds
-        insertion_rate = (traffic_density * road_capacity * route_length_km) / safe_trip_duration_hours
-        
-        # Ensure minimum viable rate
-        insertion_rate = max(insertion_rate, 1.0)
-        
-        return insertion_rate
+        # Defensive: normalize the key and validate
+        if not isinstance(traffic_condition, str):
+            raise TypeError("traffic_condition must be a string")
+
+        key = traffic_condition.lower()
+        if key not in TRAFFIC_DEMAND:
+            raise ValueError(f"unknown traffic_condition: {traffic_condition!r}")
+
+        veh_per_hour = float(TRAFFIC_DEMAND[key])
+        # ensure at least 1 veh/hr to avoid divide-by-zero later
+        return max(veh_per_hour, 1.0)
     
     def generate_od_matrix(self):
         """
