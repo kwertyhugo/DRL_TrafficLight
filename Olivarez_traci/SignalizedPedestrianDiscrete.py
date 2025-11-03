@@ -8,9 +8,9 @@ from keras.utils import to_categorical
 from models.DQN import DQNAgent as dqn
 
 # Select DRL Agent
-mainIntersectionAgent = dqn(state_size=15, action_size=7, memory_size=200, gamma=0.95, epsilon=0.2, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='ReLU_DQNAgent')
-swPedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.2, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SW_PedXing_Agent')
-sePedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.2, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, name='SE_PedXing_Agent')
+mainIntersectionAgent = dqn(state_size=15, action_size=7, memory_size=200, gamma=0.95, epsilon=0.01, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='ReLU_DQNAgent')
+swPedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.01, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='SW_PedXing_Agent')
+sePedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.01, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='SE_PedXing_Agent')
 
 mainIntersectionAgent.load()
 swPedXingAgent.load()
@@ -168,23 +168,12 @@ def _sePedXing_queue():
     return [west, east, pedestrian]
 
 # Calculate reward based on queue reduction
-def calculate_reward(current_state, prev_state):
-    if prev_state is None:
+def calculate_reward(current_state):
+    if current_state is None:
         return 0
     
     current_total = sum(current_state)
-    prev_total = sum(prev_state)
-    
-    # Reward for reducing queue, penalty for increasing
-    queue_diff = prev_total - current_total
-    
-    # Normalize reward
-    if queue_diff > 0:
-        reward = queue_diff * 2  # Bonus for reducing queue
-    else:
-        reward = queue_diff  # Penalty for increasing queue
-    
-    return reward
+    return -current_total
 
 # Output of the model
 def _mainIntersection_phase(action_index):
@@ -282,12 +271,12 @@ while traci.simulation.getMinExpectedNumber() > 0:
     mainCurrentPhaseDuration -= stepLength
     if mainCurrentPhaseDuration <= 0:
         # Get current state
-        state_list = _mainIntersection_queue()
+        state_list = np.array(_mainIntersection_queue())
+        normalized_state_list = state_list/1000
         state_vector = to_categorical(mainCurrentPhase, num_classes=10).flatten()
-        mainCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
+        mainCurrentState = np.concatenate([normalized_state_list, state_vector]).astype(np.float32)
         
-        # Calculate reward from previous action
-        mainReward = calculate_reward(mainCurrentState, mainPrevState)
+        mainReward = calculate_reward(normalized_state_list)
         total_main_reward += mainReward
         
         # Store experience if we have previous state/action
@@ -305,18 +294,19 @@ while traci.simulation.getMinExpectedNumber() > 0:
         mainPrevState = mainCurrentState
         mainPrevAction = mainActionIndex
         
-        print(f"Main Intersection - Queue: {sum(mainCurrentState)}, Reward: {mainReward}, Action: {actionSpace[mainActionIndex]}")
+        print(f"Main Intersection - Queue: {sum(normalized_state_list)}, Reward: {mainReward}, Action: {actionSpace[mainActionIndex]}")
     
     # SW Pedestrian Crossing Agent Logic
     swCurrentPhaseDuration -= stepLength
     if swCurrentPhaseDuration <= 0:
         # Get current state
-        state_list = _swPedXing_queue()
+        state_list = np.array(_swPedXing_queue())
+        normalized_state_list = state_list/1000
         state_vector = to_categorical(swCurrentPhase, num_classes=4).flatten()
-        swCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
+        swCurrentState = np.concatenate([normalized_state_list, state_vector]).astype(np.float32)
         
         # Calculate reward
-        swReward = calculate_reward(swCurrentState, swPrevState)
+        swReward = calculate_reward(normalized_state_list)
         total_sw_reward += swReward
         
         # Store experience
@@ -334,18 +324,19 @@ while traci.simulation.getMinExpectedNumber() > 0:
         swPrevState = swCurrentState
         swPrevAction = swActionIndex
         
-        print(f"SW Ped Crossing - Queue: {sum(swCurrentState)}, Reward: {swReward}, Action: {actionSpace[swActionIndex]}")
+        print(f"SW Ped Crossing - Queue: {sum(normalized_state_list)}, Reward: {swReward}, Action: {actionSpace[swActionIndex]}")
     
     # SE Pedestrian Crossing Agent Logic
     seCurrentPhaseDuration -= stepLength
     if seCurrentPhaseDuration <= 0:
         # Get current state
-        state_list = _sePedXing_queue()
+        state_list = np.array(_sePedXing_queue())
+        normalized_state_list = state_list/1000
         state_vector = to_categorical(seCurrentPhase, num_classes=4).flatten()
-        seCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
+        seCurrentState = np.concatenate([normalized_state_list, state_vector]).astype(np.float32)
         
         # Calculate reward
-        seReward = calculate_reward(seCurrentState, sePrevState)
+        seReward = calculate_reward(normalized_state_list)
         total_se_reward += seReward
         
         # Store experience
@@ -363,7 +354,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
         sePrevState = seCurrentState
         sePrevAction = seActionIndex
         
-        print(f"SE Ped Crossing - Queue: {sum(seCurrentState)}, Reward: {seReward}, Action: {actionSpace[seActionIndex]}")
+        print(f"SE Ped Crossing - Queue: {sum(normalized_state_list)}, Reward: {seReward}, Action: {actionSpace[seActionIndex]}")
     
     # Periodic training (replay)
     if step_counter % TRAIN_FREQUENCY == 0:
