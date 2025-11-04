@@ -16,8 +16,8 @@ if gpus:
 
 class A2CAgent:
     
-    def __init__(self, state_size, action_size, gamma=0.95, learning_rate=0.0002, 
-                entropy_coef=0.01, value_coef=0.5, name='A2C_Agent'):
+    def __init__(self, state_size, action_size, gamma=0.95, learning_rate=0.0001, 
+                entropy_coef=0.1, value_coef=0.5, name='A2C_Agent'):
         
         self.state_size = state_size
         self.action_size = action_size
@@ -79,21 +79,27 @@ class A2CAgent:
     def train(self):
         """Train on collected trajectory"""
         if len(self.states) == 0:
-            return 0, 0, 0  # No data to train on
+            return 0.0, 0.0, 0.0  # No data to train on
         
         # Convert lists to numpy arrays
-        states = np.array(self.states)
-        actions = np.array(self.actions)
-        rewards = np.array(self.rewards)
-        values = np.array(self.values)
-        dones = np.array(self.dones)
+        states = np.array(self.states, dtype=np.float32)
+        actions = np.array(self.actions, dtype=np.int32)
+        rewards = np.array(self.rewards, dtype=np.float32)
+        values = np.array(self.values, dtype=np.float32)
+        dones = np.array(self.dones, dtype=np.float32)
         
         # Calculate returns and advantages
         returns = self._compute_returns(rewards, dones)
+        
+        # Normalize returns for stability
+        if len(returns) > 1:
+            returns = (returns - np.mean(returns)) / (np.std(returns) + 1e-8)
+        
         advantages = returns - values
         
         # Normalize advantages for stability
-        advantages = (advantages - np.mean(advantages)) / (np.std(advantages) + 1e-8)
+        if len(advantages) > 1:
+            advantages = (advantages - np.mean(advantages)) / (np.std(advantages) + 1e-8)
         
         # Train the model
         actor_loss, critic_loss, entropy = self._train_step(states, actions, advantages, returns)
@@ -110,20 +116,25 @@ class A2CAgent:
     def _compute_returns(self, rewards, dones):
         """Compute discounted returns"""
         returns = np.zeros_like(rewards, dtype=np.float32)
-        running_return = 0
+        running_return = 0.0
         
         # Calculate returns backwards
         for t in reversed(range(len(rewards))):
             if dones[t]:
-                running_return = 0
+                running_return = 0.0
             running_return = rewards[t] + self.gamma * running_return
             returns[t] = running_return
             
         return returns
     
-    @tf.function
     def _train_step(self, states, actions, advantages, returns):
         """Single training step using GradientTape"""
+        # Convert to tensors
+        states = tf.convert_to_tensor(states, dtype=tf.float32)
+        actions = tf.convert_to_tensor(actions, dtype=tf.int32)
+        advantages = tf.convert_to_tensor(advantages, dtype=tf.float32)
+        returns = tf.convert_to_tensor(returns, dtype=tf.float32)
+        
         with tf.GradientTape() as tape:
             # Forward pass
             action_probs, values = self.model(states, training=True)
@@ -149,9 +160,12 @@ class A2CAgent:
         
         # Compute and apply gradients
         gradients = tape.gradient(total_loss, self.model.trainable_variables)
+        # Clip gradients to prevent exploding gradients
+        gradients, _ = tf.clip_by_global_norm(gradients, 0.5)
         self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
         
-        return actor_loss.numpy(), critic_loss.numpy(), entropy.numpy()
+        # Convert to Python floats for returning
+        return float(actor_loss.numpy()), float(critic_loss.numpy()), float(entropy.numpy())
     
     def load(self):
         """Load a pre-trained model"""

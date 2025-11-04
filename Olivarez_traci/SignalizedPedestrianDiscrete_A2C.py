@@ -1,5 +1,9 @@
 import os
-import sys 
+import sys
+
+# Add parent directory to path so we can import from models
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import traci
 import numpy as np
 import csv
@@ -8,12 +12,12 @@ from keras.utils import to_categorical
 from models.A2C import A2CAgent as a2c
 
 # Select A2C Agents
-mainIntersectionAgent = a2c(state_size=15, action_size=7, gamma=0.95, learning_rate=0.0002, 
-                        entropy_coef=0.01, value_coef=0.5, name='A2C_Main_Agent')
-swPedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0002,
-                    entropy_coef=0.01, value_coef=0.5, name='A2C_SW_PedXing_Agent')
-sePedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0002,
-                    entropy_coef=0.01, value_coef=0.5, name='A2C_SE_PedXing_Agent')
+mainIntersectionAgent = a2c(state_size=15, action_size=7, gamma=0.95, learning_rate=0.0001, 
+                        entropy_coef=0.1, value_coef=0.5, name='A2C_Main_Agent')
+swPedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0001,
+                    entropy_coef=0.1, value_coef=0.5, name='A2C_SW_PedXing_Agent')
+sePedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0001,
+                    entropy_coef=0.1, value_coef=0.5, name='A2C_SE_PedXing_Agent')
 
 # Uncomment to load pre-trained models
 # mainIntersectionAgent.load()
@@ -44,10 +48,13 @@ seCurrentPhase = 0
 seCurrentPhaseDuration = 30
 actionSpace = (-15, -10, -5, 0, 5, 10, 15)
 
-# Store previous states for learning
+# Store previous states and actions for learning
 mainPrevState = None
+mainPrevAction = None
 swPrevState = None
+swPrevAction = None
 sePrevState = None
+sePrevAction = None
 
 # Training parameters
 TRAIN_FREQUENCY = 100  # Train every 100 steps / 5 seconds
@@ -177,11 +184,8 @@ def calculate_reward(current_state, prev_state):
     # Reward for reducing queue, penalty for increasing
     queue_diff = prev_total - current_total
     
-    # Normalize reward
-    if queue_diff > 0:
-        reward = queue_diff * 2  # Bonus for reducing queue
-    else:
-        reward = queue_diff  # Penalty for increasing queue
+    # Scale down and clip reward for stability
+    reward = np.clip(queue_diff * 0.1, -5, 5)
     
     return reward
 
@@ -251,7 +255,7 @@ def save_history(filename, headers, reward_hist, actor_loss_hist, critic_loss_hi
         writer.writerow(headers)
         for i in range(len(reward_hist)):
             writer.writerow([i * train_frequency, reward_hist[i], actor_loss_hist[i], 
-                           critic_loss_hist[i], entropy_hist[i]])
+                        critic_loss_hist[i], entropy_hist[i]])
 
 traci.start(Sumo_config)
 _subscribe_all_detectors()
@@ -278,9 +282,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
         total_main_reward += mainReward
         
         # Store experience (A2C stores in trajectory, not replay buffer)
-        if mainPrevState is not None:
+        if mainPrevState is not None and mainPrevAction is not None:
             done = False
-            mainIntersectionAgent.remember(mainPrevState, mainActionIndex, mainReward, mainCurrentState, done)
+            mainIntersectionAgent.remember(mainPrevState, mainPrevAction, mainReward, mainCurrentState, done)
         
         # Choose new action (sampled from policy)
         mainActionIndex = mainIntersectionAgent.act(mainCurrentState)
@@ -288,8 +292,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
         # Apply phase change with action
         _mainIntersection_phase(mainActionIndex)
         
-        # Store current state for next iteration
+        # Store current state and action for next iteration
         mainPrevState = mainCurrentState
+        mainPrevAction = mainActionIndex
         
         print(f"Main Intersection - Queue: {sum(mainCurrentState[:5]):.2f}, Reward: {mainReward:.2f}, Action: {actionSpace[mainActionIndex]}")
     
@@ -303,14 +308,15 @@ while traci.simulation.getMinExpectedNumber() > 0:
         swReward = calculate_reward(swCurrentState, swPrevState)
         total_sw_reward += swReward
         
-        if swPrevState is not None:
+        if swPrevState is not None and swPrevAction is not None:
             done = False
-            swPedXingAgent.remember(swPrevState, swActionIndex, swReward, swCurrentState, done)
+            swPedXingAgent.remember(swPrevState, swPrevAction, swReward, swCurrentState, done)
         
         swActionIndex = swPedXingAgent.act(swCurrentState)
         _swPedXing_phase(swActionIndex)
         
         swPrevState = swCurrentState
+        swPrevAction = swActionIndex
         
         print(f"SW Ped Crossing - Queue: {sum(swCurrentState[:3]):.2f}, Reward: {swReward:.2f}, Action: {actionSpace[swActionIndex]}")
     
@@ -324,14 +330,15 @@ while traci.simulation.getMinExpectedNumber() > 0:
         seReward = calculate_reward(seCurrentState, sePrevState)
         total_se_reward += seReward
         
-        if sePrevState is not None:
+        if sePrevState is not None and sePrevAction is not None:
             done = False
-            sePedXingAgent.remember(sePrevState, seActionIndex, seReward, seCurrentState, done)
+            sePedXingAgent.remember(sePrevState, sePrevAction, seReward, seCurrentState, done)
         
         seActionIndex = sePedXingAgent.act(seCurrentState)
         _sePedXing_phase(seActionIndex)
         
         sePrevState = seCurrentState
+        sePrevAction = seActionIndex
         
         print(f"SE Ped Crossing - Queue: {sum(seCurrentState[:3]):.2f}, Reward: {seReward:.2f}, Action: {actionSpace[seActionIndex]}")
     

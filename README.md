@@ -5,5 +5,5 @@ This project is in accordance towards the requirements for BSCSST Thesis
 For A2c: 
 - python -m venv venv
 - venv\Scripts\activate
-- pip install tensorflow keras numpy gym
-- python models\A2C.py
+- pip install -r requirements.txt
+- python Olivarez_traci\SignalizedPedestrianDiscrete_A2C.py
