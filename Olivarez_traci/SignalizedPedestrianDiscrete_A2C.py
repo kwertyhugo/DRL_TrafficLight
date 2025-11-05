@@ -11,13 +11,13 @@ from keras.utils import to_categorical
 
 from models.A2C import A2CAgent as a2c
 
-# Select A2C Agents
-mainIntersectionAgent = a2c(state_size=15, action_size=7, gamma=0.95, learning_rate=0.0001, 
-                        entropy_coef=0.1, value_coef=0.5, name='A2C_Main_Agent')
-swPedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0001,
-                    entropy_coef=0.1, value_coef=0.5, name='A2C_SW_PedXing_Agent')
-sePedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0001,
-                    entropy_coef=0.1, value_coef=0.5, name='A2C_SE_PedXing_Agent')
+# Select A2C Agents with conservative hyperparameters for stability
+mainIntersectionAgent = a2c(state_size=15, action_size=7, gamma=0.95, learning_rate=0.0003, 
+                        entropy_coef=0.2, value_coef=0.5, max_grad_norm=0.5, name='A2C_Main_Agent')
+swPedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0003,
+                    entropy_coef=0.2, value_coef=0.5, max_grad_norm=0.5, name='A2C_SW_PedXing_Agent')
+sePedXingAgent = a2c(state_size=7, action_size=7, gamma=0.95, learning_rate=0.0003,
+                    entropy_coef=0.2, value_coef=0.5, max_grad_norm=0.5, name='A2C_SE_PedXing_Agent')
 
 # Uncomment to load pre-trained models
 # mainIntersectionAgent.load()
@@ -32,7 +32,7 @@ else:
 
 Sumo_config = [
     'sumo',
-    '-c', 'Olivarez_traci\map.sumocfg',
+    '-c', 'Olivarez_traci/map.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1'
@@ -48,40 +48,44 @@ seCurrentPhase = 0
 seCurrentPhaseDuration = 30
 actionSpace = (-15, -10, -5, 0, 5, 10, 15)
 
-# Store previous states and actions for learning
+# Episode tracking
+mainEpisodeNumber = 0
+swEpisodeNumber = 0
+seEpisodeNumber = 0
+
+# Store state and action from previous step for each agent
 mainPrevState = None
 mainPrevAction = None
+mainPrevQueue = None
+
 swPrevState = None
 swPrevAction = None
+swPrevQueue = None
+
 sePrevState = None
 sePrevAction = None
+sePrevQueue = None
 
-# Training parameters
-TRAIN_FREQUENCY = 100  # Train every 100 steps / 5 seconds
-step_counter = 0
-
-# -- Data storage for plotting --
+# Data storage for plotting
 main_actor_loss_history = []
 main_critic_loss_history = []
 main_entropy_history = []
 main_reward_history = []
+main_episode_steps = []
 
 sw_actor_loss_history = []
 sw_critic_loss_history = []
 sw_entropy_history = []
 sw_reward_history = []
+sw_episode_steps = []
 
 se_actor_loss_history = []
 se_critic_loss_history = []
 se_entropy_history = []
 se_reward_history = []
+se_episode_steps = []
 
-# -- Variables to accumulate reward between training steps --
-total_main_reward = 0
-total_sw_reward = 0
-total_se_reward = 0
-
-#Object Context Subscription in SUMO
+# Object Context Subscription in SUMO
 def _junctionSubscription(junction_id):
     traci.junction.subscribeContext(
         junction_id,
@@ -91,13 +95,11 @@ def _junctionSubscription(junction_id):
     )
     
 def _subscribe_all_detectors():
-    # List of all your vehicle detectors
     detector_ids = [
         "e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10",
         "e2_0", "e2_1", "e2_2", "e2_3"
     ]
     
-    # The variables we want from each vehicle inside the detector
     vehicle_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
     
     for det_id in detector_ids:
@@ -120,18 +122,18 @@ def _weighted_waits(detector_id):
         type = data.get(traci.constants.VAR_TYPE, "car")
         waitTime = data.get(traci.constants.VAR_WAITING_TIME, 0)
         
-        if type == "car":
-            sumWait += waitTime
-        elif type == "jeep":
-            sumWait += waitTime * 1.5
-        elif type == "bus":
-            sumWait += waitTime * 2.2
-        elif type == "truck":
-            sumWait += waitTime * 2.5
-        elif type == "motorcycle":
-            sumWait += waitTime * 0.3
-        elif type == "tricycle":
-            sumWait += waitTime * 0.5
+        weight_map = {
+            "car": 1.0,
+            "jeep": 1.5,
+            "bus": 2.2,
+            "truck": 2.5,
+            "motorcycle": 0.3,
+            "tricycle": 0.5
+        }
+        
+        weight = weight_map.get(type, 1.0)
+        sumWait += waitTime * weight
+        
     return sumWait
 
 def _mainIntersection_queue():
@@ -173,21 +175,22 @@ def _sePedXing_queue():
 
     return [west, east, pedestrian]
 
-# Calculate reward based on queue reduction
-def calculate_reward(current_state, prev_state):
-    if prev_state is None:
-        return 0
+# Reward function - simpler and more stable
+def calculate_reward(current_queue_total, prev_queue_total):
+    """
+    Simple reward based on queue reduction.
+    """
+    if prev_queue_total is None:
+        return 0.0
     
-    current_total = sum(current_state)
-    prev_total = sum(prev_state)
+    # Positive reward for reducing queue
+    reduction = (prev_queue_total - current_queue_total)
     
-    # Reward for reducing queue, penalty for increasing
-    queue_diff = prev_total - current_total
+    # Scale down for stability
+    reward = reduction * 0.01
     
-    # Scale down and clip reward for stability
-    reward = np.clip(queue_diff * 0.1, -5, 5)
-    
-    return reward
+    # Clip
+    return np.clip(reward, -1.0, 1.0)
 
 # Output of the model
 def _mainIntersection_phase(action_index):
@@ -249,150 +252,172 @@ def _sePedXing_phase(action_index):
     
     traci.trafficlight.setPhaseDuration("3285696417", seCurrentPhaseDuration)
 
-def save_history(filename, headers, reward_hist, actor_loss_hist, critic_loss_hist, entropy_hist, train_frequency):
+def save_history(filename, headers, episodes, rewards, actor_losses, critic_losses, entropies):
     with open(filename, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(headers)
-        for i in range(len(reward_hist)):
-            writer.writerow([i * train_frequency, reward_hist[i], actor_loss_hist[i], 
-                        critic_loss_hist[i], entropy_hist[i]])
+        for i in range(len(episodes)):
+            writer.writerow([episodes[i], rewards[i], actor_losses[i], 
+                           critic_losses[i], entropies[i]])
 
+# Start SUMO
 traci.start(Sumo_config)
 _subscribe_all_detectors()
 _junctionSubscription("cluster_295373794_3477931123_7465167861")
 _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
 
-detector_ids = traci.lanearea.getIDList()
+print("Starting A2C training for traffic light control...")
+print("Training occurs at the end of each complete phase cycle (episode)")
+print("Reward: queue reduction (simpler is better)")
+print("=" * 70)
 
 # Simulation Loop
 while traci.simulation.getMinExpectedNumber() > 0:
-    step_counter += 1
     
-    # Main Intersection Agent Logic
+    # ===== MAIN INTERSECTION AGENT =====
     mainCurrentPhaseDuration -= stepLength
+    
     if mainCurrentPhaseDuration <= 0:
-        # Get current state
-        state_list = _mainIntersection_queue()
-        state_vector = to_categorical(mainCurrentPhase, num_classes=10).flatten()
-        mainCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
+        # Get current queue and state
+        queue = _mainIntersection_queue()
+        queue_total = sum(queue)
+        phase_vector = to_categorical(mainCurrentPhase, num_classes=10).flatten()
+        current_state = np.concatenate([queue, phase_vector]).astype(np.float32)
         
-        # Calculate reward from previous action
-        mainReward = calculate_reward(mainCurrentState, mainPrevState)
-        total_main_reward += mainReward
-        
-        # Store experience (A2C stores in trajectory, not replay buffer)
+        # If we have a previous state, calculate reward and store transition
         if mainPrevState is not None and mainPrevAction is not None:
-            done = False
-            mainIntersectionAgent.remember(mainPrevState, mainPrevAction, mainReward, mainCurrentState, done)
+            reward = calculate_reward(queue_total, mainPrevQueue)
+            mainIntersectionAgent.store_transition(mainPrevState, mainPrevAction, reward)
         
-        # Choose new action (sampled from policy)
-        mainActionIndex = mainIntersectionAgent.act(mainCurrentState)
+        # Choose next action
+        action = mainIntersectionAgent.act(current_state, training=True)
         
-        # Apply phase change with action
-        _mainIntersection_phase(mainActionIndex)
+        # Apply the action
+        _mainIntersection_phase(action)
         
-        # Store current state and action for next iteration
-        mainPrevState = mainCurrentState
-        mainPrevAction = mainActionIndex
-        
-        print(f"Main Intersection - Queue: {sum(mainCurrentState[:5]):.2f}, Reward: {mainReward:.2f}, Action: {actionSpace[mainActionIndex]}")
-    
-    # SW Pedestrian Crossing Agent Logic
-    swCurrentPhaseDuration -= stepLength
-    if swCurrentPhaseDuration <= 0:
-        state_list = _swPedXing_queue()
-        state_vector = to_categorical(swCurrentPhase, num_classes=4).flatten()
-        swCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
-        
-        swReward = calculate_reward(swCurrentState, swPrevState)
-        total_sw_reward += swReward
-        
-        if swPrevState is not None and swPrevAction is not None:
-            done = False
-            swPedXingAgent.remember(swPrevState, swPrevAction, swReward, swCurrentState, done)
-        
-        swActionIndex = swPedXingAgent.act(swCurrentState)
-        _swPedXing_phase(swActionIndex)
-        
-        swPrevState = swCurrentState
-        swPrevAction = swActionIndex
-        
-        print(f"SW Ped Crossing - Queue: {sum(swCurrentState[:3]):.2f}, Reward: {swReward:.2f}, Action: {actionSpace[swActionIndex]}")
-    
-    # SE Pedestrian Crossing Agent Logic
-    seCurrentPhaseDuration -= stepLength
-    if seCurrentPhaseDuration <= 0:
-        state_list = _sePedXing_queue()
-        state_vector = to_categorical(seCurrentPhase, num_classes=4).flatten()
-        seCurrentState = np.concatenate([state_list, state_vector]).astype(np.float32)
-        
-        seReward = calculate_reward(seCurrentState, sePrevState)
-        total_se_reward += seReward
-        
-        if sePrevState is not None and sePrevAction is not None:
-            done = False
-            sePedXingAgent.remember(sePrevState, sePrevAction, seReward, seCurrentState, done)
-        
-        seActionIndex = sePedXingAgent.act(seCurrentState)
-        _sePedXing_phase(seActionIndex)
-        
-        sePrevState = seCurrentState
-        sePrevAction = seActionIndex
-        
-        print(f"SE Ped Crossing - Queue: {sum(seCurrentState[:3]):.2f}, Reward: {seReward:.2f}, Action: {actionSpace[seActionIndex]}")
-    
-    # Periodic training (A2C trains on trajectory)
-    if step_counter % TRAIN_FREQUENCY == 0:
-        # Train main intersection agent
-        actor_loss, critic_loss, entropy = mainIntersectionAgent.train()
-        if actor_loss > 0:  # Only log if training occurred
+        # Check if episode is complete (cycled back to phase 0)
+        if mainCurrentPhase == 0 and mainPrevState is not None:
+            mainEpisodeNumber += 1
+            
+            # Train on complete episode
+            actor_loss, critic_loss, entropy, total_reward = mainIntersectionAgent.train_on_episode()
+            
+            # Log results
             main_actor_loss_history.append(actor_loss)
             main_critic_loss_history.append(critic_loss)
             main_entropy_history.append(entropy)
-            main_reward_history.append(total_main_reward)
-            total_main_reward = 0
-            print(f"[Main] Actor Loss: {actor_loss:.4f}, Critic Loss: {critic_loss:.4f}, Entropy: {entropy:.4f}")
+            main_reward_history.append(total_reward)
+            main_episode_steps.append(mainEpisodeNumber)
+            
+            print(f"[MAIN Ep {mainEpisodeNumber:3d}] Reward: {total_reward:7.2f} | "
+                  f"Loss: {actor_loss:6.4f}/{critic_loss:7.2f} | "
+                  f"Ent: {entropy:5.3f} | Queue: {queue_total:7.2f}")
         
-        # Train SW pedestrian crossing agent
-        actor_loss, critic_loss, entropy = swPedXingAgent.train()
-        if actor_loss > 0:
+        # Store current state and action for next iteration
+        mainPrevState = current_state
+        mainPrevAction = action
+        mainPrevQueue = queue_total
+    
+    # ===== SW PEDESTRIAN CROSSING AGENT =====
+    swCurrentPhaseDuration -= stepLength
+    
+    if swCurrentPhaseDuration <= 0:
+        queue = _swPedXing_queue()
+        queue_total = sum(queue)
+        phase_vector = to_categorical(swCurrentPhase, num_classes=4).flatten()
+        current_state = np.concatenate([queue, phase_vector]).astype(np.float32)
+        
+        if swPrevState is not None and swPrevAction is not None:
+            reward = calculate_reward(queue_total, swPrevQueue)
+            swPedXingAgent.store_transition(swPrevState, swPrevAction, reward)
+        
+        action = swPedXingAgent.act(current_state, training=True)
+        _swPedXing_phase(action)
+        
+        if swCurrentPhase == 0 and swPrevState is not None:
+            swEpisodeNumber += 1
+            
+            actor_loss, critic_loss, entropy, total_reward = swPedXingAgent.train_on_episode()
+            
             sw_actor_loss_history.append(actor_loss)
             sw_critic_loss_history.append(critic_loss)
             sw_entropy_history.append(entropy)
-            sw_reward_history.append(total_sw_reward)
-            total_sw_reward = 0
-            print(f"[SW] Actor Loss: {actor_loss:.4f}, Critic Loss: {critic_loss:.4f}, Entropy: {entropy:.4f}")
+            sw_reward_history.append(total_reward)
+            sw_episode_steps.append(swEpisodeNumber)
+            
+            print(f"[SW   Ep {swEpisodeNumber:3d}] Reward: {total_reward:7.2f} | "
+                  f"Loss: {actor_loss:6.4f}/{critic_loss:7.2f} | "
+                  f"Ent: {entropy:5.3f} | Queue: {queue_total:7.2f}")
         
-        # Train SE pedestrian crossing agent
-        actor_loss, critic_loss, entropy = sePedXingAgent.train()
-        if actor_loss > 0:
+        swPrevState = current_state
+        swPrevAction = action
+        swPrevQueue = queue_total
+    
+    # ===== SE PEDESTRIAN CROSSING AGENT =====
+    seCurrentPhaseDuration -= stepLength
+    
+    if seCurrentPhaseDuration <= 0:
+        queue = _sePedXing_queue()
+        queue_total = sum(queue)
+        phase_vector = to_categorical(seCurrentPhase, num_classes=4).flatten()
+        current_state = np.concatenate([queue, phase_vector]).astype(np.float32)
+        
+        if sePrevState is not None and sePrevAction is not None:
+            reward = calculate_reward(queue_total, sePrevQueue)
+            sePedXingAgent.store_transition(sePrevState, sePrevAction, reward)
+        
+        action = sePedXingAgent.act(current_state, training=True)
+        _sePedXing_phase(action)
+        
+        if seCurrentPhase == 0 and sePrevState is not None:
+            seEpisodeNumber += 1
+            
+            actor_loss, critic_loss, entropy, total_reward = sePedXingAgent.train_on_episode()
+            
             se_actor_loss_history.append(actor_loss)
             se_critic_loss_history.append(critic_loss)
             se_entropy_history.append(entropy)
-            se_reward_history.append(total_se_reward)
-            total_se_reward = 0
-            print(f"[SE] Actor Loss: {actor_loss:.4f}, Critic Loss: {critic_loss:.4f}, Entropy: {entropy:.4f}")
+            se_reward_history.append(total_reward)
+            se_episode_steps.append(seEpisodeNumber)
+            
+            print(f"[SE   Ep {seEpisodeNumber:3d}] Reward: {total_reward:7.2f} | "
+                  f"Loss: {actor_loss:6.4f}/{critic_loss:7.2f} | "
+                  f"Ent: {entropy:5.3f} | Queue: {queue_total:7.2f}")
+        
+        sePrevState = current_state
+        sePrevAction = action
+        sePrevQueue = queue_total
     
     traci.simulationStep()
 
 # Save trained models
-print("Saving trained models...")
+print("\n" + "=" * 70)
+print("Simulation complete! Saving trained models...")
 mainIntersectionAgent.save()
 swPedXingAgent.save()
 sePedXingAgent.save()
-print("Models saved successfully!")
 
+# Save training history
 print("Saving training history...")
-save_history('a2c_main_agent_history.csv', ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss', 'Entropy'], 
-            main_reward_history, main_actor_loss_history, main_critic_loss_history, main_entropy_history, TRAIN_FREQUENCY)
+save_history('a2c_main_agent_history.csv', 
+            ['Episode', 'Total_Reward', 'Actor_Loss', 'Critic_Loss', 'Entropy'], 
+            main_episode_steps, main_reward_history, main_actor_loss_history, 
+            main_critic_loss_history, main_entropy_history)
             
-save_history('a2c_sw_agent_history.csv', ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss', 'Entropy'], 
-            sw_reward_history, sw_actor_loss_history, sw_critic_loss_history, sw_entropy_history, TRAIN_FREQUENCY)
+save_history('a2c_sw_agent_history.csv', 
+            ['Episode', 'Total_Reward', 'Actor_Loss', 'Critic_Loss', 'Entropy'], 
+            sw_episode_steps, sw_reward_history, sw_actor_loss_history, 
+            sw_critic_loss_history, sw_entropy_history)
             
-save_history('a2c_se_agent_history.csv', ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss', 'Entropy'], 
-            se_reward_history, se_actor_loss_history, se_critic_loss_history, se_entropy_history, TRAIN_FREQUENCY)
+save_history('a2c_se_agent_history.csv', 
+            ['Episode', 'Total_Reward', 'Actor_Loss', 'Critic_Loss', 'Entropy'], 
+            se_episode_steps, se_reward_history, se_actor_loss_history, 
+            se_critic_loss_history, se_entropy_history)
 
-print("History saved successfully!")
+print(f"\nTraining Summary:")
+print(f"  Main Intersection: {mainEpisodeNumber} episodes")
+print(f"  SW Ped Crossing: {swEpisodeNumber} episodes")
+print(f"  SE Ped Crossing: {seEpisodeNumber} episodes")
 
 traci.close()

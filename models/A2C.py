@@ -2,8 +2,9 @@ import os
 import numpy as np
 import tensorflow as tf
 from keras.models import Model, load_model
-from keras.layers import Dense, Input
+from keras.layers import Dense, Input, LayerNormalization
 from keras.optimizers import Adam
+from keras import regularizers
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -16,163 +17,204 @@ if gpus:
 
 class A2CAgent:
     
-    def __init__(self, state_size, action_size, gamma=0.95, learning_rate=0.0001, 
-                entropy_coef=0.1, value_coef=0.5, name='A2C_Agent'):
+    def __init__(self, state_size, action_size, gamma=0.95, learning_rate=0.0003, 
+                entropy_coef=0.2, value_coef=0.5, max_grad_norm=0.5, name='A2C_Agent'):
         
         self.state_size = state_size
         self.action_size = action_size
         self.gamma = gamma
         self.learning_rate = learning_rate
-        self.entropy_coef = entropy_coef  # For exploration
-        self.value_coef = value_coef      # Weight for critic loss
+        self.entropy_coef = entropy_coef
+        self.value_coef = value_coef
+        self.max_grad_norm = max_grad_norm
         self.name = name
         
-        # Store trajectory for training (on-policy)
+        # Episode trajectory storage
         self.states = []
         self.actions = []
         self.rewards = []
-        self.values = []
-        self.dones = []
         
+        # Build model
         self.model = self._build_model()
         self.optimizer = Adam(learning_rate=self.learning_rate)
         
+        # Track training stats
+        self.episode_count = 0
+        
     def _build_model(self):
-        """Build Actor-Critic model with shared layers"""
+        """Build Actor-Critic model with normalization and regularization"""
         inputs = Input(shape=(self.state_size,))
         
-        # Shared layers
-        x = Dense(512, activation='relu')(inputs)
-        x = Dense(256, activation='relu')(x)
-        x = Dense(128, activation='relu')(x)
+        # Normalize input
+        x = LayerNormalization()(inputs)
         
-        # Actor head (policy network)
-        actor = Dense(64, activation='relu')(x)
-        action_probs = Dense(self.action_size, activation='softmax', name='actor')(actor)
+        # Shared layers with regularization
+        x = Dense(64, activation='tanh', 
+                 kernel_regularizer=regularizers.l2(0.01),
+                 kernel_initializer='glorot_uniform')(x)
+        x = LayerNormalization()(x)
         
-        # Critic head (value network)
-        critic = Dense(64, activation='relu')(x)
-        state_value = Dense(1, activation='linear', name='critic')(critic)
+        x = Dense(32, activation='tanh',
+                 kernel_regularizer=regularizers.l2(0.01),
+                 kernel_initializer='glorot_uniform')(x)
+        x = LayerNormalization()(x)
         
-        model = Model(inputs=inputs, outputs=[action_probs, state_value])
+        # Actor head (policy) - output log probabilities for numerical stability
+        actor_hidden = Dense(16, activation='tanh',
+                            kernel_initializer='glorot_uniform')(x)
+        action_logits = Dense(self.action_size, 
+                             kernel_initializer='glorot_uniform',
+                             name='actor')(actor_hidden)
+        
+        # Critic head (value)
+        critic_hidden = Dense(16, activation='tanh',
+                             kernel_initializer='glorot_uniform')(x)
+        state_value = Dense(1, 
+                           kernel_initializer='glorot_uniform',
+                           name='critic')(critic_hidden)
+        
+        model = Model(inputs=inputs, outputs=[action_logits, state_value])
         return model
     
-    def remember(self, state, action, reward, next_state, done):
-        """Store experience in trajectory"""
+    def act(self, state, training=True):
+        """Choose action using softmax policy"""
+        state = state.reshape((1, self.state_size))
+        action_logits, state_value = self.model.predict(state, verbose=0)
+        
+        # Convert logits to probabilities
+        action_probs = tf.nn.softmax(action_logits[0]).numpy()
+        
+        if training:
+            # Sample from distribution
+            action = np.random.choice(self.action_size, p=action_probs)
+        else:
+            # Greedy action
+            action = np.argmax(action_probs)
+        
+        return action
+    
+    def store_transition(self, state, action, reward):
+        """Store transition in episode buffer"""
         self.states.append(state)
         self.actions.append(action)
         self.rewards.append(reward)
-        self.dones.append(done)
-        
-    def act(self, state):
-        """Choose action by sampling from policy distribution"""
-        state = state.reshape((1, self.state_size))
-        action_probs, state_value = self.model.predict(state, verbose=0)
-        
-        # Store value for later training
-        self.values.append(state_value[0, 0])
-        
-        # Sample action from probability distribution
-        action = np.random.choice(self.action_size, p=action_probs[0])
-        return action
     
-    def train(self):
-        """Train on collected trajectory"""
+    def train_on_episode(self):
+        """Train on collected episode with heavy stabilization"""
         if len(self.states) == 0:
-            return 0.0, 0.0, 0.0  # No data to train on
+            return 0.0, 0.0, 0.0, 0.0
         
-        # Convert lists to numpy arrays
+        self.episode_count += 1
+        
+        # Convert to arrays
         states = np.array(self.states, dtype=np.float32)
         actions = np.array(self.actions, dtype=np.int32)
         rewards = np.array(self.rewards, dtype=np.float32)
-        values = np.array(self.values, dtype=np.float32)
-        dones = np.array(self.dones, dtype=np.float32)
         
-        # Calculate returns and advantages
-        returns = self._compute_returns(rewards, dones)
+        # Compute returns with normalization
+        returns = self._compute_returns(rewards)
         
-        # Normalize returns for stability
-        if len(returns) > 1:
+        # Normalize returns (critical for stability)
+        if len(returns) > 1 and np.std(returns) > 1e-8:
             returns = (returns - np.mean(returns)) / (np.std(returns) + 1e-8)
         
-        advantages = returns - values
+        # Train
+        actor_loss, critic_loss, entropy = self._train_step(states, actions, returns)
         
-        # Normalize advantages for stability
-        if len(advantages) > 1:
-            advantages = (advantages - np.mean(advantages)) / (np.std(advantages) + 1e-8)
+        total_reward = np.sum(rewards)
         
-        # Train the model
-        actor_loss, critic_loss, entropy = self._train_step(states, actions, advantages, returns)
-        
-        # Clear trajectory
+        # Clear buffers
         self.states = []
         self.actions = []
         self.rewards = []
-        self.values = []
-        self.dones = []
         
-        return actor_loss, critic_loss, entropy
+        return actor_loss, critic_loss, entropy, total_reward
     
-    def _compute_returns(self, rewards, dones):
+    def _compute_returns(self, rewards):
         """Compute discounted returns"""
         returns = np.zeros_like(rewards, dtype=np.float32)
         running_return = 0.0
         
-        # Calculate returns backwards
         for t in reversed(range(len(rewards))):
-            if dones[t]:
-                running_return = 0.0
             running_return = rewards[t] + self.gamma * running_return
             returns[t] = running_return
-            
+        
         return returns
     
-    def _train_step(self, states, actions, advantages, returns):
-        """Single training step using GradientTape"""
-        # Convert to tensors
-        states = tf.convert_to_tensor(states, dtype=tf.float32)
-        actions = tf.convert_to_tensor(actions, dtype=tf.int32)
-        advantages = tf.convert_to_tensor(advantages, dtype=tf.float32)
-        returns = tf.convert_to_tensor(returns, dtype=tf.float32)
-        
+    @tf.function
+    def _train_step(self, states, actions, returns):
+        """Training step with strong constraints"""
         with tf.GradientTape() as tape:
             # Forward pass
-            action_probs, values = self.model(states, training=True)
+            action_logits, values = self.model(states, training=True)
             values = tf.squeeze(values)
             
-            # Convert actions to one-hot
+            # Get action probabilities from logits
+            action_probs = tf.nn.softmax(action_logits)
+            
+            # Compute advantages
+            advantages = returns - values
+            
+            # Normalize advantages
+            adv_mean = tf.reduce_mean(advantages)
+            adv_std = tf.math.reduce_std(advantages) + 1e-8
+            advantages = (advantages - adv_mean) / adv_std
+            
+            # One-hot encode actions
             actions_onehot = tf.one_hot(actions, self.action_size)
             
-            # Get probabilities of taken actions
-            action_log_probs = tf.math.log(tf.reduce_sum(action_probs * actions_onehot, axis=1) + 1e-10)
+            # Get log probabilities of taken actions
+            selected_action_probs = tf.reduce_sum(action_probs * actions_onehot, axis=1)
+            # Add epsilon and clip for numerical stability
+            selected_action_probs = tf.clip_by_value(selected_action_probs, 1e-8, 1.0 - 1e-8)
+            log_probs = tf.math.log(selected_action_probs)
             
-            # Actor loss (policy gradient)
-            actor_loss = -tf.reduce_mean(action_log_probs * advantages)
+            # Actor loss - MUST be positive (we minimize negative reward)
+            # Stop gradient on advantages to prevent feedback loop
+            actor_loss = -tf.reduce_mean(log_probs * tf.stop_gradient(advantages))
             
-            # Critic loss (value prediction error)
+            # Force actor loss to be positive
+            actor_loss = tf.abs(actor_loss)
+            
+            # Critic loss - MSE
             critic_loss = tf.reduce_mean(tf.square(returns - values))
             
-            # Entropy bonus for exploration
-            entropy = -tf.reduce_mean(tf.reduce_sum(action_probs * tf.math.log(action_probs + 1e-10), axis=1))
+            # Entropy for exploration - add epsilon for stability
+            entropy = -tf.reduce_mean(
+                tf.reduce_sum(action_probs * tf.math.log(action_probs + 1e-8), axis=1)
+            )
             
             # Total loss
             total_loss = actor_loss + self.value_coef * critic_loss - self.entropy_coef * entropy
         
-        # Compute and apply gradients
+        # Compute gradients with clipping
         gradients = tape.gradient(total_loss, self.model.trainable_variables)
-        # Clip gradients to prevent exploding gradients
-        gradients, _ = tf.clip_by_global_norm(gradients, 0.5)
+        
+        # Clip gradients aggressively
+        gradients, grad_norm = tf.clip_by_global_norm(gradients, self.max_grad_norm)
+        
+        # Apply gradients
         self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
         
-        # Convert to Python floats for returning
-        return float(actor_loss.numpy()), float(critic_loss.numpy()), float(entropy.numpy())
+        return tf.abs(actor_loss), critic_loss, entropy
+    
+    def clear_trajectory(self):
+        """Clear trajectory without training"""
+        self.states = []
+        self.actions = []
+        self.rewards = []
     
     def load(self):
-        """Load a pre-trained model"""
+        """Load pre-trained model"""
         model_path = './agent_models/' + self.name + '.keras'
-        print(f"Loading model from {model_path}...")
-        self.model = load_model(model_path)
+        if os.path.exists(model_path):
+            print(f"Loading model from {model_path}...")
+            self.model = load_model(model_path)
+        else:
+            print(f"No model found at {model_path}, starting fresh.")
     
     def save(self):
-        """Save the current model"""
+        """Save model"""
+        os.makedirs('./agent_models', exist_ok=True)
         self.model.save('./agent_models/' + self.name + '.keras')
+        print(f"Model saved to ./agent_models/{self.name}.keras")
