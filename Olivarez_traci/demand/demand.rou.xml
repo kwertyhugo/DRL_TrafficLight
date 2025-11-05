@@ -43,26 +43,26 @@
     </vTypeDistribution>
 
     <!-- Pedestrian Flow -->
-    <personFlow id="pf_0" type="ped" begin="0.00" end="3600.00" personsPerHour="100" departPos="25">
+    <personFlow id="pf_0" type="ped" begin="0.00" end="360.00" personsPerHour="100" departPos="25">
         <personTrip from="-440471861#7" to="1119486610#0"/>
     </personFlow>
 
     <!-- Vehicle Flows (each group sums to 0.05) -->
 
     <!-- From -361256298#1 -->
-    <flow id="A1" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.025" from="-361256298#1" to="939610874" departLane="best" departSpeed="max"/>
-    <flow id="A2" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.015" from="-361256298#1" to="-440471861#6" departLane="best" departSpeed="max"/>
-    <flow id="A3" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.010" from="-361256298#1" to="-140483224#12" departLane="best" departSpeed="max"/>
+    <flow id="A1" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.025" from="-361256298#1" to="939610874" departLane="best" departSpeed="max"/>
+    <flow id="A2" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.015" from="-361256298#1" to="-440471861#6" departLane="best" departSpeed="max"/>
+    <flow id="A3" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.010" from="-361256298#1" to="-140483224#12" departLane="best" departSpeed="max"/>
 
     <!-- From 939610874 -->
-    <flow id="B1" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.0167" from="939610874" to="-361256298#1" departLane="best" departSpeed="max"/>
-    <flow id="B2" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.0208" from="939610874" to="-440471861#6" departLane="best" departSpeed="max"/>
-    <flow id="B3" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.0125" from="939610874" to="-140483224#12" departLane="best" departSpeed="max"/>
+    <flow id="B1" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.0167" from="939610874" to="-361256298#1" departLane="best" departSpeed="max"/>
+    <flow id="B2" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.0208" from="939610874" to="-440471861#6" departLane="best" departSpeed="max"/>
+    <flow id="B3" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.0125" from="939610874" to="-140483224#12" departLane="best" departSpeed="max"/>
 
     <!-- From 440471861#6 -->
-    <flow id="C1" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.0167" from="440471861#6" to="-361256298#1" departLane="best" departSpeed="max"/>
-    <flow id="C2" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.0083" from="440471861#6" to="939610874" departLane="best" departSpeed="max"/>
-    <flow id="C3" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.0250" from="440471861#6" to="-140483224#12" departLane="best" departSpeed="max"/>
+    <flow id="C1" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.0167" from="440471861#6" to="-361256298#1" departLane="best" departSpeed="max"/>
+    <flow id="C2" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.0083" from="440471861#6" to="939610874" departLane="best" departSpeed="max"/>
+    <flow id="C3" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.0250" from="440471861#6" to="-140483224#12" departLane="best" departSpeed="max"/>
 
     <!-- From 140483224#12 -->
     <flow id="D1" type="AguinaldoHighway" begin="0.00" end="360.00" probability="0.0208" from="140483224#12" to="-361256298#1" departLane="best" departSpeed="max"/>

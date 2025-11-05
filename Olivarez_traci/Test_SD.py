@@ -8,9 +8,9 @@ from keras.utils import to_categorical
 from models.DQN import DQNAgent as dqn
 
 # Select DRL Agent
-mainIntersectionAgent = dqn(state_size=15, action_size=7, memory_size=200, gamma=0.95, epsilon=0.01, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='ReLU_DQNAgent')
-swPedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.01, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='SW_PedXing_Agent')
-sePedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0.01, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='SE_PedXing_Agent')
+mainIntersectionAgent = dqn(state_size=15, action_size=7, memory_size=200, gamma=0.95, epsilon=0, epsilon_min=0, name='ReLU_DQNAgent')
+swPedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0, epsilon_min=0, name='SW_PedXing_Agent')
+sePedXingAgent = dqn(state_size=7, action_size=7, memory_size=200, gamma=0.95, epsilon=0, epsilon_min=0, name='SE_PedXing_Agent')
 
 mainIntersectionAgent.load()
 swPedXingAgent.load()
@@ -22,12 +22,26 @@ if 'SUMO_HOME' in os.environ:
 else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
+# Sumo_config = [
+#     'sumo-gui',
+#     '-c', r'Olivarez_traci\map.sumocfg',
+#     '--step-length', '0.05',
+#     '--delay', '100',
+#     '--lateral-resolution', '0.1',
+#     '--end', '360',
+#     '--statistic-output', r'Olivarez_traci\SD_DQN_stats.xml',
+#     '--tripinfo-output', r'Olivarez_traci\SD_DQN_stats.xml'
+# ]
+
 Sumo_config = [
-    'sumo',
-    '-c', 'Olivarez_traci\map.sumocfg',
+    'sumo-gui',
+    '-c', r'Olivarez_traci\map.sumocfg',
     '--step-length', '0.05',
-    '--delay', '0',
-    '--lateral-resolution', '0.1'
+    '--delay', '100',
+    '--lateral-resolution', '0.1',
+    '--end', '360',
+    '--statistic-output', r'Olivarez_traci\SD_none_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\SD_none_stats.xml'
 ]
 
 # Simulation Variables
@@ -39,37 +53,7 @@ swCurrentPhaseDuration = 30
 seCurrentPhase = 0
 seCurrentPhaseDuration = 30
 actionSpace = (-15, -10, -5, 0, 5, 10, 15)
-
-# Store previous states and actions for learning
-mainPrevState = None
-mainPrevAction = None
-swPrevState = None
-swPrevAction = None
-sePrevState = None
-sePrevAction = None
-
-# Batch training parameters
-BATCH_SIZE = 32
-TRAIN_FREQUENCY = 100  # Train every 100 steps / 5 seconds
 step_counter = 0
-
-# -- Data storage for plotting --
-main_reward_history = []
-main_loss_history = []
-main_epsilon_history = []
-
-sw_reward_history = []
-sw_loss_history = []
-sw_epsilon_history = []
-
-se_reward_history = []
-se_loss_history = []
-se_epsilon_history = []
-
-# -- Variables to accumulate reward between training steps --
-total_main_reward = 0
-total_sw_reward = 0
-total_se_reward = 0
 
 #Object Context Subscription in SUMO
 def _junctionSubscription(junction_id):
@@ -247,14 +231,6 @@ def _sePedXing_phase(action_index):
     
     traci.trafficlight.setPhaseDuration("3285696417", seCurrentPhaseDuration)
 
-def save_history(filename, headers, reward_hist, loss_hist, epsilon_hist, train_frequency):
-    with open(filename, 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(headers)
-        for i in range(len(reward_hist)):
-            # Save the simulation step number (i * frequency)
-            writer.writerow([i * train_frequency, reward_hist[i], loss_hist[i], epsilon_hist[i]])
-
 traci.start(Sumo_config)
 _subscribe_all_detectors()
 _junctionSubscription("cluster_295373794_3477931123_7465167861")
@@ -267,146 +243,39 @@ detector_ids = traci.lanearea.getIDList()
 while traci.simulation.getMinExpectedNumber() > 0:
     step_counter += 1
     
-    # Main Intersection Agent Logic
     mainCurrentPhaseDuration -= stepLength
     if mainCurrentPhaseDuration <= 0:
-        # Get current state
         state_list = np.array(_mainIntersection_queue())
         normalized_state_list = state_list/1000
         state_vector = to_categorical(mainCurrentPhase, num_classes=10).flatten()
         mainCurrentState = np.concatenate([normalized_state_list, state_vector]).astype(np.float32)
-        
         mainReward = calculate_reward(normalized_state_list)
-        total_main_reward += mainReward
-        
-        # Store experience if we have previous state/action
-        if mainPrevState is not None and mainPrevAction is not None:
-            done = False
-            mainIntersectionAgent.remember(mainPrevState, mainPrevAction, mainReward, mainCurrentState, done)
-        
-        # Choose new action
-        mainActionIndex = mainIntersectionAgent.act(mainCurrentState)
-        
-        # Apply phase change with action
+        #mainActionIndex = mainIntersectionAgent.act(mainCurrentState) #For with DQN agent
+        mainActionIndex = 4 #For with no agent
         _mainIntersection_phase(mainActionIndex)
-        
-        # Store current state and action for next iteration
-        mainPrevState = mainCurrentState
-        mainPrevAction = mainActionIndex
-        
-        print(f"Main Intersection - Queue: {sum(normalized_state_list)}, Reward: {mainReward}, Action: {actionSpace[mainActionIndex]}")
     
-    # SW Pedestrian Crossing Agent Logic
     swCurrentPhaseDuration -= stepLength
     if swCurrentPhaseDuration <= 0:
-        # Get current state
         state_list = np.array(_swPedXing_queue())
         normalized_state_list = state_list/1000
         state_vector = to_categorical(swCurrentPhase, num_classes=4).flatten()
         swCurrentState = np.concatenate([normalized_state_list, state_vector]).astype(np.float32)
-        
-        # Calculate reward
         swReward = calculate_reward(normalized_state_list)
-        total_sw_reward += swReward
-        
-        # Store experience
-        if swPrevState is not None and swPrevAction is not None:
-            done = False
-            swPedXingAgent.remember(swPrevState, swPrevAction, swReward, swCurrentState, done)
-        
-        # Choose new action
-        swActionIndex = swPedXingAgent.act(swCurrentState)
-        
-        # Apply phase change
+        #swActionIndex = swPedXingAgent.act(swCurrentState) #For with DQN agent
+        swActionIndex = 4 #For with no agent
         _swPedXing_phase(swActionIndex)
-        
-        # Store state and action
-        swPrevState = swCurrentState
-        swPrevAction = swActionIndex
-        
-        print(f"SW Ped Crossing - Queue: {sum(normalized_state_list)}, Reward: {swReward}, Action: {actionSpace[swActionIndex]}")
     
-    # SE Pedestrian Crossing Agent Logic
     seCurrentPhaseDuration -= stepLength
     if seCurrentPhaseDuration <= 0:
-        # Get current state
         state_list = np.array(_sePedXing_queue())
         normalized_state_list = state_list/1000
         state_vector = to_categorical(seCurrentPhase, num_classes=4).flatten()
         seCurrentState = np.concatenate([normalized_state_list, state_vector]).astype(np.float32)
-        
-        # Calculate reward
         seReward = calculate_reward(normalized_state_list)
-        total_se_reward += seReward
-        
-        # Store experience
-        if sePrevState is not None and sePrevAction is not None:
-            done = False
-            sePedXingAgent.remember(sePrevState, sePrevAction, seReward, seCurrentState, done)
-        
-        # Choose new action
-        seActionIndex = sePedXingAgent.act(seCurrentState)
-        
-        # Apply phase change
+        #seActionIndex = sePedXingAgent.act(seCurrentState) #For with DQN agent
+        seActionIndex = 4 #For with no agent
         _sePedXing_phase(seActionIndex)
         
-        # Store state and action
-        sePrevState = seCurrentState
-        sePrevAction = seActionIndex
-        
-        print(f"SE Ped Crossing - Queue: {sum(normalized_state_list)}, Reward: {seReward}, Action: {actionSpace[seActionIndex]}")
-    
-    # Periodic training (replay)
-    if step_counter % TRAIN_FREQUENCY == 0:
-        # Train main intersection agent
-        if len(mainIntersectionAgent.memory) >= BATCH_SIZE:
-            loss = mainIntersectionAgent.replay(BATCH_SIZE)
-            main_loss_history.append(loss)
-            main_reward_history.append(total_main_reward)
-            main_epsilon_history.append(mainIntersectionAgent.epsilon)
-            total_main_reward = 0
-            mainIntersectionAgent.epsilon = max(mainIntersectionAgent.epsilon_min, 
-                                               mainIntersectionAgent.epsilon * mainIntersectionAgent.epsilon_decay_rate)
-        
-        # Train SW pedestrian crossing agent
-        if len(swPedXingAgent.memory) >= BATCH_SIZE:
-            loss = swPedXingAgent.replay(BATCH_SIZE)
-            sw_loss_history.append(loss)
-            sw_reward_history.append(total_sw_reward)
-            sw_epsilon_history.append(swPedXingAgent.epsilon)
-            total_sw_reward = 0
-            swPedXingAgent.epsilon = max(swPedXingAgent.epsilon_min,
-                                        swPedXingAgent.epsilon * swPedXingAgent.epsilon_decay_rate)
-        
-        # Train SE pedestrian crossing agent
-        if len(sePedXingAgent.memory) >= BATCH_SIZE:
-            loss = sePedXingAgent.replay(BATCH_SIZE)
-            se_loss_history.append(loss)
-            se_reward_history.append(total_se_reward)
-            se_epsilon_history.append(sePedXingAgent.epsilon)
-            total_se_reward = 0
-            sePedXingAgent.epsilon = max(sePedXingAgent.epsilon_min,
-                                        sePedXingAgent.epsilon * sePedXingAgent.epsilon_decay_rate)
-    
     traci.simulationStep()
-
-# Save trained models
-print("Saving trained models...")
-mainIntersectionAgent.save()
-swPedXingAgent.save()
-sePedXingAgent.save()
-print("Models saved successfully!")
-
-print("Saving training history...")
-save_history('main_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
-            main_reward_history, main_loss_history, main_epsilon_history, TRAIN_FREQUENCY)
-            
-save_history('sw_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
-            sw_reward_history, sw_loss_history, sw_epsilon_history, TRAIN_FREQUENCY)
-            
-save_history('se_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
-            se_reward_history, se_loss_history, se_epsilon_history, TRAIN_FREQUENCY)
-
-print("History saved successfully!")
 
 traci.close()
