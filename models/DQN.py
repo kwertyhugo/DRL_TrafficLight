@@ -117,7 +117,7 @@ class DQNAgent:
 
     # Load a pre-trained model
     def load(self):
-        model_path = './agent_models/' + self.name + '.keras'
+        model_path = './Olivarez_traci/models_DQN/' + self.name + '.keras'
         print(f"Loading model from {model_path}...")
         
         self.model = load_model(model_path)
@@ -126,4 +126,4 @@ class DQNAgent:
 
     # Load save the current model
     def save(self):
-        self.model.save('./agent_models/' + self.name + '.keras')
+        self.model.save('./Olivarez_traci/models_DQN/' + self.name + '.keras')

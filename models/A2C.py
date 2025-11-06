@@ -169,10 +169,10 @@ class A2CAgent:
     
     def load(self):
         """Load a pre-trained model"""
-        model_path = './agent_models/' + self.name + '.keras'
+        model_path = './Olivarez_traci/models_A2C/' + self.name + '.keras'
         print(f"Loading model from {model_path}...")
         self.model = load_model(model_path)
     
     def save(self):
         """Save the current model"""
-        self.model.save('./agent_models/' + self.name + '.keras')
+        self.model.save('./Olivarez_traci/models_A2C/' + self.name + '.keras')

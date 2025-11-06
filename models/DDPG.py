@@ -2,10 +2,13 @@ import os
 import random
 from collections import deque
 import numpy as np
+import pickle
+import csv
 import tensorflow as tf
 from keras.models import Model
 from keras.layers import Input, Dense, Concatenate, GRU, LayerNormalization
 from keras.optimizers import Adam
+from keras.models import load_model
 
 # GPU memory growth (same pattern you used)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -41,7 +44,7 @@ class OUActionNoise:
 
 
 class ReplayBuffer:
-    def __init__(self, maxlen=100000):
+    def __init__(self, maxlen=1000):
         self.buffer = deque(maxlen=maxlen)
 
     def add(self, state, action, reward, next_state, done):
@@ -199,15 +202,94 @@ class DDPGAgent:
 
         return float(actor_loss.numpy()), float(critic_loss.numpy())
 
-    def save(self, folder='agent_weights'):
+    def save(self, folder='./Olivarez_traci/models_DDPG/'):
         os.makedirs(folder, exist_ok=True)
-        self.actor.save_weights(os.path.join(folder, f'{self.name}_actor.h5'))
-        self.critic.save_weights(os.path.join(folder, f'{self.name}_critic.h5'))
-        self.target_actor.save_weights(os.path.join(folder, f'{self.name}_target_actor.h5'))
-        self.target_critic.save_weights(os.path.join(folder, f'{self.name}_target_critic.h5'))
+        self.actor.save_weights(os.path.join(folder, f'{self.name}_actor_weights.weights.h5'))
+        self.critic.save_weights(os.path.join(folder, f'{self.name}_critic_weights.weights.h5'))
+        self.target_actor.save_weights(os.path.join(folder, f'{self.name}_target_actor_weights.weights.h5'))
+        self.target_critic.save_weights(os.path.join(folder, f'{self.name}_target_critic_weights.weights.h5'))
+        print("All weights saved successfully.")
 
-    def load(self, folder='agent_weights'):
-        self.actor.load_weights(os.path.join(folder, f'{self.name}_actor.h5'))
-        self.critic.load_weights(os.path.join(folder, f'{self.name}_critic.h5'))
-        self.target_actor.load_weights(os.path.join(folder, f'{self.name}_target_actor.h5'))
-        self.target_critic.load_weights(os.path.join(folder, f'{self.name}_target_critic.h5'))
+    def load(self, folder='./Olivarez_traci/models_DDPG/'):
+        actor_w = os.path.join(folder, f'{self.name}_actor_weights.weights.h5')
+        critic_w = os.path.join(folder, f'{self.name}_critic_weights.weights.h5')
+        target_actor_w = os.path.join(folder, f'{self.name}_target_actor_weights.weights.h5')
+        target_critic_w = os.path.join(folder, f'{self.name}_target_critic_weights.weights.h5')
+
+        # Ensure the folder exists
+        os.makedirs(folder, exist_ok=True)
+        print(f"Loading model weights from '{folder}'...")
+
+        # Check for missing files
+        missing = [p for p in [actor_w, critic_w, target_actor_w, target_critic_w] if not os.path.exists(p)]
+
+        if missing:
+            print("Warning: Some weight files are missing:")
+            for f in missing:
+                print(f"  - {f}")
+            print("Creating new placeholder weights...")
+            # Initialize and save empty weights
+            try:
+                self.actor.save_weights(actor_w)
+                self.critic.save_weights(critic_w)
+                self.target_actor.save_weights(target_actor_w)
+                self.target_critic.save_weights(target_critic_w)
+                print("Placeholder weight files created successfully.")
+            except Exception as e:
+                print("Error while creating placeholder weights:", e)
+            return
+
+        # If all weights exist, load them
+        try:
+            self.actor.load_weights(actor_w)
+            self.critic.load_weights(critic_w)
+            self.target_actor.load_weights(target_actor_w)
+            self.target_critic.load_weights(target_critic_w)
+            print("All weights loaded successfully.")
+        except Exception as e:
+            print("Error while loading weights:", e)
+            
+    def save_replay_buffer(self, folder='./Olivarez_traci/models_DDPG/'):
+        os.makedirs(folder, exist_ok=True)
+        path = os.path.join(folder, f'{self.name}_replay.pkl')
+        try:
+            with open(path, 'wb') as f:
+                pickle.dump(list(self.replay_buffer.buffer), f)
+            print(f"[INFO] Replay buffer saved for {self.name} -> {path}")
+        except Exception as e:
+            print(f"[ERROR] Failed to save replay buffer for {self.name}: {e}")
+
+    def load_replay_buffer(self, folder='./Olivarez_traci/models_DDPG/'):
+        path = os.path.join(folder, f'{self.name}_replay.pkl')
+        if os.path.exists(path):
+            try:
+                with open(path, 'rb') as f:
+                    data = pickle.load(f)
+                self.replay_buffer.buffer = deque(data, maxlen=self.replay_buffer.buffer.maxlen)
+                print(f"[INFO] Replay buffer loaded for {self.name} ({len(self.replay_buffer)} experiences)")
+            except Exception as e:
+                print(f"[ERROR] Failed to load replay buffer for {self.name}: {e}")
+        else:
+            print(f"[WARN] No replay buffer found for {self.name} at {path}")
+
+                     
+    def load_history(self, filepath):
+        rewards, actor_losses, critic_losses = [], [], []
+        if not os.path.exists(filepath):
+            print(f"[WARN] No training history file found at {filepath}")
+            return rewards, actor_losses, critic_losses
+        try:
+            with open(filepath, 'r') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    rewards.append(float(row['Reward']))
+                    actor_losses.append(float(row['Actor_Loss']))
+                    critic_losses.append(float(row['Critic_Loss']))
+            print(f"[INFO] Loaded training history from {filepath}")
+        except Exception as e:
+            print(f"[ERROR] Failed to load training history from {filepath}: {e}")
+        return rewards, actor_losses, critic_losses
+
+
+
+

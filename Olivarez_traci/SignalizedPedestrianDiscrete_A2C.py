@@ -250,11 +250,15 @@ def _sePedXing_phase(action_index):
     traci.trafficlight.setPhaseDuration("3285696417", seCurrentPhaseDuration)
 
 def save_history(filename, headers, reward_hist, actor_loss_hist, critic_loss_hist, entropy_hist, train_frequency):
-    with open(filename, 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(headers)
-        for i in range(len(reward_hist)):
-            writer.writerow([i * train_frequency, reward_hist[i], actor_loss_hist[i], 
+    file_exists = os.path.exists(filename) and os.path.getsize(filename) > 0
+    with open(filename, 'a', newline='') as f:
+            writer = csv.writer(f)
+
+            # Write header only if new file
+            if not file_exists:
+                writer.writerow(headers)
+            for i in range(len(reward_hist)):
+                writer.writerow([i * train_frequency, reward_hist[i], actor_loss_hist[i], 
                         critic_loss_hist[i], entropy_hist[i]])
 
 traci.start(Sumo_config)
