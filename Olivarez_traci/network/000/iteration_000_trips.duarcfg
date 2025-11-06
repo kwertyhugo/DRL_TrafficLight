@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-10-28 16:36:12 by Eclipse SUMO duarouter Version 1.24.0
+-->
+
+<duarouterConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/duarouterConfiguration.xsd">
+
+    <input>
+        <net-file value="c:\Users\Sammy\Documents\THESIS\DRL_TrafficLight\Olivarez_traciSkeleton\network\map.net.xml"/>
+        <route-files value="c:\Users\Sammy\Documents\THESIS\DRL_TrafficLight\Olivarez_traciSkeleton\network\trips.trips.xml"/>
+    </input>
+
+    <output>
+        <output-file value="trips_000.rou.xml"/>
+        <exit-times value="False"/>
+    </output>
+
+    <processing>
+        <max-alternatives value="2"/>
+        <with-taz value="False"/>
+        <routing-algorithm value="dijkstra"/>
+        <weights.expand value="true"/>
+        <gawron.beta value="0.9"/>
+        <gawron.a value="0.5"/>
+        <keep-all-routes value="False"/>
+        <logit.beta value="0.15"/>
+        <logit.gamma value="1.0"/>
+    </processing>
+
+    <time>
+        <begin value="0.0"/>
+        <end value="64800.0"/>
+    </time>
+
+    <report>
+        <verbose value="False"/>
+        <no-warnings value="False"/>
+        <ignore-errors value="True"/>
+        <no-step-log value="true"/>
+    </report>
+
+    <random_number>
+        <random value="False"/>
+    </random_number>
+
+</duarouterConfiguration>

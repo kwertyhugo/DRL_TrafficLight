@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-11-03 14:13:55 by Eclipse SUMO GUI Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="network/map.net.xml"/>
+        <route-files value="demand/flows_edge_based_filtered.flows.xml"/>
+        <additional-files value="additionals/map.poly.xml,additionals/detectors.add.xml"/>
+    </input>
+
+    <output>
+        <summary-output value="output/summary.xml"/>
+        <tripinfo-output value="output/tripinfo.xml"/>
+        <statistic-output value="output/statistics.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="18000"/>
+        <step-length value="1"/>
+    </time>
+
+    <processing>
+        <ignore-route-errors value="true"/>
+        <ignore-accidents value="false"/>
+        <max-depart-delay value="900"/>
+        <time-to-impatience value="300"/>
+    </processing>
+
+    <routing>
+        <device.rerouting.adaptation-steps value="18"/>
+        <device.rerouting.adaptation-interval value="10"/>
+        <device.rerouting.with-taz value="false"/>
+    </routing>
+
+    <report>
+        <verbose value="true"/>
+        <duration-log.statistics value="true"/>
+        <no-step-log value="false"/>
+    </report>
+
+</sumoConfiguration>
+-->
+
+<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="520068.07" clockEnd="520316.14" clockDuration="248.08" traciDuration="3.26" realTimeFactor="7.52" vehicleUpdatesPerSecond="10839.63" personUpdatesPerSecond="0.00" begin="0.00" end="1865.00" duration="1865.00"/>
+    <vehicles loaded="17648" inserted="2147" running="1827" waiting="9314"/>
+    <teleports total="391" jam="209" yield="173" wrongLane="9"/>
+    <safety collisions="0" emergencyStops="1" emergencyBraking="1"/>
+    <persons loaded="0" running="0" jammed="0"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+    <vehicleTripStatistics count="320" routeLength="637.20" speed="4.38" duration="689.79" waitingTime="551.84" timeLoss="578.48" departDelay="36.24" departDelayWaiting="-1.00" totalTravelTime="220732.00" totalDepartDelay="11598.00"/>
+    <pedestrianStatistics number="0" routeLength="0.00" duration="0.00" timeLoss="0.00"/>
+    <rideStatistics number="0"/>
+    <transportStatistics number="0"/>
+</statistics>
