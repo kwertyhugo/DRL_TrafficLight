@@ -40,3 +40,5 @@ Thumbs.db
 # TensorBoard / training outputs
 logs/
 runs/
+
+Olivarez_traci/additionals/e2_*.xml
