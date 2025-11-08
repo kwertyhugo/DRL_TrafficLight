@@ -87,7 +87,9 @@ Sumo_config = [
     '-c', sumo_cfg_path,
     '--step-length', '0.05',
     '--delay', '0',
-    '--lateral-resolution', '0.1'
+    '--lateral-resolution', '0.1',
+    '--statistic-output', r'Olivarez_traci\output_DDPG\SD_DQN_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DDPG\SD_DQN_trips.xml'
 ]
 
 # ------- Helpers & subscriptions -------

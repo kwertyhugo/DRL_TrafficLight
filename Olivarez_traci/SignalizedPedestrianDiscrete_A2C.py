@@ -90,8 +90,10 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo', '-c', 'Olivarez_traci/map.sumocfg',
-    '--step-length', '0.05', '--delay', '0',
+    'sumo',
+    '-c', 'Olivarez_traci\map.sumocfg',
+    '--step-length', '0.05',
+    '--delay', '0',
     '--lateral-resolution', '0.1'
 ]
 
