@@ -17,7 +17,7 @@ if gpus:
 class A2CAgent:
     
     def __init__(self, state_size, action_size, gamma=0.95, learning_rate=0.0001, 
-                entropy_coef=0.1, value_coef=0.5, name='A2C_Agent'):
+                entropy_coef=0.1, value_coef=0.5, max_grad_norm=0.5, name='A2C_Agent'):
         
         self.state_size = state_size
         self.action_size = action_size
@@ -25,13 +25,14 @@ class A2CAgent:
         self.learning_rate = learning_rate
         self.entropy_coef = entropy_coef  # For exploration
         self.value_coef = value_coef      # Weight for critic loss
+        self.max_grad_norm = max_grad_norm  # Gradient clipping
         self.name = name
+        self.model_dir = './Olivarez_traci/models_A2C/'  # Default directory
         
         # Store trajectory for training (on-policy)
         self.states = []
         self.actions = []
         self.rewards = []
-        self.values = []
         self.dones = []
         
         self.model = self._build_model()
@@ -58,26 +59,34 @@ class A2CAgent:
         return model
     
     def remember(self, state, action, reward, next_state, done):
-        """Store experience in trajectory"""
+        """Store experience in trajectory (for compatibility with old code)"""
         self.states.append(state)
         self.actions.append(action)
         self.rewards.append(reward)
         self.dones.append(done)
+    
+    def store_transition(self, state, action, reward):
+        """Store transition in trajectory (for episode-based training)"""
+        self.states.append(state)
+        self.actions.append(action)
+        self.rewards.append(reward)
         
-    def act(self, state):
+    def act(self, state, training=True):
         """Choose action by sampling from policy distribution"""
         state = state.reshape((1, self.state_size))
         action_probs, state_value = self.model.predict(state, verbose=0)
         
-        # Store value for later training
-        self.values.append(state_value[0, 0])
+        if training:
+            # Sample action from probability distribution (exploration)
+            action = np.random.choice(self.action_size, p=action_probs[0])
+        else:
+            # Choose best action (exploitation)
+            action = np.argmax(action_probs[0])
         
-        # Sample action from probability distribution
-        action = np.random.choice(self.action_size, p=action_probs[0])
         return action
     
     def train(self):
-        """Train on collected trajectory"""
+        """Train on collected trajectory (for step-based training)"""
         if len(self.states) == 0:
             return 0.0, 0.0, 0.0  # No data to train on
         
@@ -85,11 +94,14 @@ class A2CAgent:
         states = np.array(self.states, dtype=np.float32)
         actions = np.array(self.actions, dtype=np.int32)
         rewards = np.array(self.rewards, dtype=np.float32)
-        values = np.array(self.values, dtype=np.float32)
         dones = np.array(self.dones, dtype=np.float32)
         
         # Calculate returns and advantages
         returns = self._compute_returns(rewards, dones)
+        
+        # Get current values for advantage calculation
+        _, values = self.model.predict(states, verbose=0)
+        values = values.squeeze()
         
         # Normalize returns for stability
         if len(returns) > 1:
@@ -108,13 +120,49 @@ class A2CAgent:
         self.states = []
         self.actions = []
         self.rewards = []
-        self.values = []
         self.dones = []
         
         return actor_loss, critic_loss, entropy
     
+    def train_on_episode(self):
+        """Train on complete episode and return metrics"""
+        if len(self.states) == 0:
+            return 0.0, 0.0, 0.0, 0.0
+        
+        # Convert lists to numpy arrays
+        states = np.array(self.states, dtype=np.float32)
+        actions = np.array(self.actions, dtype=np.int32)
+        rewards = np.array(self.rewards, dtype=np.float32)
+        
+        # Total reward for this episode
+        total_reward = np.sum(rewards)
+        
+        # Calculate returns (no dones needed for episode-based training)
+        returns = self._compute_returns_simple(rewards)
+        
+        # Get current values for advantage calculation
+        _, values = self.model.predict(states, verbose=0)
+        values = values.squeeze()
+        
+        # Calculate advantages
+        advantages = returns - values
+        
+        # Normalize advantages for stability
+        if len(advantages) > 1:
+            advantages = (advantages - np.mean(advantages)) / (np.std(advantages) + 1e-8)
+        
+        # Train the model
+        actor_loss, critic_loss, entropy = self._train_step(states, actions, advantages, returns)
+        
+        # Clear trajectory
+        self.states = []
+        self.actions = []
+        self.rewards = []
+        
+        return actor_loss, critic_loss, entropy, total_reward
+    
     def _compute_returns(self, rewards, dones):
-        """Compute discounted returns"""
+        """Compute discounted returns with done flags"""
         returns = np.zeros_like(rewards, dtype=np.float32)
         running_return = 0.0
         
@@ -122,6 +170,18 @@ class A2CAgent:
         for t in reversed(range(len(rewards))):
             if dones[t]:
                 running_return = 0.0
+            running_return = rewards[t] + self.gamma * running_return
+            returns[t] = running_return
+            
+        return returns
+    
+    def _compute_returns_simple(self, rewards):
+        """Compute discounted returns without done flags (for episode-based)"""
+        returns = np.zeros_like(rewards, dtype=np.float32)
+        running_return = 0.0
+        
+        # Calculate returns backwards
+        for t in reversed(range(len(rewards))):
             running_return = rewards[t] + self.gamma * running_return
             returns[t] = running_return
             
@@ -161,7 +221,7 @@ class A2CAgent:
         # Compute and apply gradients
         gradients = tape.gradient(total_loss, self.model.trainable_variables)
         # Clip gradients to prevent exploding gradients
-        gradients, _ = tf.clip_by_global_norm(gradients, 0.5)
+        gradients, _ = tf.clip_by_global_norm(gradients, self.max_grad_norm)
         self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
         
         # Convert to Python floats for returning
@@ -169,10 +229,13 @@ class A2CAgent:
     
     def load(self):
         """Load a pre-trained model"""
-        model_path = './Olivarez_traci/models_A2C/' + self.name + '.keras'
+        model_path = os.path.join(self.model_dir, self.name + '.keras')
         print(f"Loading model from {model_path}...")
         self.model = load_model(model_path)
     
     def save(self):
         """Save the current model"""
-        self.model.save('./Olivarez_traci/models_A2C/' + self.name + '.keras')
+        os.makedirs(self.model_dir, exist_ok=True)
+        model_path = os.path.join(self.model_dir, self.name + '.keras')
+        self.model.save(model_path)
+        print(f"Model saved to {model_path}")
