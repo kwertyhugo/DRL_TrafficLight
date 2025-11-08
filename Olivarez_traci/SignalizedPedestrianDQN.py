@@ -7,9 +7,9 @@ from keras.utils import to_categorical
 
 from models.DQN import DQNAgent as dqn
 
-mainIntersectionAgent = dqn(state_size=17, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='ReLU_DQNAgent')
-swPedXingAgent = dqn(state_size=14, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='SW_PedXing_Agent')
-sePedXingAgent = dqn(state_size=14, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='SE_PedXing_Agent')
+mainIntersectionAgent = dqn(state_size=17, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent')
+swPedXingAgent = dqn(state_size=14, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.00005, target_update_freq=500, name='SW_PedXing_Agent')
+sePedXingAgent = dqn(state_size=14, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.00005, target_update_freq=500, name='SE_PedXing_Agent')
 
 # mainIntersectionAgent.load()
 # swPedXingAgent.load()
@@ -284,7 +284,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
             mainCurrentState = np.concatenate([normalized_main_queue, main_phase, swPed_phase, sePed_phase]).astype(np.float32)
             
             if trainMode == 1:
-                mainReward = calculate_reward(main_queue)
+                mainReward = calculate_reward(normalized_main_queue)
                 total_main_reward += mainReward
                 
                 if mainPrevState is not None and mainPrevAction is not None:
@@ -299,7 +299,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
             swCurrentState = np.concatenate([normalized_swPed_queue, main_phase, swPed_phase, sePed_phase]).astype(np.float32)
             
             if trainMode == 1:
-                swReward = calculate_reward(swPed_queue)
+                swReward = calculate_reward(normalized_swPed_queue)
                 total_sw_reward += swReward
                 
                 if swPrevState is not None and swPrevAction is not None:
@@ -314,7 +314,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
             seCurrentState = np.concatenate([normalized_sePed_queue, main_phase, swPed_phase, sePed_phase]).astype(np.float32)
             
             if trainMode == 1:
-                seReward = calculate_reward(sePed_queue)
+                seReward = calculate_reward(normalized_sePed_queue)
                 total_se_reward += seReward
                 
                 if sePrevState is not None and sePrevAction is not None:

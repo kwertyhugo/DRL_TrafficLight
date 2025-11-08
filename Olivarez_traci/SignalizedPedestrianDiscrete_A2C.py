@@ -35,7 +35,9 @@ Sumo_config = [
     '-c', 'Olivarez_traci\map.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
-    '--lateral-resolution', '0.1'
+    '--lateral-resolution', '0.1',
+    '--statistic-output', r'Olivarez_traci\output_A2C\SD_DQN_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_A2C\SD_DQN_trips.xml'
 ]
 
 # Simulation Variables
