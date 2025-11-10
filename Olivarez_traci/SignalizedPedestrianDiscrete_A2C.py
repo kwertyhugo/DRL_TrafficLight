@@ -3,41 +3,44 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# Create output directories if they don't exist
+
+os.makedirs('./Olivarez_traci/output_A2C', exist_ok=True)
+os.makedirs('./Olivarez_traci/models_A2C', exist_ok=True)
 import traci
 import numpy as np
 import csv
 from keras.utils import to_categorical
-from keras.models import load_model  # Add this for loading models
 from models.A2C import A2CAgent as a2c
 
 # === AGENT INITIALIZATION - Focus on stable value function ===
 mainIntersectionAgent = a2c(
     state_size=26, action_size=7, 
-    gamma=0.99,              # Keep high for long-term planning
-    learning_rate=0.0001,    # Slightly higher for faster adaptation
-    entropy_coef=0.01,       # Lower entropy for more deterministic policy
-    value_coef=0.5,          # Standard value coefficient
-    max_grad_norm=0.5,       # Critical: clip gradients
+    gamma=0.99,
+    learning_rate=0.0005,    # ✅ Balanced (not 0.007!)
+    entropy_coef=0.08,       # ✅ Keep exploration high
+    value_coef=0.5,
+    max_grad_norm=1.0,       # ✅ Slightly higher for stability
     name='A2C_Main_Agent'
 )
 
 swPedXingAgent = a2c(
     state_size=23, action_size=7, 
     gamma=0.99,
-    learning_rate=0.0001,
-    entropy_coef=0.01,
+    learning_rate=0.0005,    # ✅ Match main agent
+    entropy_coef=0.08,       # ✅ Match main agent
     value_coef=0.5,
-    max_grad_norm=0.5, 
+    max_grad_norm=1.0,       # ✅ Match main agent
     name='A2C_SW_PedXing_Agent'
 )
 
 sePedXingAgent = a2c(
     state_size=23, action_size=7, 
     gamma=0.99,
-    learning_rate=0.0001,
-    entropy_coef=0.01,
+    learning_rate=0.0005,    # ✅ Match main agent
+    entropy_coef=0.08,       # ✅ Match main agent
     value_coef=0.5,
-    max_grad_norm=0.5, 
+    max_grad_norm=1.0,       # ✅ Match main agent
     name='A2C_SE_PedXing_Agent'
 )
 
