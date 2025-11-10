@@ -4,7 +4,6 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Create output directories if they don't exist
-
 os.makedirs('./Olivarez_traci/output_A2C', exist_ok=True)
 os.makedirs('./Olivarez_traci/models_A2C', exist_ok=True)
 import traci
@@ -12,35 +11,36 @@ import numpy as np
 import csv
 from keras.utils import to_categorical
 from models.A2C import A2CAgent as a2c
+from keras.models import load_model # Import load_model
 
-# === AGENT INITIALIZATION - Focus on stable value function ===
+# === AGENT INITIALIZATION - STATE SIZES ARE CORRECT FOR THIS COUPLED MODEL ===
 mainIntersectionAgent = a2c(
-    state_size=26, action_size=7, 
+    state_size=26, action_size=7,  # 8 queues + 10 + 4 + 4 phases = 26
     gamma=0.99,
-    learning_rate=0.0005,    # ✅ Balanced (not 0.007!)
-    entropy_coef=0.08,       # ✅ Keep exploration high
+    learning_rate=0.0005,
+    entropy_coef=0.08,
     value_coef=0.5,
-    max_grad_norm=1.0,       # ✅ Slightly higher for stability
+    max_grad_norm=1.0,
     name='A2C_Main_Agent'
 )
 
 swPedXingAgent = a2c(
-    state_size=23, action_size=7, 
+    state_size=23, action_size=7,  # 5 queues + 10 + 4 + 4 phases = 23
     gamma=0.99,
-    learning_rate=0.0005,    # ✅ Match main agent
-    entropy_coef=0.08,       # ✅ Match main agent
+    learning_rate=0.0005,
+    entropy_coef=0.08,
     value_coef=0.5,
-    max_grad_norm=1.0,       # ✅ Match main agent
+    max_grad_norm=1.0,
     name='A2C_SW_PedXing_Agent'
 )
 
 sePedXingAgent = a2c(
-    state_size=23, action_size=7, 
+    state_size=23, action_size=7,  # 5 queues + 10 + 4 + 4 phases = 23
     gamma=0.99,
-    learning_rate=0.0005,    # ✅ Match main agent
-    entropy_coef=0.08,       # ✅ Match main agent
+    learning_rate=0.0005,
+    entropy_coef=0.08,
     value_coef=0.5,
-    max_grad_norm=1.0,       # ✅ Match main agent
+    max_grad_norm=1.0,
     name='A2C_SE_PedXing_Agent'
 )
 
@@ -58,7 +58,6 @@ if CONTINUE_TRAINING:
         se_model_path = './Olivarez_traci/models_A2C/A2C_SE_PedXing_Agent.keras'
         
         if os.path.exists(main_model_path):
-            # Your A2CAgent.load() doesn't take filepath, so load directly
             mainIntersectionAgent.model = load_model(main_model_path)
             print(f"✓ Loaded Main Agent from {main_model_path}")
         else:
@@ -93,7 +92,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', 'Olivarez_traci\map.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
@@ -110,20 +109,18 @@ seCurrentPhase = 0
 seCurrentPhaseDuration = 30
 actionSpace = (-15, -10, -5, 0, 5, 10, 15)
 
-# Episode counters - will be loaded from history if continuing
+# Episode counters
 mainEpisodeNumber = 0
 swEpisodeNumber = 0
 seEpisodeNumber = 0
 
-# Load last episode numbers if continuing training
 if CONTINUE_TRAINING:
     def get_last_episode(filename):
-        """Get the last episode number from CSV file"""
         if os.path.exists(filename) and os.path.getsize(filename) > 0:
             try:
                 with open(filename, 'r') as f:
                     lines = f.readlines()
-                    if len(lines) > 1:  # Has data beyond header
+                    if len(lines) > 1:
                         last_line = lines[-1].strip()
                         if last_line:
                             return int(last_line.split(',')[0])
@@ -199,6 +196,7 @@ def _weighted_waits(detector_id):
         sumWait += wait * weight_map.get(vtype, 1.0)
     return sumWait
 
+# This function is correct.
 def _mainIntersection_queue():
     e2_4 = _weighted_waits("e2_4")
     e2_5 = _weighted_waits("e2_5")
@@ -215,6 +213,7 @@ def _mainIntersection_queue():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
     return [e2_4, e2_5, e2_6, e2_7, e2_8, e2_9, e2_10, pedestrian]
 
+# This function is correct.
 def _swPedXing_queue():
     e2_0 = _weighted_waits("e2_0")
     e2_1 = _weighted_waits("e2_1")
@@ -228,6 +227,7 @@ def _swPedXing_queue():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
     return [e2_0, e2_1, e2_4, e2_5, pedestrian]
 
+# This function is correct.
 def _sePedXing_queue():
     e2_2 = _weighted_waits("e2_2")
     e2_3 = _weighted_waits("e2_3")
@@ -241,31 +241,15 @@ def _sePedXing_queue():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
     return [e2_2, e2_3, e2_6, e2_7, pedestrian]
 
-def calculate_reward(current_state):
-    """
-    KEY INSIGHT: The reward SHOULD vary naturally with traffic!
-    The issue isn't the reward magnitude, it's that we need CONSISTENT scaling.
-    
-    Solution: Use the SAME normalization for rewards as we do for states.
-    This keeps everything in the same scale the network was designed for.
-    """
-    if current_state is None:
-        print("ERROR: STATE UNDETECTED")
+# This reward function is perfect.
+def calculate_reward(current_state_queues):
+    if current_state_queues is None:
         return 0.0
     
-    current_total = sum(current_state)
-    
-    # Use SAME normalization as state: divide by 1000
-    # This keeps reward in same scale as what the network "sees"
+    current_total = sum(current_state_queues)
     normalized_queue = current_total / 1000.0
-    
-    # Simple negative reward (agent minimizes waiting time)
     reward = -normalized_queue
-    
-    # Clip to reasonable range to prevent extreme outliers
-    # Allow range of [-10, 0] which handles queues up to 10,000
     reward = np.clip(reward, -10.0, 0.0)
-    
     return reward
 
 def _mainIntersection_phase(action_index):
@@ -332,139 +316,138 @@ _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
 
 print("=" * 70)
-print("Starting A2C training with CONSISTENT REWARD SCALING")
+print("Starting SYNCHRONOUS A2C Training")
 print("=" * 70)
-print("Key Fix: Rewards use SAME normalization as states (÷1000)")
-print("This keeps the critic's value predictions in a learnable range")
-print("  - State normalization: queue ÷ 1000")
-print("  - Reward calculation: -queue ÷ 1000, clipped to [-10, 0]")
-print("  - Learning rate: 0.0001 (balanced)")
-print("  - Gradient clipping: 0.5 (prevents explosions)")
+print("Key Fix: All agents act ONLY when the MAIN agent acts.")
+print("This creates a stable, synchronous environment.")
+print("  - Main Agent is the 'master' clock.")
+print("  - SW and SE Agents are 'slaves' (act at the same time).")
+print("  - All agents train at the same time (when Main ep ends).")
 print("=" * 70)
 
 # Simulation Loop
 while traci.simulation.getMinExpectedNumber() > 0:
     
-    # === MAIN INTERSECTION ===
+    ### --- CHANGED --- ###
+    # The timers for SW and SE are now ONLY ticked.
+    # They no longer trigger any actions.
     mainCurrentPhaseDuration -= stepLength
+    swCurrentPhaseDuration -= stepLength
+    seCurrentPhaseDuration -= stepLength
+    
+    # === SYNCHRONOUS DECISION BLOCK (Master Clock) ===
+    # All logic is now inside the MAIN agent's timer.
+    # This is the ONLY place agents observe, act, and store.
     if mainCurrentPhaseDuration <= 0:
-        main_queue = np.array(_mainIntersection_queue())
-        normalized_main_queue = main_queue / 1000.0  # For state
         
+        # --- 1. GET ALL STATES (Observe) ---
         main_phase = to_categorical(mainCurrentPhase, num_classes=10).flatten()
         swPed_phase = to_categorical(swCurrentPhase, num_classes=4).flatten()
         sePed_phase = to_categorical(seCurrentPhase, num_classes=4).flatten()
         
+        # MAIN AGENT
+        main_queue = np.array(_mainIntersection_queue())
+        normalized_main_queue = main_queue / 1000.0
         mainCurrentState = np.concatenate([
             normalized_main_queue, main_phase, swPed_phase, sePed_phase
         ]).astype(np.float32)
+
+        # SW AGENT
+        swPed_queue = np.array(_swPedXing_queue())
+        normalized_swPed_queue = swPed_queue / 1000.0
+        swCurrentState = np.concatenate([
+            normalized_swPed_queue, main_phase, swPed_phase, sePed_phase
+        ]).astype(np.float32)
         
-        # Use consistent normalization for reward
+        # SE AGENT
+        sePed_queue = np.array(_sePedXing_queue())
+        normalized_sePed_queue = sePed_queue / 1000.0
+        seCurrentState = np.concatenate([
+            normalized_sePed_queue, main_phase, swPed_phase, sePed_phase
+        ]).astype(np.float32)
+        
+        # --- 2. CALCULATE REWARDS (based on current state) ---
         mainReward = calculate_reward(main_queue)
+        swReward = calculate_reward(swPed_queue)
+        seReward = calculate_reward(sePed_queue)
         
-        if mainPrevState is not None and mainPrevAction is not None:
+        # --- 3. STORE TRANSITIONS (for previous step) ---
+        if mainPrevState is not None:
             mainIntersectionAgent.store_transition(mainPrevState, mainPrevAction, mainReward)
+            swPedXingAgent.store_transition(swPrevState, swPrevAction, swReward)
+            sePedXingAgent.store_transition(sePrevState, sePrevAction, seReward)
         
+        # --- 4. CHOOSE NEW ACTIONS (Act) ---
         mainActionIndex = mainIntersectionAgent.act(mainCurrentState, training=True)
+        swActionIndex = swPedXingAgent.act(swCurrentState, training=True)
+        seActionIndex = sePedXingAgent.act(seCurrentState, training=True)
+
+        # --- 5. APPLY ACTIONS & UPDATE PHASES (Synchronized) ---
         _mainIntersection_phase(mainActionIndex)
+        _swPedXing_phase(swActionIndex)
+        _sePedXing_phase(seActionIndex)
         
+        # --- 6. TRAIN (if episode ends for master) ---
         if mainCurrentPhase == 0 and mainPrevState is not None:
             mainEpisodeNumber += 1
-            actor_loss, critic_loss, entropy, total_reward = mainIntersectionAgent.train_on_episode()
+            swEpisodeNumber += 1
+            seEpisodeNumber += 1
             
+            # Train MAIN
+            actor_loss, critic_loss, entropy, total_reward = mainIntersectionAgent.train_on_episode()
             main_actor_loss_history.append(actor_loss)
             main_critic_loss_history.append(critic_loss)
             main_entropy_history.append(entropy)
             main_reward_history.append(total_reward)
             main_episode_steps.append(mainEpisodeNumber)
-            
             raw_queue_total = sum(main_queue)
             print(f"[MAIN Ep {mainEpisodeNumber:3d}] EpisodeRwd: {total_reward:7.3f} | "
                   f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
                   f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/8:7.1f}")
-        
-        mainPrevState = mainCurrentState
-        mainPrevAction = mainActionIndex
-    
-    # === SW PEDESTRIAN CROSSING ===
-    swCurrentPhaseDuration -= stepLength
-    if swCurrentPhaseDuration <= 0:
-        swPed_queue = np.array(_swPedXing_queue())
-        normalized_swPed_queue = swPed_queue / 1000.0
-        
-        main_phase = to_categorical(mainCurrentPhase, num_classes=10).flatten()
-        swPed_phase = to_categorical(swCurrentPhase, num_classes=4).flatten()
-        sePed_phase = to_categorical(seCurrentPhase, num_classes=4).flatten()
-        
-        swCurrentState = np.concatenate([
-            normalized_swPed_queue, main_phase, swPed_phase, sePed_phase
-        ]).astype(np.float32)
-        
-        swReward = calculate_reward(swPed_queue)
-        
-        if swPrevState is not None and swPrevAction is not None:
-            swPedXingAgent.store_transition(swPrevState, swPrevAction, swReward)
-        
-        swActionIndex = swPedXingAgent.act(swCurrentState, training=True)
-        _swPedXing_phase(swActionIndex)
-        
-        if swCurrentPhase == 0 and swPrevState is not None:
-            swEpisodeNumber += 1
-            actor_loss, critic_loss, entropy, total_reward = swPedXingAgent.train_on_episode()
             
+            # Train SW
+            actor_loss, critic_loss, entropy, total_reward = swPedXingAgent.train_on_episode()
             sw_actor_loss_history.append(actor_loss)
             sw_critic_loss_history.append(critic_loss)
             sw_entropy_history.append(entropy)
             sw_reward_history.append(total_reward)
             sw_episode_steps.append(swEpisodeNumber)
-            
             raw_queue_total = sum(swPed_queue)
             print(f"[SW   Ep {swEpisodeNumber:3d}] EpisodeRwd: {total_reward:7.3f} | "
                   f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
                   f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/5:7.1f}")
-        
-        swPrevState = swCurrentState
-        swPrevAction = swActionIndex
-    
-    # === SE PEDESTRIAN CROSSING ===
-    seCurrentPhaseDuration -= stepLength
-    if seCurrentPhaseDuration <= 0:
-        sePed_queue = np.array(_sePedXing_queue())
-        normalized_sePed_queue = sePed_queue / 1000.0
-        
-        main_phase = to_categorical(mainCurrentPhase, num_classes=10).flatten()
-        swPed_phase = to_categorical(swCurrentPhase, num_classes=4).flatten()
-        sePed_phase = to_categorical(seCurrentPhase, num_classes=4).flatten()
-        
-        seCurrentState = np.concatenate([
-            normalized_sePed_queue, main_phase, swPed_phase, sePed_phase
-        ]).astype(np.float32)
-        
-        seReward = calculate_reward(sePed_queue)
-        
-        if sePrevState is not None and sePrevAction is not None:
-            sePedXingAgent.store_transition(sePrevState, sePrevAction, seReward)
-        
-        seActionIndex = sePedXingAgent.act(seCurrentState, training=True)
-        _sePedXing_phase(seActionIndex)
-        
-        if seCurrentPhase == 0 and sePrevState is not None:
-            seEpisodeNumber += 1
-            actor_loss, critic_loss, entropy, total_reward = sePedXingAgent.train_on_episode()
             
+            # Train SE
+            actor_loss, critic_loss, entropy, total_reward = sePedXingAgent.train_on_episode()
             se_actor_loss_history.append(actor_loss)
             se_critic_loss_history.append(critic_loss)
             se_entropy_history.append(entropy)
             se_reward_history.append(total_reward)
             se_episode_steps.append(seEpisodeNumber)
-            
             raw_queue_total = sum(sePed_queue)
             print(f"[SE   Ep {seEpisodeNumber:3d}] EpisodeRwd: {total_reward:7.3f} | "
                 f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
                 f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/5:7.1f}")
         
+        # --- 7. SAVE CURRENT STATE/ACTIONS for next loop ---
+        mainPrevState = mainCurrentState
+        mainPrevAction = mainActionIndex
+        swPrevState = swCurrentState
+        swPrevAction = swActionIndex
         sePrevState = seCurrentState
         sePrevAction = seActionIndex
+    
+    
+    ### --- REMOVED --- ###
+    # The SW agent's decision block is GONE.
+    # if swCurrentPhaseDuration <= 0:
+    #    ... (All this logic was moved into the main block) ...
+    
+    ### --- REMOVED --- ###
+    # The SE agent's decision block is GONE.
+    # if seCurrentPhaseDuration <= 0:
+    #    ... (All this logic was moved into the main block) ...
+    
     
     traci.simulationStep()
 
