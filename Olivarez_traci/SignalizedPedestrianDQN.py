@@ -7,13 +7,13 @@ from keras.utils import to_categorical
 
 from models.DQN import DQNAgent as dqn
 
-mainIntersectionAgent = dqn(state_size=17, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent')
-swPedXingAgent = dqn(state_size=14, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.00005, target_update_freq=500, name='SW_PedXing_Agent')
-sePedXingAgent = dqn(state_size=14, action_size=11, memory_size=200, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.00005, target_update_freq=500, name='SE_PedXing_Agent')
+mainIntersectionAgent = dqn(state_size=17, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent')
+swPedXingAgent = dqn(state_size=14, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=500, name='SW_PedXing_Agent')
+sePedXingAgent = dqn(state_size=14, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=500, name='SE_PedXing_Agent')
 
-# mainIntersectionAgent.load()
-# swPedXingAgent.load()
-# sePedXingAgent.load()
+mainIntersectionAgent.load()
+swPedXingAgent.load()
+sePedXingAgent.load()
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -23,7 +23,7 @@ else:
 
 Sumo_config = [
     'sumo',
-    '-c', 'Olivarez_traci\map.sumocfg',
+    '-c', 'Olivarez_traci\signalizedPed.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1',
@@ -32,7 +32,7 @@ Sumo_config = [
 ]
 
 # Simulation Variables
-trainMode = 1
+trainMode = 0
 stepLength = 0.05
 mainCurrentPhase = 0
 mainCurrentPhaseDuration = 30
@@ -209,11 +209,14 @@ def _swPedXing_phase(action_index):
 
     if swCurrentPhase % 2 == 1:
         phase_duration = 5
+    elif swCurrentPhase == 0:
+        duration_adjustment = actionSpace[action_index]
+        base_duration = 100
+        phase_duration = max(5, min(130, base_duration + duration_adjustment))
     else:
         duration_adjustment = actionSpace[action_index]
         base_duration = 30
         phase_duration = max(5, min(60, base_duration + duration_adjustment))
-
     swCurrentPhaseDuration = phase_duration
     traci.trafficlight.setPhaseDuration("6401523012", swCurrentPhaseDuration)
     
@@ -228,6 +231,10 @@ def _sePedXing_phase(action_index):
     
     if seCurrentPhase % 2 == 1:
         phase_duration = 5
+    elif seCurrentPhase == 0:
+        duration_adjustment = actionSpace[action_index]
+        base_duration = 100
+        phase_duration = max(5, min(130, base_duration + duration_adjustment))
     else:
         duration_adjustment = actionSpace[action_index]
         base_duration = 30

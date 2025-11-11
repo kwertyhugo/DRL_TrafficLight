@@ -81,7 +81,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 # Build sumo command
-sumo_cfg_path = os.path.join('Olivarez_traci', 'map.sumocfg')
+sumo_cfg_path = os.path.join('Olivarez_traci', 'signalizedPed.sumocfg')
 Sumo_config = [
     'sumo',
     '-c', sumo_cfg_path,
