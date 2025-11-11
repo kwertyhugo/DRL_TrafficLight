@@ -24,7 +24,7 @@ mainIntersectionAgent = ddpg(
     gamma=0.99,
     tau=0.0005,
     buffer_size=10000,
-    batch_size=256,
+    batch_size=128,
     name='MainIntersection_DDPGAgent'
 )
 
@@ -38,7 +38,7 @@ swPedXingAgent = ddpg(
     gamma=0.99,
     tau=0.0005,
     buffer_size=10000,
-    batch_size=256,
+    batch_size=128,
     name='SW_PedXing_DDPGAgent'
 )
 
@@ -52,7 +52,7 @@ sePedXingAgent = ddpg(
     gamma=0.99,
     tau=0.0005,
     buffer_size=10000,
-    batch_size=256,
+    batch_size=128,
     name='SE_PedXing_DDPGAgent'
 )
 
@@ -145,22 +145,25 @@ sePrevState = None
 sePrevAction = None
 
 # Training params
-BATCH_SIZE = 256
+BATCH_SIZE = 128
 TRAIN_FREQUENCY = 100  # training every 100 simulation steps
 step_counter = 0
 
 # Data storage for plotting
-main_reward_history = []
-main_actor_loss_history = []
-main_critic_loss_history = []
+if not main_reward_history:
+    main_reward_history = []
+    main_actor_loss_history = []
+    main_critic_loss_history = []
 
-sw_reward_history = []
-sw_actor_loss_history = []
-sw_critic_loss_history = []
-
-se_reward_history = []
-se_actor_loss_history = []
-se_critic_loss_history = []
+if not sw_reward_history:
+    sw_reward_history = []
+    sw_actor_loss_history = []
+    sw_critic_loss_history = []
+    
+if not se_reward_history:
+    se_reward_history = []
+    se_actor_loss_history = []
+    se_critic_loss_history = []
 
 # Accumulate rewards between training steps
 total_main_reward = 0
