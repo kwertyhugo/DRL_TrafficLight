@@ -91,7 +91,7 @@ else:
 
 Sumo_config = [
     'sumo',
-    '-c', 'Olivarez_traci\map.sumocfg',
+    '-c', 'Olivarez_traci\signalizedPed.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1'
