@@ -19,12 +19,12 @@ mainIntersectionAgent = ddpg(
     action_size=1,
     action_low=action_low,
     action_high=action_high,
-    actor_lr=0.0001,
-    critic_lr=0.001,
+    actor_lr=0.00001,
+    critic_lr=0.0001,
     gamma=0.99,
-    tau=0.001,
-    buffer_size=1000,
-    batch_size=64,
+    tau=0.0005,
+    buffer_size=10000,
+    batch_size=256,
     name='MainIntersection_DDPGAgent'
 )
 
@@ -33,12 +33,12 @@ swPedXingAgent = ddpg(
     action_size=1,
     action_low=action_low,
     action_high=action_high,
-    actor_lr=0.0001,
-    critic_lr=0.001,
+    actor_lr=0.00001,
+    critic_lr=0.0001,
     gamma=0.99,
-    tau=0.001,
-    buffer_size=1000,
-    batch_size=64,
+    tau=0.0005,
+    buffer_size=10000,
+    batch_size=256,
     name='SW_PedXing_DDPGAgent'
 )
 
@@ -47,12 +47,12 @@ sePedXingAgent = ddpg(
     action_size=1,
     action_low=action_low,
     action_high=action_high,
-    actor_lr=0.0001,
-    critic_lr=0.001,
+    actor_lr=0.00001,
+    critic_lr=0.0001,
     gamma=0.99,
-    tau=0.001,
-    buffer_size=1000,
-    batch_size=64,
+    tau=0.0005,
+    buffer_size=10000,
+    batch_size=256,
     name='SE_PedXing_DDPGAgent'
 )
 
@@ -145,7 +145,7 @@ sePrevState = None
 sePrevAction = None
 
 # Training params
-BATCH_SIZE = 64
+BATCH_SIZE = 256
 TRAIN_FREQUENCY = 100  # training every 100 simulation steps
 step_counter = 0
 
@@ -274,7 +274,7 @@ def _mainIntersection_phase(action):
     mainCurrentPhase = (mainCurrentPhase + 1) % 10
 
     # Map action from [-1, 1] to duration adjustment [-15, 15]
-    duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 15.0)
+    duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 5.0)
     
     # Compute base duration
     if mainCurrentPhase == 2 or mainCurrentPhase == 4:
@@ -298,7 +298,7 @@ def _swPedXing_phase(action):
     global swCurrentPhase, swCurrentPhaseDuration
 
     swCurrentPhase = (swCurrentPhase + 1) % 4
-    duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 15.0)
+    duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 5.0)
 
     if swCurrentPhase % 2 == 1:
         base_duration = 5.0
@@ -318,7 +318,7 @@ def _sePedXing_phase(action):
     global seCurrentPhase, seCurrentPhaseDuration
 
     seCurrentPhase = (seCurrentPhase + 1) % 4
-    duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 15.0)
+    duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 5.0)
 
     if seCurrentPhase % 2 == 1:
         base_duration = 5.0
@@ -363,6 +363,11 @@ _subscribe_all_detectors()
 _junctionSubscription("cluster_295373794_3477931123_7465167861")
 _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
+
+print("Resetting DDPG exploration noise...")
+mainIntersectionAgent.noise.reset()
+swPedXingAgent.noise.reset()
+sePedXingAgent.noise.reset()
 
 print("Starting simulation loop...")
 
