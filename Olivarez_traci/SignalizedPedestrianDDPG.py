@@ -83,13 +83,13 @@ else:
 # Build sumo command
 sumo_cfg_path = os.path.join('Olivarez_traci', 'signalizedPed.sumocfg')
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', sumo_cfg_path,
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DDPG\SD_DQN_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DDPG\SD_DQN_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DDPG\SD_DDPG_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DDPG\SD_DDPG_trips.xml'
 ]
 
 # ------- Helpers & subscriptions -------

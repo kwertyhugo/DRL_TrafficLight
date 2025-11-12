@@ -6,14 +6,6 @@ import csv
 
 # Import your DDPG implementation
 from models.DDPG import DDPGAgent as ddpg
-
-# ----------------- NEW CONTROL VARIABLES -----------------
-# 0: Training Mode (with noise) / 1: Testing Mode (no noise)
-TEST_MODE = 0
-# 0: Multi-agent control / 1: Main Intersection only control
-TRAFFIC_LIGHT_CONTROL_MODE = 1
-# ---------------------------------------------------------
-
 # ------- Configuration / Agents -------
 
 # Define continuous action bounds (vector or scalar)
@@ -26,50 +18,22 @@ mainIntersectionAgent = ddpg(
     action_size=1,
     action_low=action_low,
     action_high=action_high,
-    # These LR/tau values are placeholders—consider the stabilization values discussed
     actor_lr=0.0001,
     critic_lr=0.001,
     gamma=0.99,
     tau=0.0005,
     buffer_size=10000,
     batch_size=128,
-    name='MainIntersection_DDPGAgent'
+    name='MainIntersection_DDPGAgent_one_trafficlight'
 )
 
-# --- Conditional Agent Initialization ---
-if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-    swPedXingAgent = ddpg(
-        state_size=3, action_size=1, action_low=action_low, action_high=action_high,
-        actor_lr=0.0001, critic_lr=0.001, gamma=0.99, tau=0.0005, buffer_size=10000, batch_size=128,
-        name='SW_PedXing_DDPGAgent'
-    )
-    sePedXingAgent = ddpg(
-        state_size=3, action_size=1, action_low=action_low, action_high=action_high,
-        actor_lr=0.0001, critic_lr=0.001, gamma=0.99, tau=0.0005, buffer_size=10000, batch_size=128,
-        name='SE_PedXing_DDPGAgent'
-    )
-# ----------------------------------------
-
-
-# Load models, replay buffers, and histories
 mainIntersectionAgent.load()
-if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-    swPedXingAgent.load()
-    sePedXingAgent.load()
-
 mainIntersectionAgent.load_replay_buffer()
-if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-    swPedXingAgent.load_replay_buffer()
-    sePedXingAgent.load_replay_buffer()
-
-main_reward_history, main_actor_loss_history, main_critic_loss_history = mainIntersectionAgent.load_history('./Olivarez_traci/output_DDPG/main_ddpg_history.csv')
-if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-    sw_reward_history, sw_actor_loss_history, sw_critic_loss_history = mainIntersectionAgent.load_history('./Olivarez_traci/output_DDPG/sw_ddpg_history.csv')
-    se_reward_history, se_actor_loss_history, se_critic_loss_history = mainIntersectionAgent.load_history('./Olivarez_traci/output_DDPG/se_ddpg_history.csv')
+main_reward_history, main_actor_loss_history, main_critic_loss_history = mainIntersectionAgent.load_history('./Olivarez_traci/output_DDPG/main_ddpg_history_one_trafficlight.csv')
 
 
 # ------- SUMO start-up -------
-# ... (SUMO_HOME check remains the same)
+
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
     if tools not in sys.path:
@@ -85,12 +49,12 @@ Sumo_config = [
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DDPG\SD_DQN_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DDPG\SD_DQN_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DDPG\SD_DDPG_one_trafficlight_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DDPG\SD_DDPG_one_trafficlight_trips.xml'
 ]
 
 # ------- Helpers & subscriptions -------
-# ... (_junctionSubscription and _subscribe_all_detectors remain the same)
+
 def _junctionSubscription(junction_id):
     """Subscribe to junction for pedestrian data"""
     try:
@@ -128,22 +92,14 @@ def _subscribe_all_detectors():
 stepLength = 0.05
 mainCurrentPhase = 0
 mainCurrentPhaseDuration = 30.0
-swCurrentPhase = 0
-swCurrentPhaseDuration = 30.0
-seCurrentPhase = 0
-seCurrentPhaseDuration = 30.0
 
 # Keep previous state for reward calculation
 mainPrevState = None
 mainPrevAction = None
-swPrevState = None
-swPrevAction = None
-sePrevState = None
-sePrevAction = None
 
 # Training params
 BATCH_SIZE = 128
-TRAIN_FREQUENCY = 100
+TRAIN_FREQUENCY = 100  # training every 100 simulation steps
 step_counter = 0
 
 # Data storage for plotting
@@ -151,22 +107,12 @@ if not main_reward_history:
     main_reward_history = []
     main_actor_loss_history = []
     main_critic_loss_history = []
-if TRAFFIC_LIGHT_CONTROL_MODE == 0 and not sw_reward_history:
-    sw_reward_history = []
-    sw_actor_loss_history = []
-    sw_critic_loss_history = []
-    se_reward_history = []
-    se_actor_loss_history = []
-    se_critic_loss_history = []
-
 
 # Accumulate rewards between training steps
 total_main_reward = 0
-total_sw_reward = 0
-total_se_reward = 0
 
 # ------- Environment state functions -------
-# ... (_weighted_waits and _mainIntersection_queue remain the same)
+
 def _weighted_waits(detector_id):
     """Calculate weighted waiting times from detector"""
     sumWait = 0
@@ -216,17 +162,9 @@ def _mainIntersection_queue():
     
     return np.array([southwest, southeast, northeast, northwest, pedestrian], dtype=np.float32)
 
-def _swPedXing_queue():
-    """Placeholder for SW pedestrian crossing state"""
-    return np.zeros(3, dtype=np.float32) 
-
-def _sePedXing_queue():
-    """Placeholder for SE pedestrian crossing state"""
-    return np.zeros(3, dtype=np.float32)
-# -------------------------------------------------------------------
 
 # ------- Reward calculation -------
-# ... (calculate_reward remains the same)
+
 def calculate_reward(current_state):
     """Calculate reward based on total queue (negative waiting time)"""
     if current_state is None:
@@ -241,14 +179,14 @@ def calculate_reward(current_state):
     return reward
 
 # ------- Phase application functions -------
-# ... (_mainIntersection_phase remains the same, adjusted to 5.0 scale)
+
 def _mainIntersection_phase(action):
     """Apply continuous action to main intersection phase duration"""
     global mainCurrentPhase, mainCurrentPhaseDuration
 
     mainCurrentPhase = (mainCurrentPhase + 1) % 10
 
-    # Map action from [-1, 1] to duration adjustment [-5, 5] (Stabilized scale)
+    # Map action from [-1, 1] to duration adjustment [-15, 15]
     duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 5.0)
     
     # Compute base duration
@@ -268,35 +206,8 @@ def _mainIntersection_phase(action):
     except Exception as e:
         print(f"[WARN] setPhase failed for main intersection: {e}")
 
-def _swPedXing_phase(action):
-    """Placeholder for SW pedestrian crossing phase"""
-    global swCurrentPhase, swCurrentPhaseDuration
-    swCurrentPhase = (swCurrentPhase + 1) % 4
-    # Fixed or default logic if not controlled by DDPG
-    swCurrentPhaseDuration = 30.0 if swCurrentPhase % 2 == 0 else 5.0 
-
-    try:
-        traci.trafficlight.setPhase("6401523012", swCurrentPhase)
-        traci.trafficlight.setPhaseDuration("6401523012", swCurrentPhaseDuration)
-    except Exception as e:
-        print(f"[WARN] setPhase failed for SW ped crossing: {e}")
-
-def _sePedXing_phase(action):
-    """Placeholder for SE pedestrian crossing phase"""
-    global seCurrentPhase, seCurrentPhaseDuration
-    seCurrentPhase = (seCurrentPhase + 1) % 4
-    # Fixed or default logic if not controlled by DDPG
-    seCurrentPhaseDuration = 30.0 if seCurrentPhase % 2 == 0 else 5.0
-
-    try:
-        traci.trafficlight.setPhase("3285696417", seCurrentPhase)
-        traci.trafficlight.setPhaseDuration("3285696417", seCurrentPhaseDuration)
-    except Exception as e:
-        print(f"[WARN] setPhase failed for SE ped crossing: {e}")
-# -------------------------------------------------------------------
-
 # ------- History saving function -------
-# ... (save_history remains the same)
+
 def save_history(filename, headers, reward_hist, actor_loss_hist, critic_loss_hist, train_frequency):
     file_exists = os.path.exists(filename) and os.path.getsize(filename) > 0
     existing_rows = 0
@@ -332,14 +243,7 @@ _junctionSubscription("3285696417")
 
 print("Resetting DDPG exploration noise...")
 mainIntersectionAgent.noise.reset()
-if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-    swPedXingAgent.noise.reset()
-    sePedXingAgent.noise.reset()
-
-
 print("Starting simulation loop...")
-# Determine whether to use noise for action selection
-USE_NOISE = (TEST_MODE == 0)
 
 while traci.simulation.getMinExpectedNumber() > 0:
     step_counter += 1
@@ -352,81 +256,28 @@ while traci.simulation.getMinExpectedNumber() > 0:
         mainReward = calculate_reward(mainCurrentState * 1000.0)  # Calculate on unnormalized
         total_main_reward += mainReward
 
-        # Only store experience and train if NOT in TEST_MODE
-        if TEST_MODE == 0:
-            if mainPrevState is not None and mainPrevAction is not None:
-                done = False
-                mainIntersectionAgent.remember(
-                    mainPrevState, 
-                    mainPrevAction, 
-                    mainReward, 
-                    mainCurrentState, 
-                    done
-                )
+        # Store experience if we have previous state
+        if mainPrevState is not None and mainPrevAction is not None:
+            done = False
+            mainIntersectionAgent.remember(
+                mainPrevState, 
+                mainPrevAction, 
+                mainReward, 
+                mainCurrentState, 
+                done
+            )
 
-        # Get action from agent (add_noise uses USE_NOISE flag)
-        mainAction = mainIntersectionAgent.get_action(mainCurrentState, add_noise=USE_NOISE)
+        # Get action from agent (with exploration noise during training)
+        mainAction = mainIntersectionAgent.get_action(mainCurrentState, add_noise=True)
         _mainIntersection_phase(mainAction)
 
         mainPrevState = mainCurrentState
         mainPrevAction = mainAction
 
-        print(f"[MAIN] Queue={np.sum(mainCurrentState * 1000.0):.1f}, Reward={mainReward:.3f}, Action={mainAction[0]:.3f}, Noise={'ON' if USE_NOISE else 'OFF'}")
+        print(f"[MAIN] Queue={np.sum(mainCurrentState * 1000.0):.1f}, Reward={mainReward:.3f}, Action={mainAction[0]:.3f}")
 
-    # ---- SW & SE pedestrian crossing logic (Only runs if TRAFFIC_LIGHT_CONTROL_MODE == 0) ----
-    if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-        # Placeholder logic for SW Pedestrian Crossing
-        swCurrentPhaseDuration -= stepLength
-        if swCurrentPhaseDuration <= 0:
-            swCurrentState = _swPedXing_queue() / 1000.0 # Placeholder queue
-            swReward = calculate_reward(swCurrentState * 1000.0)
-            total_sw_reward += swReward
-            
-            if TEST_MODE == 0:
-                # Store experience and train if NOT in TEST_MODE
-                if swPrevState is not None and swPrevAction is not None:
-                    done = False
-                    swPedXingAgent.remember(swPrevState, swPrevAction, swReward, swCurrentState, done)
-
-            swAction = swPedXingAgent.get_action(swCurrentState, add_noise=USE_NOISE)
-            # Use DDPG controlled phase function
-            _swPedXing_phase(swAction) 
-
-            swPrevState = swCurrentState
-            swPrevAction = swAction
-            print(f"[SW] Queue={np.sum(swCurrentState * 1000.0):.1f}, Reward={swReward:.3f}, Action={swAction[0]:.3f}")
-
-        # Placeholder logic for SE Pedestrian Crossing
-        seCurrentPhaseDuration -= stepLength
-        if seCurrentPhaseDuration <= 0:
-            seCurrentState = _sePedXing_queue() / 1000.0 # Placeholder queue
-            seReward = calculate_reward(seCurrentState * 1000.0)
-            total_se_reward += seReward
-            
-            if TEST_MODE == 0:
-                # Store experience and train if NOT in TEST_MODE
-                if sePrevState is not None and sePrevAction is not None:
-                    done = False
-                    sePedXingAgent.remember(sePrevState, sePrevAction, seReward, seCurrentState, done)
-
-            seAction = sePedXingAgent.get_action(seCurrentState, add_noise=USE_NOISE)
-            # Use DDPG controlled phase function
-            _sePedXing_phase(seAction)
-
-            sePrevState = seCurrentState
-            sePrevAction = seAction
-            print(f"[SE] Queue={np.sum(seCurrentState * 1000.0):.1f}, Reward={seReward:.3f}, Action={seAction[0]:.3f}")
-    
-    # ---- Placeholder for fixed traffic light logic ----
-    else:
-        # If running in single-agent mode, the other traffic lights need to run their phases
-        # but since your original code didn't define sw/se phase logic, we skip them here.
-        # Note: In a real simulation, these agents' traffic lights would need a default TLLogic to run.
-        pass
-
-
-    # ---- Periodic training using replay buffer (Only runs if NOT in TEST_MODE) ----
-    if TEST_MODE == 0 and step_counter % TRAIN_FREQUENCY == 0:
+    # ---- Periodic training using replay buffer ----
+    if step_counter % TRAIN_FREQUENCY == 0:
         # Train Main
         if len(mainIntersectionAgent.replay_buffer) >= BATCH_SIZE:
             actor_loss, critic_loss = mainIntersectionAgent.train()
@@ -435,20 +286,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
             main_reward_history.append(total_main_reward)
             total_main_reward = 0
             print(f"[TRAIN MAIN] Step={step_counter}, Actor Loss={actor_loss:.4f}, Critic Loss={critic_loss:.4f}")
-        
-        if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-            # Train SW
-            if len(swPedXingAgent.replay_buffer) >= BATCH_SIZE:
-                # Train logic placeholder
-                # actor_loss, critic_loss = swPedXingAgent.train()
-                pass
-            
-            # Train SE
-            if len(sePedXingAgent.replay_buffer) >= BATCH_SIZE:
-                # Train logic placeholder
-                # actor_loss, critic_loss = sePedXingAgent.train()
-                pass
-    
 
     # Step simulation forward
     traci.simulationStep()
@@ -459,9 +296,6 @@ print("\nSimulation completed!")
 print("Saving trained models...")
 try:
     mainIntersectionAgent.save()
-    if TRAFFIC_LIGHT_CONTROL_MODE == 0 and TEST_MODE == 0:
-        swPedXingAgent.save()
-        sePedXingAgent.save()
     print("Models saved successfully!")
 except Exception as e:
     print(f"[ERROR] Could not save models: {e}")
@@ -470,9 +304,6 @@ except Exception as e:
 print("Saving replay buffers...")
 try:
     mainIntersectionAgent.save_replay_buffer()
-    if TRAFFIC_LIGHT_CONTROL_MODE == 0 and TEST_MODE == 0:
-        swPedXingAgent.save_replay_buffer()
-        sePedXingAgent.save_replay_buffer()
     print("Replay buffers saved successfully!")
 except Exception as e:
     print(f"[ERROR] Could not save replay buffers: {e}")
@@ -481,7 +312,7 @@ except Exception as e:
 print("Saving training history...")
 try:
     save_history(
-        './Olivarez_traci/output_DDPG/main_ddpg_history.csv1',
+        './Olivarez_traci/output_DDPG/main_ddpg_history_one_trafficlight.csv',
         ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss'],
         main_reward_history,
         main_actor_loss_history,
@@ -489,11 +320,6 @@ try:
         TRAIN_FREQUENCY
     )
     
-    if TRAFFIC_LIGHT_CONTROL_MODE == 0:
-        # Placeholder save history for other agents
-        # save_history(...)
-        pass
-
     print("History saved successfully!")
 except Exception as e:
     print(f"[ERROR] Could not save history: {e}")
