@@ -23,7 +23,7 @@ if gpus:
 
 class OUActionNoise:
     """Ornstein-Uhlenbeck process for temporally correlated exploration noise."""
-    def __init__(self, mean, std_deviation=0.1, theta=0.15, dt=1e-2, x_initial=None):
+    def __init__(self, mean, std_deviation=0.3, theta=0.15, dt=1e-2, x_initial=None):
         self.theta = theta
         self.mean = np.array(mean, dtype=np.float32)
         self.std_dev = std_deviation

@@ -7,7 +7,7 @@
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="network/map.net.xml"/>
+        <net-file value="network/network_onetrafficlight.net.xml"/>
         <route-files value="demand/demand.rou.xml"/>
         <additional-files value="additionals/map.poly.xml, additionals/detectors.add.xml"/>
     </input>
