@@ -1,153 +1,44 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
-  <vType id="car" vClass="passenger" length="4.5" maxSpeed="50" />
-  <vType id="jeep" vClass="bus" length="7.0" maxSpeed="40" />
-  <vType id="bus" vClass="bus" length="12.0" maxSpeed="45" />
-  <vType id="truck" vClass="truck" length="8.0" maxSpeed="40" />
-  <vType id="motorcycle" vClass="motorcycle" length="2.0" maxSpeed="60" />
-  <vType id="tricycle" vClass="motorcycle" length="3.0" maxSpeed="30" />
-  <flow id="flow_light_traffic_1" from="-361256298#1" to="939610874" begin="0" end="7200" probability="0.074991" type="car" />
-  <flow id="flow_light_traffic_2" from="-361256298#1" to="939610874" begin="0" end="7200" probability="0.030868" type="jeep" />
-  <flow id="flow_light_traffic_3" from="-361256298#1" to="939610874" begin="0" end="7200" probability="0.010895" type="bus" />
-  <flow id="flow_light_traffic_4" from="-361256298#1" to="939610874" begin="0" end="7200" probability="0.023605" type="truck" />
-  <flow id="flow_light_traffic_5" from="-361256298#1" to="939610874" begin="0" end="7200" probability="0.020609" type="motorcycle" />
-  <flow id="flow_light_traffic_6" from="-361256298#1" to="939610874" begin="0" end="7200" probability="0.020609" type="tricycle" />
-  <flow id="flow_light_traffic_7" from="-361256298#1" to="440471861#6" begin="0" end="7200" probability="0.074991" type="car" />
-  <flow id="flow_light_traffic_8" from="-361256298#1" to="440471861#6" begin="0" end="7200" probability="0.030868" type="jeep" />
-  <flow id="flow_light_traffic_9" from="-361256298#1" to="440471861#6" begin="0" end="7200" probability="0.010895" type="bus" />
-  <flow id="flow_light_traffic_10" from="-361256298#1" to="440471861#6" begin="0" end="7200" probability="0.023605" type="truck" />
-  <flow id="flow_light_traffic_11" from="-361256298#1" to="440471861#6" begin="0" end="7200" probability="0.020609" type="motorcycle" />
-  <flow id="flow_light_traffic_12" from="-361256298#1" to="440471861#6" begin="0" end="7200" probability="0.020609" type="tricycle" />
-  <flow id="flow_light_traffic_13" from="-361256298#1" to="140483224#12" begin="0" end="7200" probability="0.074991" type="car" />
-  <flow id="flow_light_traffic_14" from="-361256298#1" to="140483224#12" begin="0" end="7200" probability="0.030868" type="jeep" />
-  <flow id="flow_light_traffic_15" from="-361256298#1" to="140483224#12" begin="0" end="7200" probability="0.010895" type="bus" />
-  <flow id="flow_light_traffic_16" from="-361256298#1" to="140483224#12" begin="0" end="7200" probability="0.023605" type="truck" />
-  <flow id="flow_light_traffic_17" from="-361256298#1" to="140483224#12" begin="0" end="7200" probability="0.020609" type="motorcycle" />
-  <flow id="flow_light_traffic_18" from="-361256298#1" to="140483224#12" begin="0" end="7200" probability="0.020609" type="tricycle" />
-  <flow id="flow_light_traffic_19" from="939610874" to="-361256298#1" begin="0" end="7200" probability="0.043623" type="car" />
-  <flow id="flow_light_traffic_20" from="939610874" to="-361256298#1" begin="0" end="7200" probability="0.017956" type="jeep" />
-  <flow id="flow_light_traffic_21" from="939610874" to="-361256298#1" begin="0" end="7200" probability="0.006337" type="bus" />
-  <flow id="flow_light_traffic_22" from="939610874" to="-361256298#1" begin="0" end="7200" probability="0.013731" type="truck" />
-  <flow id="flow_light_traffic_23" from="939610874" to="-361256298#1" begin="0" end="7200" probability="0.011988" type="motorcycle" />
-  <flow id="flow_light_traffic_24" from="939610874" to="-361256298#1" begin="0" end="7200" probability="0.011988" type="tricycle" />
-  <flow id="flow_light_traffic_25" from="939610874" to="440471861#6" begin="0" end="7200" probability="0.043623" type="car" />
-  <flow id="flow_light_traffic_26" from="939610874" to="440471861#6" begin="0" end="7200" probability="0.017956" type="jeep" />
-  <flow id="flow_light_traffic_27" from="939610874" to="440471861#6" begin="0" end="7200" probability="0.006337" type="bus" />
-  <flow id="flow_light_traffic_28" from="939610874" to="440471861#6" begin="0" end="7200" probability="0.013731" type="truck" />
-  <flow id="flow_light_traffic_29" from="939610874" to="440471861#6" begin="0" end="7200" probability="0.011988" type="motorcycle" />
-  <flow id="flow_light_traffic_30" from="939610874" to="440471861#6" begin="0" end="7200" probability="0.011988" type="tricycle" />
-  <flow id="flow_light_traffic_31" from="939610874" to="140483224#12" begin="0" end="7200" probability="0.043623" type="car" />
-  <flow id="flow_light_traffic_32" from="939610874" to="140483224#12" begin="0" end="7200" probability="0.017956" type="jeep" />
-  <flow id="flow_light_traffic_33" from="939610874" to="140483224#12" begin="0" end="7200" probability="0.006337" type="bus" />
-  <flow id="flow_light_traffic_34" from="939610874" to="140483224#12" begin="0" end="7200" probability="0.013731" type="truck" />
-  <flow id="flow_light_traffic_35" from="939610874" to="140483224#12" begin="0" end="7200" probability="0.011988" type="motorcycle" />
-  <flow id="flow_light_traffic_36" from="939610874" to="140483224#12" begin="0" end="7200" probability="0.011988" type="tricycle" />
-  <flow id="flow_light_traffic_37" from="440471861#6" to="-361256298#1" begin="0" end="7200" probability="0.258662" type="car" />
-  <flow id="flow_light_traffic_38" from="440471861#6" to="-361256298#1" begin="0" end="7200" probability="0.106471" type="jeep" />
-  <flow id="flow_light_traffic_39" from="440471861#6" to="-361256298#1" begin="0" end="7200" probability="0.037578" type="bus" />
-  <flow id="flow_light_traffic_40" from="440471861#6" to="-361256298#1" begin="0" end="7200" probability="0.081419" type="truck" />
-  <flow id="flow_light_traffic_41" from="440471861#6" to="-361256298#1" begin="0" end="7200" probability="0.071085" type="motorcycle" />
-  <flow id="flow_light_traffic_42" from="440471861#6" to="-361256298#1" begin="0" end="7200" probability="0.071085" type="tricycle" />
-  <flow id="flow_light_traffic_43" from="440471861#6" to="939610874" begin="0" end="7200" probability="0.258662" type="car" />
-  <flow id="flow_light_traffic_44" from="440471861#6" to="939610874" begin="0" end="7200" probability="0.106471" type="jeep" />
-  <flow id="flow_light_traffic_45" from="440471861#6" to="939610874" begin="0" end="7200" probability="0.037578" type="bus" />
-  <flow id="flow_light_traffic_46" from="440471861#6" to="939610874" begin="0" end="7200" probability="0.081419" type="truck" />
-  <flow id="flow_light_traffic_47" from="440471861#6" to="939610874" begin="0" end="7200" probability="0.071085" type="motorcycle" />
-  <flow id="flow_light_traffic_48" from="440471861#6" to="939610874" begin="0" end="7200" probability="0.071085" type="tricycle" />
-  <flow id="flow_light_traffic_49" from="440471861#6" to="140483224#12" begin="0" end="7200" probability="0.258662" type="car" />
-  <flow id="flow_light_traffic_50" from="440471861#6" to="140483224#12" begin="0" end="7200" probability="0.106471" type="jeep" />
-  <flow id="flow_light_traffic_51" from="440471861#6" to="140483224#12" begin="0" end="7200" probability="0.037578" type="bus" />
-  <flow id="flow_light_traffic_52" from="440471861#6" to="140483224#12" begin="0" end="7200" probability="0.081419" type="truck" />
-  <flow id="flow_light_traffic_53" from="440471861#6" to="140483224#12" begin="0" end="7200" probability="0.071085" type="motorcycle" />
-  <flow id="flow_light_traffic_54" from="440471861#6" to="140483224#12" begin="0" end="7200" probability="0.071085" type="tricycle" />
-  <flow id="flow_light_traffic_55" from="140483224#12" to="-361256298#1" begin="0" end="7200" probability="0.131405" type="car" />
-  <flow id="flow_light_traffic_56" from="140483224#12" to="-361256298#1" begin="0" end="7200" probability="0.054089" type="jeep" />
-  <flow id="flow_light_traffic_57" from="140483224#12" to="-361256298#1" begin="0" end="7200" probability="0.01909" type="bus" />
-  <flow id="flow_light_traffic_58" from="140483224#12" to="-361256298#1" begin="0" end="7200" probability="0.041362" type="truck" />
-  <flow id="flow_light_traffic_59" from="140483224#12" to="-361256298#1" begin="0" end="7200" probability="0.036113" type="motorcycle" />
-  <flow id="flow_light_traffic_60" from="140483224#12" to="-361256298#1" begin="0" end="7200" probability="0.036113" type="tricycle" />
-  <flow id="flow_light_traffic_61" from="140483224#12" to="939610874" begin="0" end="7200" probability="0.131405" type="car" />
-  <flow id="flow_light_traffic_62" from="140483224#12" to="939610874" begin="0" end="7200" probability="0.054089" type="jeep" />
-  <flow id="flow_light_traffic_63" from="140483224#12" to="939610874" begin="0" end="7200" probability="0.01909" type="bus" />
-  <flow id="flow_light_traffic_64" from="140483224#12" to="939610874" begin="0" end="7200" probability="0.041362" type="truck" />
-  <flow id="flow_light_traffic_65" from="140483224#12" to="939610874" begin="0" end="7200" probability="0.036113" type="motorcycle" />
-  <flow id="flow_light_traffic_66" from="140483224#12" to="939610874" begin="0" end="7200" probability="0.036113" type="tricycle" />
-  <flow id="flow_light_traffic_67" from="140483224#12" to="440471861#6" begin="0" end="7200" probability="0.131405" type="car" />
-  <flow id="flow_light_traffic_68" from="140483224#12" to="440471861#6" begin="0" end="7200" probability="0.054089" type="jeep" />
-  <flow id="flow_light_traffic_69" from="140483224#12" to="440471861#6" begin="0" end="7200" probability="0.01909" type="bus" />
-  <flow id="flow_light_traffic_70" from="140483224#12" to="440471861#6" begin="0" end="7200" probability="0.041362" type="truck" />
-  <flow id="flow_light_traffic_71" from="140483224#12" to="440471861#6" begin="0" end="7200" probability="0.036113" type="motorcycle" />
-  <flow id="flow_light_traffic_72" from="140483224#12" to="440471861#6" begin="0" end="7200" probability="0.036113" type="tricycle" />
-  <flow id="flow_light_traffic_73" from="-361256298#1" to="939610874" begin="7200" end="14400" probability="0.074991" type="car" />
-  <flow id="flow_light_traffic_74" from="-361256298#1" to="939610874" begin="7200" end="14400" probability="0.030868" type="jeep" />
-  <flow id="flow_light_traffic_75" from="-361256298#1" to="939610874" begin="7200" end="14400" probability="0.010895" type="bus" />
-  <flow id="flow_light_traffic_76" from="-361256298#1" to="939610874" begin="7200" end="14400" probability="0.023605" type="truck" />
-  <flow id="flow_light_traffic_77" from="-361256298#1" to="939610874" begin="7200" end="14400" probability="0.020609" type="motorcycle" />
-  <flow id="flow_light_traffic_78" from="-361256298#1" to="939610874" begin="7200" end="14400" probability="0.020609" type="tricycle" />
-  <flow id="flow_light_traffic_79" from="-361256298#1" to="440471861#6" begin="7200" end="14400" probability="0.074991" type="car" />
-  <flow id="flow_light_traffic_80" from="-361256298#1" to="440471861#6" begin="7200" end="14400" probability="0.030868" type="jeep" />
-  <flow id="flow_light_traffic_81" from="-361256298#1" to="440471861#6" begin="7200" end="14400" probability="0.010895" type="bus" />
-  <flow id="flow_light_traffic_82" from="-361256298#1" to="440471861#6" begin="7200" end="14400" probability="0.023605" type="truck" />
-  <flow id="flow_light_traffic_83" from="-361256298#1" to="440471861#6" begin="7200" end="14400" probability="0.020609" type="motorcycle" />
-  <flow id="flow_light_traffic_84" from="-361256298#1" to="440471861#6" begin="7200" end="14400" probability="0.020609" type="tricycle" />
-  <flow id="flow_light_traffic_85" from="-361256298#1" to="140483224#12" begin="7200" end="14400" probability="0.074991" type="car" />
-  <flow id="flow_light_traffic_86" from="-361256298#1" to="140483224#12" begin="7200" end="14400" probability="0.030868" type="jeep" />
-  <flow id="flow_light_traffic_87" from="-361256298#1" to="140483224#12" begin="7200" end="14400" probability="0.010895" type="bus" />
-  <flow id="flow_light_traffic_88" from="-361256298#1" to="140483224#12" begin="7200" end="14400" probability="0.023605" type="truck" />
-  <flow id="flow_light_traffic_89" from="-361256298#1" to="140483224#12" begin="7200" end="14400" probability="0.020609" type="motorcycle" />
-  <flow id="flow_light_traffic_90" from="-361256298#1" to="140483224#12" begin="7200" end="14400" probability="0.020609" type="tricycle" />
-  <flow id="flow_light_traffic_91" from="939610874" to="-361256298#1" begin="7200" end="14400" probability="0.043623" type="car" />
-  <flow id="flow_light_traffic_92" from="939610874" to="-361256298#1" begin="7200" end="14400" probability="0.017956" type="jeep" />
-  <flow id="flow_light_traffic_93" from="939610874" to="-361256298#1" begin="7200" end="14400" probability="0.006337" type="bus" />
-  <flow id="flow_light_traffic_94" from="939610874" to="-361256298#1" begin="7200" end="14400" probability="0.013731" type="truck" />
-  <flow id="flow_light_traffic_95" from="939610874" to="-361256298#1" begin="7200" end="14400" probability="0.011988" type="motorcycle" />
-  <flow id="flow_light_traffic_96" from="939610874" to="-361256298#1" begin="7200" end="14400" probability="0.011988" type="tricycle" />
-  <flow id="flow_light_traffic_97" from="939610874" to="440471861#6" begin="7200" end="14400" probability="0.043623" type="car" />
-  <flow id="flow_light_traffic_98" from="939610874" to="440471861#6" begin="7200" end="14400" probability="0.017956" type="jeep" />
-  <flow id="flow_light_traffic_99" from="939610874" to="440471861#6" begin="7200" end="14400" probability="0.006337" type="bus" />
-  <flow id="flow_light_traffic_100" from="939610874" to="440471861#6" begin="7200" end="14400" probability="0.013731" type="truck" />
-  <flow id="flow_light_traffic_101" from="939610874" to="440471861#6" begin="7200" end="14400" probability="0.011988" type="motorcycle" />
-  <flow id="flow_light_traffic_102" from="939610874" to="440471861#6" begin="7200" end="14400" probability="0.011988" type="tricycle" />
-  <flow id="flow_light_traffic_103" from="939610874" to="140483224#12" begin="7200" end="14400" probability="0.043623" type="car" />
-  <flow id="flow_light_traffic_104" from="939610874" to="140483224#12" begin="7200" end="14400" probability="0.017956" type="jeep" />
-  <flow id="flow_light_traffic_105" from="939610874" to="140483224#12" begin="7200" end="14400" probability="0.006337" type="bus" />
-  <flow id="flow_light_traffic_106" from="939610874" to="140483224#12" begin="7200" end="14400" probability="0.013731" type="truck" />
-  <flow id="flow_light_traffic_107" from="939610874" to="140483224#12" begin="7200" end="14400" probability="0.011988" type="motorcycle" />
-  <flow id="flow_light_traffic_108" from="939610874" to="140483224#12" begin="7200" end="14400" probability="0.011988" type="tricycle" />
-  <flow id="flow_light_traffic_109" from="440471861#6" to="-361256298#1" begin="7200" end="14400" probability="0.258662" type="car" />
-  <flow id="flow_light_traffic_110" from="440471861#6" to="-361256298#1" begin="7200" end="14400" probability="0.106471" type="jeep" />
-  <flow id="flow_light_traffic_111" from="440471861#6" to="-361256298#1" begin="7200" end="14400" probability="0.037578" type="bus" />
-  <flow id="flow_light_traffic_112" from="440471861#6" to="-361256298#1" begin="7200" end="14400" probability="0.081419" type="truck" />
-  <flow id="flow_light_traffic_113" from="440471861#6" to="-361256298#1" begin="7200" end="14400" probability="0.071085" type="motorcycle" />
-  <flow id="flow_light_traffic_114" from="440471861#6" to="-361256298#1" begin="7200" end="14400" probability="0.071085" type="tricycle" />
-  <flow id="flow_light_traffic_115" from="440471861#6" to="939610874" begin="7200" end="14400" probability="0.258662" type="car" />
-  <flow id="flow_light_traffic_116" from="440471861#6" to="939610874" begin="7200" end="14400" probability="0.106471" type="jeep" />
-  <flow id="flow_light_traffic_117" from="440471861#6" to="939610874" begin="7200" end="14400" probability="0.037578" type="bus" />
-  <flow id="flow_light_traffic_118" from="440471861#6" to="939610874" begin="7200" end="14400" probability="0.081419" type="truck" />
-  <flow id="flow_light_traffic_119" from="440471861#6" to="939610874" begin="7200" end="14400" probability="0.071085" type="motorcycle" />
-  <flow id="flow_light_traffic_120" from="440471861#6" to="939610874" begin="7200" end="14400" probability="0.071085" type="tricycle" />
-  <flow id="flow_light_traffic_121" from="440471861#6" to="140483224#12" begin="7200" end="14400" probability="0.258662" type="car" />
-  <flow id="flow_light_traffic_122" from="440471861#6" to="140483224#12" begin="7200" end="14400" probability="0.106471" type="jeep" />
-  <flow id="flow_light_traffic_123" from="440471861#6" to="140483224#12" begin="7200" end="14400" probability="0.037578" type="bus" />
-  <flow id="flow_light_traffic_124" from="440471861#6" to="140483224#12" begin="7200" end="14400" probability="0.081419" type="truck" />
-  <flow id="flow_light_traffic_125" from="440471861#6" to="140483224#12" begin="7200" end="14400" probability="0.071085" type="motorcycle" />
-  <flow id="flow_light_traffic_126" from="440471861#6" to="140483224#12" begin="7200" end="14400" probability="0.071085" type="tricycle" />
-  <flow id="flow_light_traffic_127" from="140483224#12" to="-361256298#1" begin="7200" end="14400" probability="0.131405" type="car" />
-  <flow id="flow_light_traffic_128" from="140483224#12" to="-361256298#1" begin="7200" end="14400" probability="0.054089" type="jeep" />
-  <flow id="flow_light_traffic_129" from="140483224#12" to="-361256298#1" begin="7200" end="14400" probability="0.01909" type="bus" />
-  <flow id="flow_light_traffic_130" from="140483224#12" to="-361256298#1" begin="7200" end="14400" probability="0.041362" type="truck" />
-  <flow id="flow_light_traffic_131" from="140483224#12" to="-361256298#1" begin="7200" end="14400" probability="0.036113" type="motorcycle" />
-  <flow id="flow_light_traffic_132" from="140483224#12" to="-361256298#1" begin="7200" end="14400" probability="0.036113" type="tricycle" />
-  <flow id="flow_light_traffic_133" from="140483224#12" to="939610874" begin="7200" end="14400" probability="0.131405" type="car" />
-  <flow id="flow_light_traffic_134" from="140483224#12" to="939610874" begin="7200" end="14400" probability="0.054089" type="jeep" />
-  <flow id="flow_light_traffic_135" from="140483224#12" to="939610874" begin="7200" end="14400" probability="0.01909" type="bus" />
-  <flow id="flow_light_traffic_136" from="140483224#12" to="939610874" begin="7200" end="14400" probability="0.041362" type="truck" />
-  <flow id="flow_light_traffic_137" from="140483224#12" to="939610874" begin="7200" end="14400" probability="0.036113" type="motorcycle" />
-  <flow id="flow_light_traffic_138" from="140483224#12" to="939610874" begin="7200" end="14400" probability="0.036113" type="tricycle" />
-  <flow id="flow_light_traffic_139" from="140483224#12" to="440471861#6" begin="7200" end="14400" probability="0.131405" type="car" />
-  <flow id="flow_light_traffic_140" from="140483224#12" to="440471861#6" begin="7200" end="14400" probability="0.054089" type="jeep" />
-  <flow id="flow_light_traffic_141" from="140483224#12" to="440471861#6" begin="7200" end="14400" probability="0.01909" type="bus" />
-  <flow id="flow_light_traffic_142" from="140483224#12" to="440471861#6" begin="7200" end="14400" probability="0.041362" type="truck" />
-  <flow id="flow_light_traffic_143" from="140483224#12" to="440471861#6" begin="7200" end="14400" probability="0.036113" type="motorcycle" />
-  <flow id="flow_light_traffic_144" from="140483224#12" to="440471861#6" begin="7200" end="14400" probability="0.036113" type="tricycle" />
+  
+  <vTypeDistribution id="AguinaldoHighway">
+    <vType id="car" vClass="passenger" probability="0.413" guiShape="passenger" />
+    <vType id="jeep" vClass="passenger" probability="0.17" guiShape="passenger/van" length="8" width="2" mass="500" maxSpeed="100" desiredMaxSpeed="60" personCapacity="20" />
+    <vType id="bus" vClass="bus" probability="0.06" guiShape="bus" />
+    <vType id="truck" vClass="truck" probability="0.13" guiShape="truck" />
+    <vType id="motorcycle" vClass="motorcycle" probability="0.1135" width="0.8" minGap="1" guiShape="motorcycle" />
+    <vType id="tricycle" vClass="motorcycle" probability="0.1135" guiShape="motorcycle" width="1.5" accel="2" maxSpeed="50" personCapacity="4" />
+  </vTypeDistribution>
+  
+  <flow id="A1_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.060525999999999996" from="-361256298#1" to="939610874" departLane="best" departSpeed="max" />
+  <flow id="A2_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.060525999999999996" from="-361256298#1" to="440471861#6" departLane="best" departSpeed="max" />
+  <flow id="A3_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.060525999999999996" from="-361256298#1" to="140483224#12" departLane="best" departSpeed="max" />
+  
+  <flow id="B1_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.035207" from="939610874" to="-361256298#1" departLane="best" departSpeed="max" />
+  <flow id="B2_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.035207" from="939610874" to="440471861#6" departLane="best" departSpeed="max" />
+  <flow id="B3_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.035207" from="939610874" to="140483224#12" departLane="best" departSpeed="max" />
+  
+  <flow id="C1_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.208767" from="440471861#6" to="-361256298#1" departLane="best" departSpeed="max" />
+  <flow id="C2_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.208767" from="440471861#6" to="939610874" departLane="best" departSpeed="max" />
+  <flow id="C3_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.208767" from="440471861#6" to="140483224#12" departLane="best" departSpeed="max" />
+  
+  <flow id="D1_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.106058" from="140483224#12" to="-361256298#1" departLane="best" departSpeed="max" />
+  <flow id="D2_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.106058" from="140483224#12" to="939610874" departLane="best" departSpeed="max" />
+  <flow id="D3_1" type="AguinaldoHighway" begin="0.00" end="7200.00" probability="0.106058" from="140483224#12" to="440471861#6" departLane="best" departSpeed="max" />
+  
+  <flow id="A1_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.060525999999999996" from="-361256298#1" to="939610874" departLane="best" departSpeed="max" />
+  <flow id="A2_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.060525999999999996" from="-361256298#1" to="440471861#6" departLane="best" departSpeed="max" />
+  <flow id="A3_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.060525999999999996" from="-361256298#1" to="140483224#12" departLane="best" departSpeed="max" />
+  
+  <flow id="B1_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.035207" from="939610874" to="-361256298#1" departLane="best" departSpeed="max" />
+  <flow id="B2_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.035207" from="939610874" to="440471861#6" departLane="best" departSpeed="max" />
+  <flow id="B3_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.035207" from="939610874" to="140483224#12" departLane="best" departSpeed="max" />
+  
+  <flow id="C1_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.208767" from="440471861#6" to="-361256298#1" departLane="best" departSpeed="max" />
+  <flow id="C2_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.208767" from="440471861#6" to="939610874" departLane="best" departSpeed="max" />
+  <flow id="C3_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.208767" from="440471861#6" to="140483224#12" departLane="best" departSpeed="max" />
+  
+  <flow id="D1_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.106058" from="140483224#12" to="-361256298#1" departLane="best" departSpeed="max" />
+  <flow id="D2_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.106058" from="140483224#12" to="939610874" departLane="best" departSpeed="max" />
+  <flow id="D3_2" type="AguinaldoHighway" begin="7200.00" end="14400.00" probability="0.106058" from="140483224#12" to="440471861#6" departLane="best" departSpeed="max" />
 </routes>

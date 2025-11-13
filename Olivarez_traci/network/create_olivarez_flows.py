@@ -374,7 +374,28 @@ class OlivarezFlowGenerator:
                 print(f"\n  {period_name} ({period_config['start']}-{period_config['end']}s)")
                 print(f"  Period multiplier: {period_multiplier}")
                 
+                # Create zone mapping
+                zone_mapping = {
+                    'zone_a_malvar_north': 'A',
+                    'zone_b_highway_east': 'B', 
+                    'zone_c_malvar_south': 'C',
+                    'zone_d_highway_west': 'D'
+                }
+                
+                # Get period number based on category and period
+                period_mapping = {
+                    'heavy_traffic': {'morning_rush': '1', 'evening_rush': '2'},
+                    'moderate_traffic': {'midday_1': '1', 'afternoon_1': '2'},
+                    'light_traffic': {'early_morning': '1', 'late_evening': '2'}
+                }
+                period_num = period_mapping[category_name][period_name]
+                
+                dest_counter = {}  # Track destination numbering per origin
+                
                 for origin_zone, destinations in self.od_matrix.items():
+                    origin_letter = zone_mapping[origin_zone]
+                    dest_counter[origin_zone] = 0
+                    
                     num_destinations = len(destinations)
                     taz_insertion_rate = insertion_rates[origin_zone]
                     
@@ -384,28 +405,29 @@ class OlivarezFlowGenerator:
                     )
                     
                     for dest_zone, od_data in destinations.items():
+                        dest_counter[origin_zone] += 1
+                        dest_num = dest_counter[origin_zone]
                         
-                        # Create flows for each vehicle type
-                        for vehicle_type, flow_probability in vehicle_flows.items():
-                            if flow_probability > 0:  # Only create flows with positive probabilities
-                                flow_id += 1
-                                
-                                flow = {
-                                    'id': f"flow_{category_name}_{flow_id}",
-                                    'from': od_data['origin_edge'],
-                                    'to': od_data['dest_edge'],
-                                    'begin': period_config['start'],
-                                    'end': period_config['end'],
-                                    'probability': flow_probability,
-                                    'type': vehicle_type,
-                                    'origin_zone': origin_zone,
-                                    'dest_zone': dest_zone,
-                                    'period': period_name,
-                                    'category': category_name,
-                                    'vehicles_per_hour_equivalent': vehicles_per_od_per_hour * VEHICLE_DISTRIBUTION[vehicle_type]
-                                }
-                                
-                                category_flows.append(flow)
+                        # Sum all vehicle probabilities for this OD pair
+                        total_probability = sum(vehicle_flows.values())
+                        
+                        if total_probability > 0:  # Only create flows with positive probabilities
+                            flow = {
+                                'id': f"{origin_letter}{dest_num}_{period_num}",
+                                'from': od_data['origin_edge'],
+                                'to': od_data['dest_edge'],
+                                'begin': period_config['start'],
+                                'end': period_config['end'],
+                                'probability': total_probability,
+                                'type': 'AguinaldoHighway',
+                                'origin_zone': origin_zone,
+                                'dest_zone': dest_zone,
+                                'period': period_name,
+                                'category': category_name,
+                                'vehicles_per_hour_equivalent': vehicles_per_od_per_hour
+                            }
+                            
+                            category_flows.append(flow)
             
             self.flows_by_category[category_name] = category_flows
             print(f"\n  SUCCESS: {category_name}: {len(category_flows)} flows created")
@@ -428,47 +450,83 @@ class OlivarezFlowGenerator:
             root.set('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
             root.set('xsi:noNamespaceSchemaLocation', 'http://sumo.dlr.de/xsd/routes_file.xsd')
             
-            # Add vehicle type definitions
-            for vehicle_type in VEHICLE_DISTRIBUTION.keys():
-                vtype = ET.SubElement(root, 'vType')
-                vtype.set('id', vehicle_type)
-                
-                # Set vehicle-specific attributes
-                if vehicle_type == 'car':
-                    vtype.set('vClass', 'passenger')
-                    vtype.set('length', '4.5')
-                    vtype.set('maxSpeed', '50')
-                elif vehicle_type == 'jeep':
-                    vtype.set('vClass', 'bus')
-                    vtype.set('length', '7.0')
-                    vtype.set('maxSpeed', '40')
-                elif vehicle_type == 'bus':
-                    vtype.set('vClass', 'bus')
-                    vtype.set('length', '12.0')
-                    vtype.set('maxSpeed', '45')
-                elif vehicle_type == 'truck':
-                    vtype.set('vClass', 'truck')
-                    vtype.set('length', '8.0')
-                    vtype.set('maxSpeed', '40')
-                elif vehicle_type == 'motorcycle':
-                    vtype.set('vClass', 'motorcycle')
-                    vtype.set('length', '2.0')
-                    vtype.set('maxSpeed', '60')
-                elif vehicle_type == 'tricycle':
-                    vtype.set('vClass', 'motorcycle')
-                    vtype.set('length', '3.0')
-                    vtype.set('maxSpeed', '30')
+            # Add pedestrian vType
+            ped_vtype = ET.SubElement(root, 'vType')
+            ped_vtype.set('id', 'ped')
+            ped_vtype.set('vClass', 'pedestrian')
+            ped_vtype.set('impatience', '0.2')
+            ped_vtype.set('guiShape', 'pedestrian')
+            
+            # Add vTypeDistribution for AguinaldoHighway
+            vtd = ET.SubElement(root, 'vTypeDistribution')
+            vtd.set('id', 'AguinaldoHighway')
+            
+            # Car
+            car_vtype = ET.SubElement(vtd, 'vType')
+            car_vtype.set('id', 'car')
+            car_vtype.set('vClass', 'passenger')
+            car_vtype.set('probability', '0.413')
+            car_vtype.set('guiShape', 'passenger')
+            
+            # Jeep
+            jeep_vtype = ET.SubElement(vtd, 'vType')
+            jeep_vtype.set('id', 'jeep')
+            jeep_vtype.set('vClass', 'passenger')
+            jeep_vtype.set('probability', '0.17')
+            jeep_vtype.set('guiShape', 'passenger/van')
+            jeep_vtype.set('length', '8')
+            jeep_vtype.set('width', '2')
+            jeep_vtype.set('mass', '500')
+            jeep_vtype.set('maxSpeed', '100')
+            jeep_vtype.set('desiredMaxSpeed', '60')
+            jeep_vtype.set('personCapacity', '20')
+            
+            # Bus
+            bus_vtype = ET.SubElement(vtd, 'vType')
+            bus_vtype.set('id', 'bus')
+            bus_vtype.set('vClass', 'bus')
+            bus_vtype.set('probability', '0.06')
+            bus_vtype.set('guiShape', 'bus')
+            
+            # Truck
+            truck_vtype = ET.SubElement(vtd, 'vType')
+            truck_vtype.set('id', 'truck')
+            truck_vtype.set('vClass', 'truck')
+            truck_vtype.set('probability', '0.13')
+            truck_vtype.set('guiShape', 'truck')
+            
+            # Motorcycle
+            motorcycle_vtype = ET.SubElement(vtd, 'vType')
+            motorcycle_vtype.set('id', 'motorcycle')
+            motorcycle_vtype.set('vClass', 'motorcycle')
+            motorcycle_vtype.set('probability', '0.1135')
+            motorcycle_vtype.set('width', '0.8')
+            motorcycle_vtype.set('minGap', '1')
+            motorcycle_vtype.set('guiShape', 'motorcycle')
+            
+            # Tricycle
+            tricycle_vtype = ET.SubElement(vtd, 'vType')
+            tricycle_vtype.set('id', 'tricycle')
+            tricycle_vtype.set('vClass', 'motorcycle')
+            tricycle_vtype.set('probability', '0.1135')
+            tricycle_vtype.set('guiShape', 'motorcycle')
+            tricycle_vtype.set('width', '1.5')
+            tricycle_vtype.set('accel', '2')
+            tricycle_vtype.set('maxSpeed', '50')
+            tricycle_vtype.set('personCapacity', '4')
             
             # Add flows for this category
             for flow in flows:
                 flow_elem = ET.SubElement(root, 'flow')
                 flow_elem.set('id', flow['id'])
+                flow_elem.set('type', 'AguinaldoHighway')
+                flow_elem.set('begin', f"{flow['begin']:.2f}")
+                flow_elem.set('end', f"{flow['end']:.2f}")
+                flow_elem.set('probability', str(flow['probability']))
                 flow_elem.set('from', flow['from'])
                 flow_elem.set('to', flow['to'])
-                flow_elem.set('begin', str(flow['begin']))
-                flow_elem.set('end', str(flow['end']))
-                flow_elem.set('probability', str(flow['probability']))
-                flow_elem.set('type', flow['type'])
+                flow_elem.set('departLane', 'best')
+                flow_elem.set('departSpeed', 'max')
             
             tree = ET.ElementTree(root)
             ET.indent(tree, space='  ')
