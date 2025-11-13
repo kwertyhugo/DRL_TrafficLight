@@ -289,6 +289,12 @@ class DDPGAgent:
         except Exception as e:
             print(f"[ERROR] Failed to load training history from {filepath}: {e}")
         return rewards, actor_losses, critic_losses
+    
+    def decay_noise(self, decay_rate=0.995, min_std=0.05):
+        """Decay OU noise standard deviation gradually to stabilize training."""
+        old_std = self.noise.std_dev
+        self.noise.std_dev = max(min_std, self.noise.std_dev * decay_rate)
+        print(f"[NOISE] {self.name}: Noise std decayed from {old_std:.4f} → {self.noise.std_dev:.4f}")
 
 
 

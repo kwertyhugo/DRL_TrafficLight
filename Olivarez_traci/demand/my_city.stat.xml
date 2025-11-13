@@ -1,0 +1,45 @@
+<city>
+
+    <general 
+        inhabitants="24974"         
+        households="2200"          
+        childrenAgeLimit="18"      
+        retirementAgeLimit="65"    
+        carRate="0"              
+        unemploymentRate="0.038"    
+        footDistanceLimit="300"    
+        incomingTraffic="10000"      
+        outgoingTraffic="5000"      
+    />
+
+    <parameters 
+        carPreference="0"         
+        meanTimePerKmInCity="0"   
+        freeTimeActivityRate="0"  
+        uniformRandomTraffic="0"  
+        departureVariation="0"    
+    />
+
+    <population>
+        <bracket beginAge="0" endAge="15" peopleNbr="7667" />
+        <bracket beginAge="15" endAge="64" peopleNbr="15958" />
+        <bracket beginAge="65" endAge="100" peopleNbr="1349" />
+    </population>
+
+    <workHours>
+        <opening hour="0" proportion="1" /> 
+        <closing hour="0" proportion="1" /> 
+    </workHours>
+
+    <cityGates>
+        <entrance edge="140483224#0" pos="1000" incoming="0.5" outgoing="0.5" />
+        <entrance edge="-793339796#2" pos="70" incoming="0.5" outgoing="0.5" />
+        <entrance edge="-361260925#2" pos="30" incoming="0.5" outgoing="0.5" />
+        <entrance edge="440471861#0" pos="30" incoming="0.5" outgoing="0.5" />
+    </cityGates>
+
+    <schools>
+        <school edge="145894807#0" pos="50" beginAge="6" endAge="18" capacity="4300" opening="0" closing="14400" />
+    </schools>
+
+</city>

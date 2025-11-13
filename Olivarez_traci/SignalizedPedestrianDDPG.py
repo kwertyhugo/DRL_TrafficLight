@@ -9,9 +9,31 @@ from models.DDPG import DDPGAgent as ddpg
 
 # ------- Configuration / Agents -------
 
+# --- TRAIN/TEST TOGGLE ---
+# 1 = Train (collect experience, update models, save models, decay noise)
+# 0 = Test (load models, no noise, no updates, no saving)
+TRAIN_MODE = 1
+# -------------------------
+
+# --- NEW STABILITY FEATURES ---
+# Normalization tracking variables
+# We need separate mean/std for each agent's state
+state_mean_main = np.zeros(5, dtype=np.float32)
+state_std_main = np.ones(5, dtype=np.float32)
+state_mean_sw = np.zeros(3, dtype=np.float32)
+state_std_sw = np.ones(3, dtype=np.float32)
+state_mean_se = np.zeros(3, dtype=np.float32)
+state_std_se = np.ones(3, dtype=np.float32)
+
+reward_scale = 10.0  # reward normalization divisor
+noise_decay = 0.9995 # Slower decay for long runs
+min_noise_std = 0.01   # Minimum noise level
+# ------------------------------
+
 # Define continuous action bounds (vector or scalar)
 action_low = np.array([-1.0], dtype=np.float32)
 action_high = np.array([1.0], dtype=np.float32)
+
 
 # Create agents with proper state sizes
 mainIntersectionAgent = ddpg(
@@ -19,10 +41,10 @@ mainIntersectionAgent = ddpg(
     action_size=1,
     action_low=action_low,
     action_high=action_high,
-    actor_lr=0.0001,
-    critic_lr=0.001,
+    actor_lr = 0.0001,
+    critic_lr = 0.001,
     gamma=0.99,
-    tau=0.0005,
+    tau=0.001,
     buffer_size=10000,
     batch_size=128,
     name='MainIntersection_DDPGAgent'
@@ -33,10 +55,10 @@ swPedXingAgent = ddpg(
     action_size=1,
     action_low=action_low,
     action_high=action_high,
-    actor_lr=0.0001,
-    critic_lr=0.001,
+    actor_lr = 0.0001,
+    critic_lr = 0.001,
     gamma=0.99,
-    tau=0.0005,
+    tau=0.001,
     buffer_size=10000,
     batch_size=128,
     name='SW_PedXing_DDPGAgent'
@@ -47,23 +69,33 @@ sePedXingAgent = ddpg(
     action_size=1,
     action_low=action_low,
     action_high=action_high,
-    actor_lr=0.0001,
-    critic_lr=0.001,
+    actor_lr = 0.0001,
+    critic_lr = 0.001,
     gamma=0.99,
-    tau=0.0005,
+    tau=0.001,
     buffer_size=10000,
     batch_size=128,
     name='SE_PedXing_DDPGAgent'
 )
 
-mainIntersectionAgent.load()
-swPedXingAgent.load()
-sePedXingAgent.load()
+# --- STARTING FRESH / LOADING ---
+if TRAIN_MODE == 0:
+    # TEST MODE: Load weights, do not load buffer
+    mainIntersectionAgent.load()
+    swPedXingAgent.load()
+    sePedXingAgent.load()
+    print("[INFO] TEST_MODE: Loading weights for testing.")
+else:
+    # TRAIN MODE: Start fresh
+    # mainIntersectionAgent.load() # Uncomment to resume training
+    # swPedXingAgent.load()
+    # sePedXingAgent.load()
+    # mainIntersectionAgent.load_replay_buffer() # Uncomment to resume training
+    # swPedXingAgent.load_replay_buffer()
+    # sePedXingAgent.load_replay_buffer()
+    print("[INFO] TRAIN_MODE: Starting a fresh training run. Old weights/buffers will NOT be loaded.")
+# ----------------------
 
-# Load replay buffers if available
-mainIntersectionAgent.load_replay_buffer()
-swPedXingAgent.load_replay_buffer()
-sePedXingAgent.load_replay_buffer()
 
 # Load training histories if available
 main_reward_history, main_actor_loss_history, main_critic_loss_history = mainIntersectionAgent.load_history('./Olivarez_traci/output_DDPG/main_ddpg_history.csv')
@@ -204,7 +236,7 @@ def _weighted_waits(detector_id):
     return sumWait
 
 def _mainIntersection_queue():
-    """Get state for main intersection"""
+    """Get state for main intersection (Returns UN-NORMALIZED data)"""
     southwest = _weighted_waits("e2_4") + _weighted_waits("e2_5")
     southeast = _weighted_waits("e2_6") + _weighted_waits("e2_7")
     northeast = _weighted_waits("e2_8")
@@ -222,7 +254,7 @@ def _mainIntersection_queue():
     return np.array([southwest, southeast, northeast, northwest, pedestrian], dtype=np.float32)
 
 def _swPedXing_queue():
-    """Get state for SW pedestrian crossing"""
+    """Get state for SW pedestrian crossing (Returns UN-NORMALIZED data)"""
     north = _weighted_waits("e2_0") + _weighted_waits("e2_1")
     south = _weighted_waits("e2_4") + _weighted_waits("e2_5")
     
@@ -238,7 +270,7 @@ def _swPedXing_queue():
     return np.array([south, north, pedestrian], dtype=np.float32)
 
 def _sePedXing_queue():
-    """Get state for SE pedestrian crossing"""
+    """Get state for SE pedestrian crossing (Returns UN-NORMALIZED data)"""
     west = _weighted_waits("e2_2") + _weighted_waits("e2_3")
     east = _weighted_waits("e2_6") + _weighted_waits("e2_7")
     
@@ -253,18 +285,27 @@ def _sePedXing_queue():
     
     return np.array([west, east, pedestrian], dtype=np.float32)
 
+def normalize_state(state, mean, std_var):
+    """Normalize state by running mean/std_var for stability."""
+    # Use std_var (variance) and add epsilon for numerical stability
+    return (state - mean) / (np.sqrt(std_var) + 1e-8)
+
 # ------- Reward calculation -------
 
-def calculate_reward(current_state):
-    """Calculate reward based on total queue (negative waiting time)"""
-    if current_state is None:
+def calculate_reward(unnormalized_state):
+    """
+    Calculate reward based on total queue (negative waiting time).
+    Input state should be UN-NORMALIZED.
+    """
+    if unnormalized_state is None:
         return 0.0
     
-    # Normalize by dividing by 1000 to keep values in reasonable range
-    normalized_total = float(np.sum(current_state)) / 1000.0
+    # The state is already the raw waiting times, just sum them
+    total_wait = float(np.sum(unnormalized_state))
     
     # Negative reward proportional to queue (we want to minimize waiting)
-    reward = -normalized_total
+    # This value is scaled by reward_scale in the main loop
+    reward = -total_wait
     
     return reward
 
@@ -276,7 +317,7 @@ def _mainIntersection_phase(action):
 
     mainCurrentPhase = (mainCurrentPhase + 1) % 10
 
-    # Map action from [-1, 1] to duration adjustment [-15, 15]
+    # Map action from [-1, 1] to duration adjustment [-5, 5]
     duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 5.0)
     
     # Compute base duration
@@ -344,15 +385,22 @@ def save_history(filename, headers, reward_hist, actor_loss_hist, critic_loss_hi
     
     if file_exists:
         with open(filename, 'r') as f:
-            existing_rows = sum(1 for _ in f) - 1  # minus header line
+            try:
+                existing_rows = sum(1 for _ in f) - 1  # minus header line
+            except:
+                existing_rows = 0 # Handle empty file case
+    
+    if existing_rows < 0:
+        existing_rows = 0
 
     with open(filename, 'a', newline='') as f:
         writer = csv.writer(f)
-        if not file_exists:
+        if not file_exists or existing_rows == 0:
             writer.writerow(headers)
 
         # Write only new history data
-        for i in range(existing_rows, len(reward_hist)):
+        start_index = existing_rows
+        for i in range(start_index, len(reward_hist)):
             writer.writerow([
                 i * train_frequency,
                 reward_hist[i],
@@ -371,169 +419,223 @@ _junctionSubscription("cluster_295373794_3477931123_7465167861")
 _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
 
-print("Resetting DDPG exploration noise...")
-mainIntersectionAgent.noise.reset()
-swPedXingAgent.noise.reset()
-sePedXingAgent.noise.reset()
+if TRAIN_MODE == 1:
+    print("Resetting DDPG exploration noise...")
+    mainIntersectionAgent.noise.reset()
+    swPedXingAgent.noise.reset()
+    sePedXingAgent.noise.reset()
+    # Set initial noise level (std_dev)
+    if hasattr(mainIntersectionAgent.noise, 'std_dev'):
+         mainIntersectionAgent.noise.std_dev = 0.2 # Starting noise level
+         swPedXingAgent.noise.std_dev = 0.2
+         sePedXingAgent.noise.std_dev = 0.2
+    else:
+         print("[WARN] Could not set initial noise std_dev. Check DDPGAgent implementation.")
 
 print("Starting simulation loop...")
+
+# Flag for whether to use exploration noise
+USE_NOISE = (TRAIN_MODE == 1)
 
 while traci.simulation.getMinExpectedNumber() > 0:
     step_counter += 1
 
-    # ---- Main intersection logic ----
+    # ---- MAIN INTERSECTION ----
     mainCurrentPhaseDuration -= stepLength
     if mainCurrentPhaseDuration <= 0:
-        # Get current state (normalized)
-        mainCurrentState = _mainIntersection_queue() / 1000.0  # Normalize
-        mainReward = calculate_reward(mainCurrentState * 1000.0)  # Calculate on unnormalized
+        # --- Get state (raw, un-normalized) ---
+        raw_state = _mainIntersection_queue()
+
+        # --- Update running mean/std (for state normalization) ---
+        state_mean_main = 0.99 * state_mean_main + 0.01 * raw_state
+        state_std_main = 0.99 * state_std_main + 0.01 * np.square(raw_state - state_mean_main) # This is variance
+        
+        # Normalize the state
+        mainCurrentState = normalize_state(raw_state, state_mean_main, state_std_main)
+
+        # --- Normalize reward ---
+        mainReward = calculate_reward(raw_state) / reward_scale
         total_main_reward += mainReward
 
-        # Store experience if we have previous state
-        if mainPrevState is not None and mainPrevAction is not None:
+        # --- Store experience (Normalized State, Normalized Reward) ---
+        if TRAIN_MODE == 1 and mainPrevState is not None and mainPrevAction is not None:
             done = False
-            mainIntersectionAgent.remember(
-                mainPrevState, 
-                mainPrevAction, 
-                mainReward, 
-                mainCurrentState, 
-                done
-            )
+            mainIntersectionAgent.remember(mainPrevState, mainPrevAction, mainReward, mainCurrentState, done)
 
-        # Get action from agent (with exploration noise during training)
-        mainAction = mainIntersectionAgent.get_action(mainCurrentState, add_noise=True)
+        # --- Action + noise decay ---
+        current_noise_std = 0.0
+        if TRAIN_MODE == 1:
+            if hasattr(mainIntersectionAgent.noise, 'std_dev'):
+                 mainIntersectionAgent.noise.std_dev = max(min_noise_std, mainIntersectionAgent.noise.std_dev * noise_decay)
+                 current_noise_std = mainIntersectionAgent.noise.std_dev
+        
+        mainAction = mainIntersectionAgent.get_action(mainCurrentState, add_noise=USE_NOISE)
         _mainIntersection_phase(mainAction)
 
         mainPrevState = mainCurrentState
         mainPrevAction = mainAction
 
-        print(f"[MAIN] Queue={np.sum(mainCurrentState * 1000.0):.1f}, Reward={mainReward:.3f}, Action={mainAction[0]:.3f}")
+        print(f"[MAIN] Queue={np.sum(raw_state):.1f}, Reward={mainReward:.3f}, Action={mainAction[0]:.3f}, Noise={current_noise_std:.3f}")
 
-    # ---- SW pedestrian crossing logic ----
+
+    # ---- SW PEDESTRIAN CROSSING ----
     swCurrentPhaseDuration -= stepLength
     if swCurrentPhaseDuration <= 0:
-        swCurrentState = _swPedXing_queue() / 1000.0
-        swReward = calculate_reward(swCurrentState * 1000.0)
+        raw_state = _swPedXing_queue()
+
+        state_mean_sw = 0.99 * state_mean_sw + 0.01 * raw_state
+        state_std_sw = 0.99 * state_std_sw + 0.01 * np.square(raw_state - state_mean_sw)
+        swCurrentState = normalize_state(raw_state, state_mean_sw, state_std_sw)
+
+        swReward = calculate_reward(raw_state) / reward_scale
         total_sw_reward += swReward
 
-        if swPrevState is not None and swPrevAction is not None:
+        if TRAIN_MODE == 1 and swPrevState is not None and swPrevAction is not None:
             done = False
             swPedXingAgent.remember(swPrevState, swPrevAction, swReward, swCurrentState, done)
 
-        swAction = swPedXingAgent.get_action(swCurrentState, add_noise=True)
+        current_noise_std = 0.0
+        if TRAIN_MODE == 1:
+            if hasattr(swPedXingAgent.noise, 'std_dev'):
+                 swPedXingAgent.noise.std_dev = max(min_noise_std, swPedXingAgent.noise.std_dev * noise_decay)
+                 current_noise_std = swPedXingAgent.noise.std_dev
+
+        swAction = swPedXingAgent.get_action(swCurrentState, add_noise=USE_NOISE)
         _swPedXing_phase(swAction)
 
         swPrevState = swCurrentState
         swPrevAction = swAction
 
-        print(f"[SW] Queue={np.sum(swCurrentState * 1000.0):.1f}, Reward={swReward:.3f}, Action={swAction[0]:.3f}")
+        print(f"[SW] Queue={np.sum(raw_state):.1f}, Reward={swReward:.3f}, Action={swAction[0]:.3f}, Noise={current_noise_std:.3f}")
 
-    # ---- SE pedestrian crossing logic ----
+
+    # ---- SE PEDESTRIAN CROSSING ----
     seCurrentPhaseDuration -= stepLength
     if seCurrentPhaseDuration <= 0:
-        seCurrentState = _sePedXing_queue() / 1000.0
-        seReward = calculate_reward(seCurrentState * 1000.0)
+        raw_state = _sePedXing_queue()
+        
+        state_mean_se = 0.99 * state_mean_se + 0.01 * raw_state
+        state_std_se = 0.99 * state_std_se + 0.01 * np.square(raw_state - state_mean_se)
+        seCurrentState = normalize_state(raw_state, state_mean_se, state_std_se)
+
+        seReward = calculate_reward(raw_state) / reward_scale
         total_se_reward += seReward
 
-        if sePrevState is not None and sePrevAction is not None:
+        if TRAIN_MODE == 1 and sePrevState is not None and sePrevAction is not None:
             done = False
             sePedXingAgent.remember(sePrevState, sePrevAction, seReward, seCurrentState, done)
 
-        seAction = sePedXingAgent.get_action(seCurrentState, add_noise=True)
+        current_noise_std = 0.0
+        if TRAIN_MODE == 1:
+            if hasattr(sePedXingAgent.noise, 'std_dev'):
+                 sePedXingAgent.noise.std_dev = max(min_noise_std, sePedXingAgent.noise.std_dev * noise_decay)
+                 current_noise_std = sePedXingAgent.noise.std_dev
+                 
+        seAction = sePedXingAgent.get_action(seCurrentState, add_noise=USE_NOISE)
         _sePedXing_phase(seAction)
 
         sePrevState = seCurrentState
         sePrevAction = seAction
 
-        print(f"[SE] Queue={np.sum(seCurrentState * 1000.0):.1f}, Reward={seReward:.3f}, Action={seAction[0]:.3f}")
+        print(f"[SE] Queue={np.sum(raw_state):.1f}, Reward={seReward:.3f}, Action={seAction[0]:.3f}, Noise={current_noise_std:.3f}")
 
-    # ---- Periodic training using replay buffer ----
-    if step_counter % TRAIN_FREQUENCY == 0:
-        # Train Main
+
+    # ---- Periodic training ----
+    if TRAIN_MODE == 1 and step_counter % TRAIN_FREQUENCY == 0:
         if len(mainIntersectionAgent.replay_buffer) >= BATCH_SIZE:
             actor_loss, critic_loss = mainIntersectionAgent.train()
-            main_actor_loss_history.append(float(actor_loss))
-            main_critic_loss_history.append(float(critic_loss))
-            main_reward_history.append(total_main_reward)
-            total_main_reward = 0
-            print(f"[TRAIN MAIN] Step={step_counter}, Actor Loss={actor_loss:.4f}, Critic Loss={critic_loss:.4f}")
-        
-        # Train SW
+            if actor_loss is not None:
+                main_actor_loss_history.append(float(actor_loss))
+                main_critic_loss_history.append(float(critic_loss))
+                main_reward_history.append(total_main_reward)
+                total_main_reward = 0
+                print(f"[TRAIN MAIN] Step={step_counter}, Actor={actor_loss:.4f}, Critic={critic_loss:.4f}")
+            else:
+                print(f"[TRAIN MAIN] Step={step_counter}, Not enough samples in buffer.")
+
+
         if len(swPedXingAgent.replay_buffer) >= BATCH_SIZE:
             actor_loss, critic_loss = swPedXingAgent.train()
-            sw_actor_loss_history.append(float(actor_loss))
-            sw_critic_loss_history.append(float(critic_loss))
-            sw_reward_history.append(total_sw_reward)
-            total_sw_reward = 0
-            print(f"[TRAIN SW] Step={step_counter}, Actor Loss={actor_loss:.4f}, Critic Loss={critic_loss:.4f}")
-        
-        # Train SE
+            if actor_loss is not None:
+                sw_actor_loss_history.append(float(actor_loss))
+                sw_critic_loss_history.append(float(critic_loss))
+                sw_reward_history.append(total_sw_reward)
+                total_sw_reward = 0
+                print(f"[TRAIN SW] Step={step_counter}, Actor={actor_loss:.4f}, Critic={critic_loss:.4f}")
+            else:
+                print(f"[TRAIN SW] Step={step_counter}, Not enough samples in buffer.")
+
         if len(sePedXingAgent.replay_buffer) >= BATCH_SIZE:
             actor_loss, critic_loss = sePedXingAgent.train()
-            se_actor_loss_history.append(float(actor_loss))
-            se_critic_loss_history.append(float(critic_loss))
-            se_reward_history.append(total_se_reward)
-            total_se_reward = 0
-            print(f"[TRAIN SE] Step={step_counter}, Actor Loss={actor_loss:.4f}, Critic Loss={critic_loss:.4f}")
+            if actor_loss is not None:
+                se_actor_loss_history.append(float(actor_loss))
+                se_critic_loss_history.append(float(critic_loss))
+                se_reward_history.append(total_se_reward)
+                total_se_reward = 0
+                print(f"[TRAIN SE] Step={step_counter}, Actor={actor_loss:.4f}, Critic={critic_loss:.4f}")
+            else:
+                print(f"[TRAIN SE] Step={step_counter}, Not enough samples in buffer.")
 
-    # Step simulation forward
     traci.simulationStep()
 
-print("\nSimulation completed!")
+print("\n Simulation completed!")
 
 # Save trained models
-print("Saving trained models...")
-try:
-    mainIntersectionAgent.save()
-    swPedXingAgent.save()
-    sePedXingAgent.save()
-    print("Models saved successfully!")
-except Exception as e:
-    print(f"[ERROR] Could not save models: {e}")
-    
-# ------- Save Replay Buffers -------
-print("Saving replay buffers...")
-try:
-    mainIntersectionAgent.save_replay_buffer()
-    swPedXingAgent.save_replay_buffer()
-    sePedXingAgent.save_replay_buffer()
-    print("Replay buffers saved successfully!")
-except Exception as e:
-    print(f"[ERROR] Could not save replay buffers: {e}")
+if TRAIN_MODE == 1:
+    print("Saving trained models...")
+    try:
+        mainIntersectionAgent.save()
+        swPedXingAgent.save()
+        sePedXingAgent.save()
+        print("Models saved successfully!")
+    except Exception as e:
+        print(f"[ERROR] Could not save models: {e}")
+        
+    # ------- Save Replay Buffers -------
+    print("Saving replay buffers...")
+    try:
+        mainIntersectionAgent.save_replay_buffer()
+        swPedXingAgent.save_replay_buffer()
+        sePedXingAgent.save_replay_buffer()
+        print("Replay buffers saved successfully!")
+    except Exception as e:
+        print(f"[ERROR] Could not save replay buffers: {e}")
 
-# Save training history
-print("Saving training history...")
-try:
-    save_history(
-        './Olivarez_traci/output_DDPG/main_ddpg_history.csv',
-        ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss'],
-        main_reward_history,
-        main_actor_loss_history,
-        main_critic_loss_history,
-        TRAIN_FREQUENCY
-    )
-    
-    save_history(
-        './Olivarez_traci/output_DDPG/sw_ddpg_history.csv',
-        ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss'],
-        sw_reward_history,
-        sw_actor_loss_history,
-        sw_critic_loss_history,
-        TRAIN_FREQUENCY
-    )
-    
-    save_history(
-        './Olivarez_traci/output_DDPG/se_ddpg_history.csv',
-        ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss'],
-        se_reward_history,
-        se_actor_loss_history,
-        se_critic_loss_history,
-        TRAIN_FREQUENCY
-    )
-    
-    print("History saved successfully!")
-except Exception as e:
-    print(f"[ERROR] Could not save history: {e}")
+    # Save training history
+    print("Saving training history...")
+    try:
+        save_history(
+            './Olivarez_traci/output_DDPG/main_ddpg_history.csv',
+            ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss'],
+            main_reward_history,
+            main_actor_loss_history,
+            main_critic_loss_history,
+            TRAIN_FREQUENCY
+        )
+        
+        save_history(
+            './Olivarez_traci/output_DDPG/sw_ddpg_history.csv',
+            ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss'],
+            sw_reward_history,
+            sw_actor_loss_history,
+            sw_critic_loss_history,
+            TRAIN_FREQUENCY
+        )
+        
+        save_history(
+            './Olivarez_traci/output_DDPG/se_ddpg_history.csv',
+            ['Step', 'Reward', 'Actor_Loss', 'Critic_Loss'],
+            se_reward_history,
+            se_actor_loss_history,
+            se_critic_loss_history,
+            TRAIN_FREQUENCY
+        )
+        
+        print("History saved successfully!")
+    except Exception as e:
+        print(f"[ERROR] Could not save history: {e}")
+else:
+    print("[INFO] Test mode complete. No models, buffers, or history saved.")
     
 
 traci.close()
