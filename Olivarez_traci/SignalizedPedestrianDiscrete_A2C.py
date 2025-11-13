@@ -11,9 +11,9 @@ import numpy as np
 import csv
 from keras.utils import to_categorical
 from models.A2C import A2CAgent as a2c
-from keras.models import load_model # Import load_model
+from keras.models import load_model
 
-# === AGENT INITIALIZATION - STATE SIZES ARE CORRECT FOR THIS COUPLED MODEL ===
+# === AGENT INITIALIZATION - OPTIMIZED FOR INTEGRATED CROSSWALK SYSTEM ===
 mainIntersectionAgent = a2c(
     state_size=26, action_size=7,  # 8 queues + 10 + 4 + 4 phases = 26
     gamma=0.99,
@@ -24,21 +24,23 @@ mainIntersectionAgent = a2c(
     name='A2C_Main_Agent'
 )
 
+# OPTIMIZED: Lower entropy for SW to encourage faster policy convergence
 swPedXingAgent = a2c(
     state_size=23, action_size=7,  # 5 queues + 10 + 4 + 4 phases = 23
     gamma=0.99,
     learning_rate=0.0005,
-    entropy_coef=0.08,
+    entropy_coef=0.04,  # LOWERED from 0.08 to 0.04
     value_coef=0.5,
     max_grad_norm=1.0,
     name='A2C_SW_PedXing_Agent'
 )
 
+# OPTIMIZED: Lower entropy for SE to encourage faster policy convergence
 sePedXingAgent = a2c(
     state_size=23, action_size=7,  # 5 queues + 10 + 4 + 4 phases = 23
     gamma=0.99,
     learning_rate=0.0005,
-    entropy_coef=0.08,
+    entropy_coef=0.04,  # LOWERED from 0.08 to 0.04
     value_coef=0.5,
     max_grad_norm=1.0,
     name='A2C_SE_PedXing_Agent'
@@ -196,7 +198,6 @@ def _weighted_waits(detector_id):
         sumWait += wait * weight_map.get(vtype, 1.0)
     return sumWait
 
-# This function is correct.
 def _mainIntersection_queue():
     e2_4 = _weighted_waits("e2_4")
     e2_5 = _weighted_waits("e2_5")
@@ -213,7 +214,6 @@ def _mainIntersection_queue():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
     return [e2_4, e2_5, e2_6, e2_7, e2_8, e2_9, e2_10, pedestrian]
 
-# This function is correct.
 def _swPedXing_queue():
     e2_0 = _weighted_waits("e2_0")
     e2_1 = _weighted_waits("e2_1")
@@ -227,7 +227,6 @@ def _swPedXing_queue():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
     return [e2_0, e2_1, e2_4, e2_5, pedestrian]
 
-# This function is correct.
 def _sePedXing_queue():
     e2_2 = _weighted_waits("e2_2")
     e2_3 = _weighted_waits("e2_3")
@@ -241,13 +240,19 @@ def _sePedXing_queue():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
     return [e2_2, e2_3, e2_6, e2_7, pedestrian]
 
-# This reward function is perfect.
-def calculate_reward(current_state_queues):
+# OPTIMIZED: Enhanced reward function with better scaling for pedestrian crossings
+def calculate_reward(current_state_queues, agent_type='main'):
     if current_state_queues is None:
         return 0.0
     
     current_total = sum(current_state_queues)
-    normalized_queue = current_total / 1000.0
+    
+    # Use different scaling for crosswalk agents to make learning signals stronger
+    if agent_type in ['sw', 'se']:
+        normalized_queue = current_total / 500.0  # More sensitive for crosswalks
+    else:
+        normalized_queue = current_total / 1000.0  # Standard for main
+    
     reward = -normalized_queue
     reward = np.clip(reward, -10.0, 0.0)
     return reward
@@ -316,28 +321,31 @@ _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
 
 print("=" * 70)
-print("Starting SYNCHRONOUS A2C Training")
+print("Starting OPTIMIZED SYNCHRONOUS A2C Training")
 print("=" * 70)
-print("Key Fix: All agents act ONLY when the MAIN agent acts.")
-print("This creates a stable, synchronous environment.")
-print("  - Main Agent is the 'master' clock.")
-print("  - SW and SE Agents are 'slaves' (act at the same time).")
-print("  - All agents train at the same time (when Main ep ends).")
+print("System: Integrated Crosswalk Control")
+print("  - Main intersection with coordinated pedestrian crossings")
+print("  - Master-slave synchronization (Main is master)")
+print("  - Optimizations:")
+print("    • SW/SE entropy reduced to 0.04 (faster convergence)")
+print("    • SW/SE reward scaling increased (stronger signals)")
+print("    • All agents see shared detectors (proper coordination)")
 print("=" * 70)
 
 # Simulation Loop
 while traci.simulation.getMinExpectedNumber() > 0:
     
-    ### --- CHANGED --- ###
-    # The timers for SW and SE are now ONLY ticked.
-    # They no longer trigger any actions.
+    # --- SAFETY BREAK ADDED HERE ---
+    current_time = traci.simulation.getTime()
+    if current_time >= 21500:
+        print("Target time reached (21500). Stopping to save stable model.")
+        break
+    # -------------------------------
+
     mainCurrentPhaseDuration -= stepLength
     swCurrentPhaseDuration -= stepLength
     seCurrentPhaseDuration -= stepLength
     
-    # === SYNCHRONOUS DECISION BLOCK (Master Clock) ===
-    # All logic is now inside the MAIN agent's timer.
-    # This is the ONLY place agents observe, act, and store.
     if mainCurrentPhaseDuration <= 0:
         
         # --- 1. GET ALL STATES (Observe) ---
@@ -366,10 +374,10 @@ while traci.simulation.getMinExpectedNumber() > 0:
             normalized_sePed_queue, main_phase, swPed_phase, sePed_phase
         ]).astype(np.float32)
         
-        # --- 2. CALCULATE REWARDS (based on current state) ---
-        mainReward = calculate_reward(main_queue)
-        swReward = calculate_reward(swPed_queue)
-        seReward = calculate_reward(sePed_queue)
+        # --- 2. CALCULATE REWARDS (with optimized scaling) ---
+        mainReward = calculate_reward(main_queue, 'main')
+        swReward = calculate_reward(swPed_queue, 'sw')
+        seReward = calculate_reward(sePed_queue, 'se')
         
         # --- 3. STORE TRANSITIONS (for previous step) ---
         if mainPrevState is not None:
@@ -436,18 +444,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
         swPrevAction = swActionIndex
         sePrevState = seCurrentState
         sePrevAction = seActionIndex
-    
-    
-    ### --- REMOVED --- ###
-    # The SW agent's decision block is GONE.
-    # if swCurrentPhaseDuration <= 0:
-    #    ... (All this logic was moved into the main block) ...
-    
-    ### --- REMOVED --- ###
-    # The SE agent's decision block is GONE.
-    # if seCurrentPhaseDuration <= 0:
-    #    ... (All this logic was moved into the main block) ...
-    
     
     traci.simulationStep()
 

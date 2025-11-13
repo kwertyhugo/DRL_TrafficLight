@@ -1,0 +1,340 @@
+{
+  "generation_info": {
+    "total_categories": 3,
+    "total_flows_all_categories": 72,
+    "categories": [
+      "heavy_traffic",
+      "moderate_traffic",
+      "light_traffic"
+    ]
+  },
+  "insertion_rate_params": {
+    "max_speed": 60,
+    "current_speed": 30,
+    "base_capacity_per_lane": 600,
+    "average_speed_ms": 8.33
+  },
+  "traffic_categories": {
+    "heavy_traffic": {
+      "description": "Heavy Traffic Conditions (Rush Hours)",
+      "periods": {
+        "morning_rush": {
+          "start": 0,
+          "end": 7200,
+          "multiplier": 1.0
+        },
+        "evening_rush": {
+          "start": 7200,
+          "end": 14400,
+          "multiplier": 1.0
+        }
+      }
+    },
+    "moderate_traffic": {
+      "description": "Moderate Traffic Conditions (Regular Hours)",
+      "periods": {
+        "midday_1": {
+          "start": 0,
+          "end": 7200,
+          "multiplier": 0.7
+        },
+        "afternoon_1": {
+          "start": 7200,
+          "end": 14400,
+          "multiplier": 0.7
+        }
+      }
+    },
+    "light_traffic": {
+      "description": "Light Traffic Conditions (Off-Peak)",
+      "periods": {
+        "early_morning": {
+          "start": 0,
+          "end": 7200,
+          "multiplier": 0.3
+        },
+        "late_evening": {
+          "start": 7200,
+          "end": 14400,
+          "multiplier": 0.3
+        }
+      }
+    }
+  },
+  "vehicle_distribution": {
+    "car": 0.413,
+    "jeep": 0.17,
+    "bus": 0.06,
+    "truck": 0.13,
+    "motorcycle": 0.1135,
+    "tricycle": 0.1135
+  },
+  "summary_by_category": {
+    "heavy_traffic": {
+      "total_flows": 24,
+      "od_pairs": 12,
+      "vehicle_types": 1,
+      "time_periods": 2,
+      "flows_by_type": {
+        "AguinaldoHighway": {
+          "count": 24,
+          "total_probability": 8.21115,
+          "total_veh_per_hour": 29560.171199999997
+        }
+      },
+      "flows_by_period": {
+        "morning_rush": {
+          "count": 12,
+          "total_probability": 4.105575,
+          "total_veh_per_hour": 14780.085600000002
+        },
+        "evening_rush": {
+          "count": 12,
+          "total_probability": 4.105575,
+          "total_veh_per_hour": 14780.085600000002
+        }
+      },
+      "flows_by_od": {
+        "zone_a_malvar_north -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.403506,
+          "total_veh_per_hour": 1452.6187199999997
+        },
+        "zone_a_malvar_north -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.403506,
+          "total_veh_per_hour": 1452.6187199999997
+        },
+        "zone_a_malvar_north -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.403506,
+          "total_veh_per_hour": 1452.6187199999997
+        },
+        "zone_b_highway_east -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.23471999999999998,
+          "total_veh_per_hour": 844.9952
+        },
+        "zone_b_highway_east -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.23471999999999998,
+          "total_veh_per_hour": 844.9952
+        },
+        "zone_b_highway_east -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.23471999999999998,
+          "total_veh_per_hour": 844.9952
+        },
+        "zone_c_malvar_south -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 1.391774,
+          "total_veh_per_hour": 5010.39504
+        },
+        "zone_c_malvar_south -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 1.391774,
+          "total_veh_per_hour": 5010.39504
+        },
+        "zone_c_malvar_south -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 1.391774,
+          "total_veh_per_hour": 5010.39504
+        },
+        "zone_d_highway_west -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.70705,
+          "total_veh_per_hour": 2545.38144
+        },
+        "zone_d_highway_west -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.70705,
+          "total_veh_per_hour": 2545.38144
+        },
+        "zone_d_highway_west -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.70705,
+          "total_veh_per_hour": 2545.38144
+        }
+      }
+    },
+    "moderate_traffic": {
+      "total_flows": 24,
+      "od_pairs": 12,
+      "vehicle_types": 1,
+      "time_periods": 2,
+      "flows_by_type": {
+        "AguinaldoHighway": {
+          "count": 24,
+          "total_probability": 5.747807999999998,
+          "total_veh_per_hour": 20692.11984000001
+        }
+      },
+      "flows_by_period": {
+        "midday_1": {
+          "count": 12,
+          "total_probability": 2.873904,
+          "total_veh_per_hour": 10346.05992
+        },
+        "afternoon_1": {
+          "count": 12,
+          "total_probability": 2.873904,
+          "total_veh_per_hour": 10346.05992
+        }
+      },
+      "flows_by_od": {
+        "zone_a_malvar_north -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.282454,
+          "total_veh_per_hour": 1016.8331039999998
+        },
+        "zone_a_malvar_north -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.282454,
+          "total_veh_per_hour": 1016.8331039999998
+        },
+        "zone_a_malvar_north -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.282454,
+          "total_veh_per_hour": 1016.8331039999998
+        },
+        "zone_b_highway_east -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.164304,
+          "total_veh_per_hour": 591.49664
+        },
+        "zone_b_highway_east -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.164304,
+          "total_veh_per_hour": 591.49664
+        },
+        "zone_b_highway_east -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.164304,
+          "total_veh_per_hour": 591.49664
+        },
+        "zone_c_malvar_south -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.9742419999999999,
+          "total_veh_per_hour": 3507.2765280000003
+        },
+        "zone_c_malvar_south -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.9742419999999999,
+          "total_veh_per_hour": 3507.2765280000003
+        },
+        "zone_c_malvar_south -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.9742419999999999,
+          "total_veh_per_hour": 3507.2765280000003
+        },
+        "zone_d_highway_west -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.494936,
+          "total_veh_per_hour": 1781.767008
+        },
+        "zone_d_highway_west -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.494936,
+          "total_veh_per_hour": 1781.767008
+        },
+        "zone_d_highway_west -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.494936,
+          "total_veh_per_hour": 1781.767008
+        }
+      }
+    },
+    "light_traffic": {
+      "total_flows": 24,
+      "od_pairs": 12,
+      "vehicle_types": 1,
+      "time_periods": 2,
+      "flows_by_type": {
+        "AguinaldoHighway": {
+          "count": 24,
+          "total_probability": 2.4633480000000003,
+          "total_veh_per_hour": 8868.05136
+        }
+      },
+      "flows_by_period": {
+        "early_morning": {
+          "count": 12,
+          "total_probability": 1.2316740000000002,
+          "total_veh_per_hour": 4434.02568
+        },
+        "late_evening": {
+          "count": 12,
+          "total_probability": 1.2316740000000002,
+          "total_veh_per_hour": 4434.02568
+        }
+      },
+      "flows_by_od": {
+        "zone_a_malvar_north -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.12105199999999999,
+          "total_veh_per_hour": 435.7856159999999
+        },
+        "zone_a_malvar_north -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.12105199999999999,
+          "total_veh_per_hour": 435.7856159999999
+        },
+        "zone_a_malvar_north -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.12105199999999999,
+          "total_veh_per_hour": 435.7856159999999
+        },
+        "zone_b_highway_east -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.070414,
+          "total_veh_per_hour": 253.49856
+        },
+        "zone_b_highway_east -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.070414,
+          "total_veh_per_hour": 253.49856
+        },
+        "zone_b_highway_east -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.070414,
+          "total_veh_per_hour": 253.49856
+        },
+        "zone_c_malvar_south -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.417534,
+          "total_veh_per_hour": 1503.118512
+        },
+        "zone_c_malvar_south -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.417534,
+          "total_veh_per_hour": 1503.118512
+        },
+        "zone_c_malvar_south -> zone_d_highway_west": {
+          "count": 2,
+          "total_probability": 0.417534,
+          "total_veh_per_hour": 1503.118512
+        },
+        "zone_d_highway_west -> zone_a_malvar_north": {
+          "count": 2,
+          "total_probability": 0.212116,
+          "total_veh_per_hour": 763.614432
+        },
+        "zone_d_highway_west -> zone_b_highway_east": {
+          "count": 2,
+          "total_probability": 0.212116,
+          "total_veh_per_hour": 763.614432
+        },
+        "zone_d_highway_west -> zone_c_malvar_south": {
+          "count": 2,
+          "total_probability": 0.212116,
+          "total_veh_per_hour": 763.614432
+        }
+      }
+    }
+  },
+  "output_files": {
+    "heavy_traffic": "c:\\Users\\Sammy\\Documents\\THESIS\\DRL_TrafficLight\\Olivarez_traci\\network\\olivarez_flows_heavy.xml",
+    "moderate_traffic": "c:\\Users\\Sammy\\Documents\\THESIS\\DRL_TrafficLight\\Olivarez_traci\\network\\olivarez_flows_moderate.xml",
+    "light_traffic": "c:\\Users\\Sammy\\Documents\\THESIS\\DRL_TrafficLight\\Olivarez_traci\\network\\olivarez_flows_light.xml"
+  }
+}

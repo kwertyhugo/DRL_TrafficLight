@@ -26,7 +26,7 @@ from pathlib import Path
 import sys
 
 # Configuration
-GOOGLE_API_KEY = 'AIzaSyDU6v_Cc1mJglRT7C-rTv6vU3JZhiBH0oM'
+GOOGLE_API_KEY = 'AIzaSyAVYU-p8hwxbqrsE-v14QwJklvKYlg5FVk'
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent
 COORD_CACHE_FILE = SCRIPT_DIR / 'edge_coordinates.json'
