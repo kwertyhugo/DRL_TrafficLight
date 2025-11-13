@@ -7,9 +7,9 @@ from keras.utils import to_categorical
 
 from models.DQN import DQNAgent as dqn
 
-mainIntersectionAgent = dqn(state_size=13, action_size=11, memory_size=2000, gamma=0.95, epsilon=1, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent_Baseline')
+mainIntersectionAgent = dqn(state_size=13, action_size=11, memory_size=2000, gamma=0.95, epsilon=0.001, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=100, name='ReLU_DQNAgent_Baseline')
 
-# mainIntersectionAgent.load()
+mainIntersectionAgent.load()
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -23,8 +23,8 @@ Sumo_config = [
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips.xml'
 ]
 
 # Simulation Variables

@@ -291,7 +291,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
             mainCurrentState = np.concatenate([normalized_main_queue, main_phase, swPed_phase, sePed_phase]).astype(np.float32)
             
             if trainMode == 1:
-                mainReward = calculate_reward(normalized_main_queue)
+                mainReward = calculate_reward(normalized_main_queue*10)
                 total_main_reward += mainReward
                 
                 if mainPrevState is not None and mainPrevAction is not None:
@@ -306,7 +306,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
             swCurrentState = np.concatenate([normalized_swPed_queue, main_phase, swPed_phase, sePed_phase]).astype(np.float32)
             
             if trainMode == 1:
-                swReward = calculate_reward(normalized_swPed_queue)
+                swReward = calculate_reward(normalized_swPed_queue*10)
                 total_sw_reward += swReward
                 
                 if swPrevState is not None and swPrevAction is not None:
@@ -321,7 +321,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
             seCurrentState = np.concatenate([normalized_sePed_queue, main_phase, swPed_phase, sePed_phase]).astype(np.float32)
             
             if trainMode == 1:
-                seReward = calculate_reward(normalized_sePed_queue)
+                seReward = calculate_reward(normalized_sePed_queue*10)
                 total_se_reward += seReward
                 
                 if sePrevState is not None and sePrevAction is not None:
