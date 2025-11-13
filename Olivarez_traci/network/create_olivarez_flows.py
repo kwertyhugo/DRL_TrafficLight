@@ -62,7 +62,7 @@ VEHICLE_DISTRIBUTION = {
 INSERTION_RATE_PARAMS = {
     'max_speed': 60,       # maximum speed in km/h (free-flowing traffic)
     'current_speed': 30,   # current average speed in km/h (adjust based on traffic conditions)
-    'base_capacity_per_lane': 1800,  # vehicles per hour per lane (base rate)
+    'base_capacity_per_lane': 600,  # vehicles per hour per lane (base rate)
     'average_speed_ms': 8.33  # average speed in m/s (30 km/h) for calculating trip duration
 }
 
