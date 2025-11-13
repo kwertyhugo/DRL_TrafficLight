@@ -1,0 +1,165 @@
+{
+  "generation_info": {
+    "total_flows": 288,
+    "od_pairs": 12,
+    "vehicle_types": 6,
+    "time_periods": 4
+  },
+  "insertion_rate_params": {
+    "max_speed": 60,
+    "current_speed": 30,
+    "capacity": 1800,
+    "average_speed_ms": 8.33
+  },
+  "period_multipliers": {
+    "peak_hour": 1.0,
+    "normal_hour": 0.6,
+    "off_peak": 0.3
+  },
+  "vehicle_distribution": {
+    "car": 0.413,
+    "jeep": 0.17,
+    "bus": 0.06,
+    "truck": 0.13,
+    "motorcycle": 0.1135,
+    "tricycle": 0.1135
+  },
+  "flows_by_type": {
+    "car": {
+      "count": 48,
+      "total_probability": 9.976836000000002,
+      "total_veh_per_hour": 35916.62759999999
+    },
+    "jeep": {
+      "count": 48,
+      "total_probability": 4.106685000000001,
+      "total_veh_per_hour": 14784.084000000008
+    },
+    "bus": {
+      "count": 48,
+      "total_probability": 1.4494199999999984,
+      "total_veh_per_hour": 5217.911999999998
+    },
+    "truck": {
+      "count": 48,
+      "total_probability": 3.1404120000000004,
+      "total_veh_per_hour": 11305.47599999999
+    },
+    "motorcycle": {
+      "count": 48,
+      "total_probability": 2.741820000000001,
+      "total_veh_per_hour": 9870.550199999992
+    },
+    "tricycle": {
+      "count": 48,
+      "total_probability": 2.741820000000001,
+      "total_veh_per_hour": 9870.550199999992
+    }
+  },
+  "flows_by_period": {
+    "morning_peak": {
+      "count": 72,
+      "total_probability": 8.330004,
+      "total_veh_per_hour": 29988.000000000004
+    },
+    "midday": {
+      "count": 72,
+      "total_probability": 4.9979999999999976,
+      "total_veh_per_hour": 17992.799999999985
+    },
+    "evening_peak": {
+      "count": 72,
+      "total_probability": 8.330004,
+      "total_veh_per_hour": 29988.000000000004
+    },
+    "night": {
+      "count": 72,
+      "total_probability": 2.4989850000000007,
+      "total_veh_per_hour": 8996.399999999992
+    }
+  },
+  "flows_by_od": {
+    "zone_a_malvar_north -> zone_b_highway_east": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_a_malvar_north -> zone_c_malvar_south": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_a_malvar_north -> zone_d_highway_west": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_b_highway_east -> zone_a_malvar_north": {
+      "count": 24,
+      "total_probability": 2.013082,
+      "total_veh_per_hour": 7247.099999999997
+    },
+    "zone_b_highway_east -> zone_c_malvar_south": {
+      "count": 24,
+      "total_probability": 2.013082,
+      "total_veh_per_hour": 7247.099999999997
+    },
+    "zone_b_highway_east -> zone_d_highway_west": {
+      "count": 24,
+      "total_probability": 2.013082,
+      "total_veh_per_hour": 7247.099999999997
+    },
+    "zone_c_malvar_south -> zone_a_malvar_north": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_c_malvar_south -> zone_b_highway_east": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_c_malvar_south -> zone_d_highway_west": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_d_highway_west -> zone_a_malvar_north": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_d_highway_west -> zone_b_highway_east": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    },
+    "zone_d_highway_west -> zone_c_malvar_south": {
+      "count": 24,
+      "total_probability": 2.013083,
+      "total_veh_per_hour": 7247.0999999999985
+    }
+  },
+  "time_periods": {
+    "morning_peak": {
+      "start": 0,
+      "end": 3600,
+      "rate_type": "peak_hour"
+    },
+    "midday": {
+      "start": 3600,
+      "end": 7200,
+      "rate_type": "normal_hour"
+    },
+    "evening_peak": {
+      "start": 7200,
+      "end": 10800,
+      "rate_type": "peak_hour"
+    },
+    "night": {
+      "start": 10800,
+      "end": 14400,
+      "rate_type": "off_peak"
+    }
+  }
+}

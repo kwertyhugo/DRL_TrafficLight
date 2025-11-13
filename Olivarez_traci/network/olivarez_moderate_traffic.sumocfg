@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- SUMO Configuration for Olivarez Intersection - MODERATE TRAFFIC SCENARIO -->
+<!-- Generated for DRL Traffic Light Control with moderate traffic conditions (regular hours) -->
+
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <!-- Network file -->
+        <net-file value="../network/map.net.xml"/>
+        
+        <!-- Moderate traffic flow file -->
+        <route-files value="olivarez_flows_moderate.xml"/>
+        
+        <!-- Additional files -->
+        <additional-files value="traffic.taz.xml,../additionals/detectors.add.xml,../additionals/map.poly.xml"/>
+    </input>
+
+    <output>
+        <!-- Simulation output with moderate traffic prefix -->
+        <output-prefix value="moderate_traffic_"/>
+        
+        <!-- Vehicle trip information -->
+        <tripinfo-output value="tripinfo.xml"/>
+        
+        <!-- Summary statistics -->
+        <summary-output value="summary.xml"/>
+        
+        <!-- Vehicle emissions -->
+        <emission-output value="emissions.xml"/>
+    </output>
+
+    <time>
+        <!-- Simulation time: 4 hours (14400 seconds) -->
+        <begin value="0"/>
+        <end value="14400"/>
+        
+        <!-- Time step -->
+        <step-length value="1"/>
+    </time>
+
+    <processing>
+        <!-- Routing options -->
+        <routing-algorithm value="dijkstra"/>
+        
+        <!-- Ignore route errors for robustness -->
+        <ignore-route-errors value="true"/>
+        
+        <!-- Lane changing model -->
+        <lanechange.duration value="3"/>
+    </processing>
+
+    <routing>
+        <!-- Enable routing for flows -->
+        <device.rerouting.adaptation-steps value="18"/>
+        <device.rerouting.adaptation-interval value="10"/>
+    </routing>
+
+    <report>
+        <!-- Reduce verbosity -->
+        <verbose value="true"/>
+        <duration-log.statistics value="true"/>
+        
+        <!-- Suppress warnings for incomplete routes -->
+        <no-warnings value="false"/>
+    </report>
+
+    <random>
+        <!-- Set random seed for reproducible results -->
+        <seed value="23456"/>
+    </random>
+
+    <gui_only>
+        <!-- GUI settings (when using sumo-gui) -->
+        <start value="true"/>
+    </gui_only>
+
+</sumoConfiguration>
