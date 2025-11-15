@@ -1,3 +1,7 @@
+<!-- 
+    TRIES TO SIMULATE MORNING RUSH HOUR
+ -->
+
 <city>
 
     <general 
@@ -5,19 +9,19 @@
         households="2200"          
         childrenAgeLimit="18"      
         retirementAgeLimit="65"    
-        carRate="0"              
+        carRate="0.12"              
         unemploymentRate="0.038"    
-        footDistanceLimit="300"    
-        incomingTraffic="10000"      
-        outgoingTraffic="5000"      
+        footDistanceLimit="500"    
+        incomingTraffic="100"      
+        outgoingTraffic="500"      
     />
 
     <parameters 
-        carPreference="0"         
-        meanTimePerKmInCity="0"   
-        freeTimeActivityRate="0"  
-        uniformRandomTraffic="0"  
-        departureVariation="0"    
+        carPreference="1"         
+        meanTimePerKmInCity="360"   
+        freeTimeActivityRate="0.15"  
+        uniformRandomTraffic="0.05"  
+        departureVariation="600"    
     />
 
     <population>
