@@ -11,7 +11,7 @@
             probability="0.413"
             guiShape="passenger"/>
 
-        <vType id="jeep" vClass="passenger" 
+        <vType id="jeep" vClass="bus" 
             probability="0.17"
             guiShape="passenger/van" 
             length="8" 
