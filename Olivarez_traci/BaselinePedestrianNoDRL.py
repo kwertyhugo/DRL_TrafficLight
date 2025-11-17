@@ -10,17 +10,19 @@ else:
 
 Sumo_config = [
     'sumo',
-    '-c', r'Olivarez_traci\signalizedPed.sumocfg',
+    '-c', r'Olivarez_traci\baselinePed.sumocfg',
     '--step-length', '0.1',
-    '--delay', '0',
+    '--delay', '20',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_NoDRL\SP_NoDRL_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_NoDRL\SP_NoDRL_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_NoDRL\BP_NoDRL_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_NoDRL\BP_NoDRL_trips.xml'
 ]
 
 traci.start(Sumo_config)
 
-while traci.simulation.getMinExpectedNumber() > 0:    
+steps = 0
+while steps < 7000:    
+    steps += 0.1
     traci.simulationStep()
 
 traci.close()
