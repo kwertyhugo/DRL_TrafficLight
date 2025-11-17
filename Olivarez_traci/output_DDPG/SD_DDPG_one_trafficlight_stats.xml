@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-11-13 18:39:23 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2025-11-17 14:04:56 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="Olivarez_traci\network/map.net.xml"/>
-        <route-files value="Olivarez_traci\demand/demand.rou.xml"/>
+        <route-files value="Olivarez_traci\demand/activitygen-example.trips.rou.xml"/>
         <additional-files value="Olivarez_traci\additionals/map.poly.xml,Olivarez_traci\ additionals/detectors.add.xml"/>
     </input>
 
@@ -22,9 +22,6 @@
 
     <processing>
         <lateral-resolution value="0.1"/>
-        <collision.action value="none"/>
-        <collision.check-junctions value="false"/>
-        <collision.mingap-factor value="0"/>
     </processing>
 
     <report>
@@ -32,7 +29,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="64691"/>
+        <remote-port value="55783"/>
     </traci_server>
 
     <gui_only>
