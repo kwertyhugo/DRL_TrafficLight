@@ -16,7 +16,7 @@
     />
 
     <parameters 
-        carPreference="1"         
+        carPreference="0"         
         meanTimePerKmInCity="360"   
         freeTimeActivityRate="0.15" 
         uniformRandomTraffic="0.05"  
@@ -30,23 +30,36 @@
     </population>
 
     <workHours>
-        <opening hour= "1800"   proportion="0.021" /> <!-- 5 am -->
+        <opening hour= "1800"   proportion="0.023" /> <!-- 5 am -->
         <opening hour= "5400"   proportion="0.136" /> <!-- 6 am -->
         <opening hour= "9000"   proportion="0.341" /> <!-- 7 am -->
         <opening hour="12600"   proportion="0.341" /> <!-- 8 am -->
-        <opening hour="16200"   proportion="0.157" /> <!-- 9 am -->
+        <opening hour="16200"   proportion="0.159" /> <!-- 9 am -->
+
+        <closing hour="34200"   proportion="0.023" /> <!-- 2 am -->
+        <closing hour="37800"   proportion="0.136" /> <!-- 3 am -->
+        <closing hour="41400"   proportion="0.341" /> <!-- 4 am -->
+        <closing hour="45000"   proportion="0.341" /> <!-- 5 am -->
+        <closing hour="48600"   proportion="0.159" /> <!-- 6 am -->
     </workHours>
 
     <streets>
         <street edge="777627654" workPosition="6" />
-        <street edge="1109747832" population="1200" workPosition="20" />
+        <street edge="793339796#1" population="1200" workPosition="20" />
     </streets>
 
     <cityGates>
-        <entrance edge="140483224#0" pos="1000" incoming="0.5" outgoing="0.5" />
-        <entrance edge="-793339796#2" pos="70" incoming="0.5" outgoing="0.5" />
-        <entrance edge="-361260925#2" pos="30" incoming="0.5" outgoing="0.5" />
-        <entrance edge="440471861#0" pos="30" incoming="0.5" outgoing="0.5" />
+        <entrance edge="140483224#0" pos="0" incoming="1" outgoing="1"/>
+        <entrance edge="-140483224#0" pos="1075.84" incoming="1" outgoing="1"/>
+
+        <entrance edge="793339796#3" pos="232.25" incoming="0" outgoing="1"/>
+        <entrance edge="-793339796#3" pos="0" incoming="1" outgoing="0"/>
+
+        <entrance edge="361260924" pos="30" incoming="0" outgoing="1"/>
+        <entrance edge="361257727#0" pos="30" incoming="1" outgoing="0"/>
+
+        <entrance edge="440471861#0" pos="30" incoming="1" outgoing="0" />
+        <entrance edge="-440471861#0" pos="30" incoming="0" outgoing="1" />
     </cityGates>
 
     <schools>

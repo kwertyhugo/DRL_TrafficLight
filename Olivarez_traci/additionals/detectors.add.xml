@@ -12,8 +12,8 @@
     <laneAreaDetector id="e2_3" lanes="777627649#1_2 1119486605_2 361256298#0_2" pos="1.00" endPos="16.10" period="300.00" file="e2_3.xml"/>
     <laneAreaDetector id="e2_4" lanes="140483224#12_1 1119486610#0_1 1119486610#1_1 1119486610#2_1 777627656_1" pos="44.00" endPos="5.40" period="300.00" file="e2_4.xml"/>
     <laneAreaDetector id="e2_5" lanes="140483224#12_2 1119486610#0_2 1119486610#1_2 1119486610#2_2 777627656_2" pos="44.00" endPos="5.40" period="300.00" file="e2_5.xml"/>
-    <laneAreaDetector id="e2_6" lanes="-361256298#0_2 -1119486605_2 -777627649#1_2" pos="31.00" endPos="30.00" period="300.00" file="e2_6.xml"/>
-    <laneAreaDetector id="e2_7" lanes="-361256298#0_1 -1119486605_1 -777627649#1_1" pos="31.00" endPos="30.00" period="300.00" file="e2_7.xml"/>
+    <laneAreaDetector id="e2_6" lanes="-361256298#0_2 -1119486605_2 -777627649#1_2" pos="31.00" endPos="29.21" period="300.00" file="e2_6.xml"/>
+    <laneAreaDetector id="e2_7" lanes="-361256298#0_1 -1119486605_1 -777627649#1_1" pos="31.00" endPos="29.21" period="300.00" file="e2_7.xml"/>
     <laneAreaDetector id="e2_8" lanes="-939610874_1 -140483171#1_1" pos="26.14" endPos="44.40" period="300.00" file="e2_8.xml"/>
     <laneAreaDetector id="e2_9" lanes="440471861#6_1 440471861#7_1 440471861#8_1" pos="93.00" endPos="23.00" period="300.00" file="e2_9.xml"/>
 </additional>
