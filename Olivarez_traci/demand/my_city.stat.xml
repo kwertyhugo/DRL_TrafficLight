@@ -57,30 +57,33 @@
     </schools>
 
     <busStations>
-        <busStation id="centralMall" edge="1119486607" pos="0" />
-        <busStation id="olivarezToGMA" edge="894583375" pos="0" />
-        <busStation id="biñanTerminalR" edge="361257727#0" pos="0" />
-        <busStation id="biñanTerminalL" edge="-145894807#0" pos="260.9" />
-        <busStation id="toCavite" edge="-140483224#0" pos="1075.8" />
-        <busStation id="fromCavite" edge="140483224#0" pos="0" />
+        <busStation id="1" edge="1119486607" pos="0" />
+        <busStation id="2" edge="894583375" pos="0" />
+        <busStation id="17" edge="1119486610#0" pos="0" />
+        <busStation id="3" edge="361257727#0" pos="0" />
+        <busStation id="4" edge="-145894807#0" pos="260.9" />
+        <busStation id="5" edge="-140483224#0" pos="1075.8" />
+        <busStation id="6" edge="140483224#0" pos="0" />
 
-        <busStation id="toPacita" edge="-440471861#0" pos="31.4" />
-        <busStation id="fromPacita" edge="440471861#0" pos="0" />
-        <busStation id="binanhighwayT" edge="-361256298#0" pos="0" />
-        <busStation id="binanhighwayB" edge="361256298#0" pos="0" />
-        <busStation id="perpsT" edge="-793339796#1" pos="0" />
-        <busStation id="perpsB" edge="793339796#1" pos="0" />
-        <busStation id="toStaRosa" edge="793339796#3" pos="232.2" />
-        <busStation id="fromStaRosa" edge="-793339796#3" pos="0" />
+        <busStation id="7" edge="-440471861#0" pos="31.4" />
+        <busStation id="8" edge="440471861#0" pos="0" />
+        <busStation id="9" edge="-440471861#5" pos="40" />
+        <busStation id="10" edge="440471861#5" pos="40" />
+        <busStation id="11" edge="-361256298#0" pos="0" />
+        <busStation id="12" edge="361256298#0" pos="0" />
+        <busStation id="13" edge="-793339796#1" pos="0" />
+        <busStation id="14" edge="793339796#1" pos="0" />
+        <busStation id="15" edge="793339796#3" pos="232.2" />
+        <busStation id="16" edge="-793339796#3" pos="0" />
     </busStations>
 
     <busLines>
         <busLine id="OlitoCarmona" maxTripDuration="3600">
             <stations>
-                <station refId="centralMall" />
+                <station refId="1" />
             </stations>
             <revStations>
-                <station refId="toCavite" />
+                <station refId="5" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="1200" />
@@ -88,10 +91,10 @@
         </busLine>
         <busLine id="CarmonatoOli" maxTripDuration="3600">
             <stations>
-                <station refId="fromCavite" />
+                <station refId="6" />
             </stations>
             <revStations>
-                <station refId="centralMall" />
+                <station refId="1" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="1200" />
@@ -100,10 +103,10 @@
 
         <busLine id="OlitoGMA" maxTripDuration="3600">
             <stations>
-                <station refId="olivarezToGMA" />
+                <station refId="2" />
             </stations>
             <revStations>
-                <station refId="toCavite" />
+                <station refId="5" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="1200" />
@@ -111,68 +114,74 @@
         </busLine>
         <busLine id="GMAtoOli" maxTripDuration="3600">
             <stations>
-                <station refId="fromCavite" />
+                <station refId="6" />
             </stations>
             <revStations>
-                <station refId="olivarezToGMA" />
+                <station refId="17" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="1200" />
             </frequencies>
         </busLine>
         
-        <busLine id="GMACARtoBinan" maxTripDuration="3600">
+        <busLine id="BinantoGMACAR" maxTripDuration="3600">
             <stations>
-                <station refId="biñanTerminalR" />
+                <station refId="3" />
             </stations>
             <revStations>
-                <station refId="toCavite" />
+                <station refId="5" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="600" />
             </frequencies>
         </busLine>
-        <busLine id="BinantoGMACAR" maxTripDuration="3600">
+        <busLine id="GMACARtoBinan" maxTripDuration="3600">
             <stations>
-                <station refId="fromCavite" />
+                <station refId="6" />
             </stations>
             <revStations>
-                <station refId="biñanTerminalL" />
+                <station refId="4" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="600" />
             </frequencies>
         </busLine>
 
-        <busLine id="PacitatoStaRosa" maxTripDuration="3600">
+        <busLine id="PacitaToStaRosa" maxTripDuration="3600">
             <stations>
-                <station refId="fromPacita" />
+                <station refId="8" />
             </stations>
             <revStations>
-                <station refId="binanhighwayB" />
+                <station refId="10" />
             </revStations>
             <revStations>
-                <station refId="perpsB" />
+                <station refId="12" />
             </revStations>
             <revStations>
-                <station refId="toStaRosa" />
+                <station refId="14" />
+            </revStations>
+            <revStations>
+                <station refId="15" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="300" />
             </frequencies>
         </busLine>
-        <busLine id="StaRosatoPacita" maxTripDuration="3600">
+        <busLine id="StaRosaToPacita" maxTripDuration="3600">
             <stations>
-                <station refId="fromStaRosa" />
+                <station refId="16" />
             </stations>
             <revStations>
-                <station refId="perpsT" />
+                <station refId="13" />
             </revStations>
             <revStations>
-                <station refId="binanhighwayT" />
+                <station refId="11" />
             </revStations>
             <revStations>
-                <station refId="toPacita" />
+                <station refId="9" />
+            </revStations>
+            <revStations>
+                <station refId="7" />
             </revStations>
             <frequencies>
                 <frequency begin="0" end="64800" rate="300" />
