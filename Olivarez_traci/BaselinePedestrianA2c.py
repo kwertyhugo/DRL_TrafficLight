@@ -56,7 +56,7 @@ tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
 sys.path.append(tools)
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', r'Olivarez_traci\baselinePed.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',

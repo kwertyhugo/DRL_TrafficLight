@@ -410,8 +410,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
             main_episode_steps.append(mainEpisodeNumber)
             raw_queue_total = sum(main_queue)
             print(f"[MAIN Ep {mainEpisodeNumber:3d}] EpisodeRwd: {total_reward:7.3f} | "
-                  f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
-                  f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/8:7.1f}")
+                f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
+                f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/8:7.1f}")
             
             # Train SW
             actor_loss, critic_loss, entropy, total_reward = swPedXingAgent.train_on_episode()
@@ -422,8 +422,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
             sw_episode_steps.append(swEpisodeNumber)
             raw_queue_total = sum(swPed_queue)
             print(f"[SW   Ep {swEpisodeNumber:3d}] EpisodeRwd: {total_reward:7.3f} | "
-                  f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
-                  f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/5:7.1f}")
+                f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
+                f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/5:7.1f}")
             
             # Train SE
             actor_loss, critic_loss, entropy, total_reward = sePedXingAgent.train_on_episode()
