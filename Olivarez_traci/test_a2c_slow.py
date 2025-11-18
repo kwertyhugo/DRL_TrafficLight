@@ -82,6 +82,9 @@ Sumo_config = [
     'sumo',
     '-c', r'Olivarez_traci\signalizedPed.sumocfg',
     '--route-files', r'Olivarez_traci\demand\flows_slow_traffic.rou.xml',
+    '--step-length', '0.1',
+    '--delay', '0',
+    '--lateral-resolution', '0.1',
     '--statistic-output', r'Olivarez_traci\output_A2C\SP_A2C_Slow_stats.xml',
     '--tripinfo-output', r'Olivarez_traci\output_A2C\SP_A2C_Slow_trips.xml'
 ]
@@ -121,7 +124,7 @@ def _weighted_waits(detector_id):
         return 0
     
     weight_map = {"car": 1.0, "jeep": 1.5, "bus": 2.2, 
-                "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
+                  "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
     
     for data in vehicle_data.values():
         vtype = data.get(traci.constants.VAR_TYPE, "car")
@@ -237,7 +240,10 @@ print("=" * 70 + "\n")
 
 # === TEST LOOP ===
 step_count = 0
-while traci.simulation.getMinExpectedNumber() > 0:
+sim_step_count = 0
+max_sim_steps = 50000
+
+while traci.simulation.getMinExpectedNumber() > 0 and sim_step_count < max_sim_steps:
     
     mainCurrentPhaseDuration -= stepLength
     swCurrentPhaseDuration -= stepLength
@@ -288,17 +294,24 @@ while traci.simulation.getMinExpectedNumber() > 0:
             print(f"[Step {step_count:5d}] Time: {sim_time:7.1f}s | "
                   f"Main Queue: {sum(main_queue):7.1f} | "
                   f"SW Queue: {sum(swPed_queue):6.1f} | "
-                  f"SE Queue: {sum(sePed_queue):6.1f}")
+                  f"SE Queue: {sum(sePed_queue):6.1f} | SimStep: {sim_step_count}")
         
         step_count += 1
     
     traci.simulationStep()
+    sim_step_count += 1
+    
+    # Force stop at limit
+    if sim_step_count >= max_sim_steps:
+        print(f"\nReached simulation step limit ({max_sim_steps}). Stopping.")
+        break
 
 # === CLOSE SIMULATION ===
 print("\n" + "=" * 70)
 print("TEST COMPLETE!")
 print("=" * 70)
-print(f"Total steps executed: {step_count}")
+print(f"Total decision steps executed: {step_count}")
+print(f"Total simulation steps executed: {sim_step_count}")
 print(f"\nOutput files saved:")
 print(f"  - Statistics: Olivarez_traci/output_A2C/SP_A2C_Slow_stats.xml")
 print(f"  - Trip Info: Olivarez_traci/output_A2C/SP_A2C_Slow_trips.xml")
