@@ -140,7 +140,10 @@ print("=" * 70 + "\n")
 
 # === TEST LOOP ===
 step_count = 0
-while traci.simulation.getMinExpectedNumber() > 0:
+sim_step_count = 0
+max_sim_steps = 50000
+
+while traci.simulation.getMinExpectedNumber() > 0 and sim_step_count < max_sim_steps:
     
     mainCurrentPhaseDuration -= stepLength
     
@@ -160,21 +163,28 @@ while traci.simulation.getMinExpectedNumber() > 0:
         # Apply action
         _mainIntersection_phase(mainActionIndex)
         
-        # Print progress every 100 steps
+        # Print progress every 100 decision steps
         if step_count % 100 == 0:
             sim_time = traci.simulation.getTime()
             print(f"[Step {step_count:5d}] Time: {sim_time:7.1f}s | "
-                f"Queue Total: {sum(main_queue):7.1f}")
+                  f"Queue Total: {sum(main_queue):7.1f} | SimStep: {sim_step_count}")
         
         step_count += 1
     
     traci.simulationStep()
+    sim_step_count += 1
+    
+    # Force stop at limit
+    if sim_step_count >= max_sim_steps:
+        print(f"\nReached simulation step limit ({max_sim_steps}). Stopping.")
+        break
 
 # === CLOSE SIMULATION ===
 print("\n" + "=" * 70)
 print("TEST COMPLETE!")
 print("=" * 70)
-print(f"Total steps executed: {step_count}")
+print(f"Total decision steps executed: {step_count}")
+print(f"Total simulation steps executed: {sim_step_count}")
 print(f"\nOutput files saved:")
 print(f"  - Statistics: Olivarez_traci/output_A2C_Baseline/SP_A2C_Baseline_Jam_stats.xml")
 print(f"  - Trip Info: Olivarez_traci/output_A2C_Baseline/SP_A2C_Baseline_Jam_trips.xml")
