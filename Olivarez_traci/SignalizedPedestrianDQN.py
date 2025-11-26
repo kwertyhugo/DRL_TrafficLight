@@ -22,7 +22,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', 'Olivarez_traci\signalizedPed.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
@@ -32,7 +32,7 @@ Sumo_config = [
 ]
 
 # Simulation Variables
-trainMode = 0
+trainMode = 1
 stepLength = 0.05
 mainCurrentPhase = 0
 mainCurrentPhaseDuration = 30
@@ -276,7 +276,7 @@ sePed_phase = to_categorical(seCurrentPhase//2, num_classes=2).flatten()
 
 
 # Simulation Loop
-while traci.simulation.getMinExpectedNumber() > 0:
+while step_counter < 140000:
     step_counter += 1
     mainCurrentPhaseDuration -= stepLength
     swCurrentPhaseDuration -= stepLength
