@@ -5651,16 +5651,16 @@
         <phase duration="5"  state="r"/>
     </tlLogic>
     <tlLogic id="cluster_295373794_3477931123_7465167861" type="static" programID="0" offset="0">
-        <phase duration="30" state="rrrrrrrrrrGGGrrrrrrr"/>
-        <phase duration="5"  state="rrrrrryyrryyyrrrrrry"/>
-        <phase duration="30" state="rrrrrrGGrrrrrrrrrrrG"/>
-        <phase duration="5"  state="rrrrryGGyrrrrrrrrrry"/>
-        <phase duration="30" state="rrrrrGGGGrrrrrrrrrrr"/>
-        <phase duration="5"  state="yyyyryyyyrrrrrrrrrrr"/>
-        <phase duration="30" state="GGGGrrrrrrrrrrrrrrrr"/>
-        <phase duration="5"  state="yyyyrrrrrrrrrryyyyrr"/>
-        <phase duration="30" state="rrrrrrrrrrrrrrGGGGrr"/>
-        <phase duration="5"  state="rrrrrrrrrryyyryyyyrr"/>
+        <phase duration="30" state="rrrrrrrrGGGrrrrr"/>
+        <phase duration="5"  state="rrrrryyrGyyrrrry"/>
+        <phase duration="20" state="rrrrrGGrGrrrrrrG"/>
+        <phase duration="5"  state="rrrryGGyyrrrrrry"/>
+        <phase duration="30" state="rrrrGGGGrrrrrrrr"/>
+        <phase duration="5"  state="yyyyyyyyrrrrrrrr"/>
+        <phase duration="30" state="GGGGrrrrrrrrrrrr"/>
+        <phase duration="5"  state="yyyyrrrrrrryyyyr"/>
+        <phase duration="30" state="rrrrrrrrrrrGGGGr"/>
+        <phase duration="5"  state="rrrrrrrryyyyyyyr"/>
     </tlLogic>
 
     <junction id="10055679231" type="priority" x="1832.77" y="950.85" incLanes="1098227082_0" intLanes=":10055679231_0_0" shape="1832.77,950.85 1830.22,948.91 1832.77,950.85">

@@ -9,7 +9,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', r'Olivarez_traci\signalizedPed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',

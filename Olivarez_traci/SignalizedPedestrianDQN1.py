@@ -21,7 +21,7 @@ Sumo_config = [
     'sumo-gui',
     '-c', 'Olivarez_traci\signalizedPed.sumocfg',
     '--step-length', '0.05',
-    '--delay', '0',
+    '--delay', '100',
     '--lateral-resolution', '0.1',
     '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats.xml',
     '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips.xml'
@@ -157,10 +157,10 @@ def _trafficLight_phase(action_index):
         phase_duration = 5
     else:
         duration_adjustment = actionSpace[action_index]
-        if currentPhase == 2 or currentPhase == 4:
-            base_duration = 20
-        else:
+        if currentPhase != 2:
             base_duration = 30
+        else:
+            base_duration = 20
         
         phase_duration = max(5, min(60, base_duration + duration_adjustment))
     
