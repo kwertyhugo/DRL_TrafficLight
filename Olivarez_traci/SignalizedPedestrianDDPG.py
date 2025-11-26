@@ -12,7 +12,7 @@ from models.DDPG import DDPGAgent as ddpg
 # --- TRAIN/TEST TOGGLE ---
 # 1 = Train (collect experience, update models, save models, decay noise)
 # 0 = Test (load models, no noise, no updates, no saving)
-TRAIN_MODE = 1
+TRAIN_MODE = 0
 # -------------------------
 
 # --- NEW STABILITY FEATURES ---
@@ -115,7 +115,7 @@ else:
 # Build sumo command
 sumo_cfg_path = os.path.join('Olivarez_traci', 'signalizedPed.sumocfg')
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', sumo_cfg_path,
     '--step-length', '0.05',
     '--delay', '0',
@@ -437,7 +437,7 @@ print("Starting simulation loop...")
 # Flag for whether to use exploration noise
 USE_NOISE = (TRAIN_MODE == 1)
 
-while traci.simulation.getMinExpectedNumber() > 0:
+while step_counter < 140000:
     step_counter += 1
 
     # ---- MAIN INTERSECTION ----

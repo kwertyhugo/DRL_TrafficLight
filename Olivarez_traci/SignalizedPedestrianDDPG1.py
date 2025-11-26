@@ -27,7 +27,7 @@ action_high = np.array([1.0], dtype=np.float32)
 # --- TRAIN/TEST TOGGLE ---
 # 1 = Train (collect experience, update models, save models, decay noise)
 # 0 = Test (load models, no noise, no updates, no saving)
-TRAIN_MODE = 1
+TRAIN_MODE = 0
 # -------------------------
 
 # Create agents with proper state sizes
@@ -71,9 +71,9 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 # Build sumo command
-sumo_cfg_path = os.path.join('Olivarez_traci', 'signalizedPed.sumocfg')
+sumo_cfg_path = os.path.join('Olivarez_traci', 'baselinePed.sumocfg')
 Sumo_config = [
-    'sumo', # Use 'sumo' (no GUI) for fast training
+    'sumo-gui', # Use 'sumo' (no GUI) for fast training
     '-c', sumo_cfg_path,
     '--step-length', '0.05',
     '--delay', '0',
@@ -299,7 +299,7 @@ print("Starting simulation loop...")
 # Flag for whether to use exploration noise
 USE_NOISE = (TRAIN_MODE == 1)
 
-while traci.simulation.getMinExpectedNumber() > 0:
+while step_counter < 90000:
     step_counter += 1
 
     # ---- Main intersection logic ----
