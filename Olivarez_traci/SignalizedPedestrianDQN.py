@@ -7,9 +7,9 @@ from keras.utils import to_categorical
 
 from models.DQN import DQNAgent as dqn
 
-mainIntersectionAgent = dqn(state_size=17, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent')
-swPedXingAgent = dqn(state_size=14, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=500, name='SW_PedXing_Agent')
-sePedXingAgent = dqn(state_size=14, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=500, name='SE_PedXing_Agent')
+mainIntersectionAgent = dqn(state_size=17, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent')
+swPedXingAgent = dqn(state_size=14, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=500, name='SW_PedXing_Agent')
+sePedXingAgent = dqn(state_size=14, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=500, name='SE_PedXing_Agent')
 
 mainIntersectionAgent.load()
 swPedXingAgent.load()
@@ -22,7 +22,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', 'Olivarez_traci\signalizedPed.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',
