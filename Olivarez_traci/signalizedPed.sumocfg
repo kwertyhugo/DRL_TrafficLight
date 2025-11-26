@@ -8,7 +8,7 @@
 
     <input>
         <net-file value="network/map.net.xml"/>
-        <route-files value="demand/flows_normal_traffic.rou.xml"/>
+        <route-files value="demand/flows_traffic_jam.rou.xml"/>
         <additional-files value="additionals/map.poly.xml, additionals/detectors.add.xml"/>
     </input>
 
