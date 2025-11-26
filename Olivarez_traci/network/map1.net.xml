@@ -5622,15 +5622,27 @@
     </edge>
 
     <tlLogic id="3285696417" type="static" programID="0" offset="0">
-        <phase duration="30" state="GGggGGr"/>
-        <phase duration="5"  state="yyggyyy"/>
-        <phase duration="30" state="rrggrrG"/>
-        <phase duration="5"  state="yyggyyy"/>
+        <phase duration="30" state="rrgrrrG"/>
+        <phase duration="5"  state="yygyyyy"/>
+        <phase duration="30" state="GGgGGGr"/> 
+        <phase duration="5"  state="GGgGGGr"/>
+        <phase duration="30" state="GGgGGGr"/>
+        <phase duration="5"  state="yygyyyy"/>
+        <phase duration="30" state="rrgrrrG"/>
+        <phase duration="5"  state="yygyyyy"/>
+        <phase duration="30" state="GGgGGGr"/>
+        <phase duration="5"  state="yygyyyy"/>
     </tlLogic>
     <tlLogic id="6401523012" type="static" programID="0" offset="0">
         <phase duration="30" state="GGGGr"/>
         <phase duration="5"  state="yyyyy"/>
         <phase duration="30" state="rrrrG"/>
+        <phase duration="5"  state="yyyyy"/>
+        <phase duration="30" state="GGGGr"/>
+        <phase duration="5"  state="yyyyy"/>
+        <phase duration="30" state="rrrrG"/>
+        <phase duration="5"  state="yyyyy"/>
+        <phase duration="30" state="GGGGr"/>
         <phase duration="5"  state="yyyyy"/>
     </tlLogic>
     <tlLogic id="660909495" type="static" programID="0" offset="0">
@@ -5640,9 +5652,9 @@
     </tlLogic>
     <tlLogic id="cluster_295373794_3477931123_7465167861" type="static" programID="0" offset="0">
         <phase duration="30" state="rrrrrrrrrrGGGrrrrrrr"/>
-        <phase duration="5"  state="rrrrrryyyryyyrrrrrry"/>
-        <phase duration="30" state="rrrrrrGGGrrrrrrrrrrG"/>
-        <phase duration="5"  state="rrrrrrGGGrrrrrrrrrry"/>
+        <phase duration="5"  state="rrrrrryyrryyyrrrrrry"/>
+        <phase duration="30" state="rrrrrrGGrrrrrrrrrrrG"/>
+        <phase duration="5"  state="rrrrryGGyrrrrrrrrrry"/>
         <phase duration="30" state="rrrrrGGGGrrrrrrrrrrr"/>
         <phase duration="5"  state="yyyyryyyyrrrrrrrrrrr"/>
         <phase duration="30" state="GGGGrrrrrrrrrrrrrrrr"/>
