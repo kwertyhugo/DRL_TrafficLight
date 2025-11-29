@@ -87,13 +87,12 @@ if TRAIN_MODE == 0:
     print("[INFO] TEST_MODE: Loading weights for testing.")
 else:
     # TRAIN MODE: Start fresh
-    # mainIntersectionAgent.load() # Uncomment to resume training
-    # swPedXingAgent.load()
-    # sePedXingAgent.load()
-    # mainIntersectionAgent.load_replay_buffer() # Uncomment to resume training
-    # swPedXingAgent.load_replay_buffer()
-    # sePedXingAgent.load_replay_buffer()
-    print("[INFO] TRAIN_MODE: Starting a fresh training run. Old weights/buffers will NOT be loaded.")
+    mainIntersectionAgent.load() # Uncomment to resume training
+    swPedXingAgent.load()
+    sePedXingAgent.load()
+    mainIntersectionAgent.load_replay_buffer() # Uncomment to resume training
+    swPedXingAgent.load_replay_buffer()
+    sePedXingAgent.load_replay_buffer()
 # ----------------------
 
 
@@ -115,7 +114,7 @@ else:
 # Build sumo command
 sumo_cfg_path = os.path.join('Olivarez_traci', 'signalizedPed.sumocfg')
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', sumo_cfg_path,
     '--step-length', '0.05',
     '--delay', '0',
@@ -341,7 +340,7 @@ def _swPedXing_phase(action):
     """Apply continuous action to SW pedestrian crossing phase duration"""
     global swCurrentPhase, swCurrentPhaseDuration
 
-    swCurrentPhase = (swCurrentPhase + 1) % 4
+    swCurrentPhase = (swCurrentPhase + 1) % 10
     duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 5.0)
 
     if swCurrentPhase % 2 == 1:
@@ -361,7 +360,7 @@ def _sePedXing_phase(action):
     """Apply continuous action to SE pedestrian crossing phase duration"""
     global seCurrentPhase, seCurrentPhaseDuration
 
-    seCurrentPhase = (seCurrentPhase + 1) % 4
+    seCurrentPhase = (seCurrentPhase + 1) % 10
     duration_adjustment = float(np.clip(action[0], -1.0, 1.0) * 5.0)
 
     if seCurrentPhase % 2 == 1:
@@ -437,7 +436,7 @@ print("Starting simulation loop...")
 # Flag for whether to use exploration noise
 USE_NOISE = (TRAIN_MODE == 1)
 
-while step_counter < 140000:
+while traci.simulation.getMinExpectedNumber() > 0:
     step_counter += 1
 
     # ---- MAIN INTERSECTION ----
