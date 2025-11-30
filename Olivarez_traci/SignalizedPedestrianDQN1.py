@@ -9,7 +9,7 @@ from models.DQN import DQNAgent as dqn
 
 trafficLightAgent = dqn(state_size=19, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent1')
 
-# trafficLightAgent.load()
+trafficLightAgent.load()
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -18,18 +18,18 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', 'Olivarez_traci\signalizedPed.sumocfg',
-    '--step-length', '0.05',
-    '--delay', '100',
+    '--step-length', '0.1',
+    '--delay', '0',
     '--lateral-resolution', '0.1',
     '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats.xml',
     '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips.xml'
 ]
 
 # Simulation Variables
-trainMode = 0
-stepLength = 0.05
+trainMode = 1
+stepLength = 0.1
 currentPhase = 0
 currentPhaseDuration = 30
 actionSpace = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
@@ -40,7 +40,7 @@ prevAction = None
 
 # Batch training parameters
 BATCH_SIZE = 32
-TRAIN_FREQUENCY = 20  # Train every 20 steps / 1 seconds
+TRAIN_FREQUENCY = 20  # Train every 20 steps / 2 seconds
 step_counter = 0
 
 # -- Data storage for plotting --
@@ -132,7 +132,7 @@ def _mainIntersection_queue():
         for pid, data in junction_subscriptionE.items():
             pedestrianE += data.get(traci.constants.VAR_WAITING_TIME, 0)
             
-    return [e2_0, e2_1, e2_2, e2_3, e2_4, e2_5, e2_6, e2_7, e2_8, e2_9, e2_10, pedestrianM*1.5, pedestrianW*1.5, pedestrianE*1.5]
+    return [e2_0, e2_1, e2_2, e2_3, e2_4, e2_5, e2_6, e2_7, e2_8, e2_9, e2_10, pedestrianM*1.25, pedestrianW*1.25, pedestrianE*1.25]
 
 
 def calculate_reward(current_state):
@@ -236,7 +236,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
 
     # Periodic training (replay)
-    if trainMode == 1 and step_counter % TRAIN_FREQUENCY == 0 and step_counter > 600/stepLength:
+    if trainMode == 1 and step_counter % TRAIN_FREQUENCY == 0 and step_counter > 1200/stepLength:
         if len(trafficLightAgent.memory) >= BATCH_SIZE:
             loss = trafficLightAgent.replay(BATCH_SIZE)
             loss_history.append(loss)
