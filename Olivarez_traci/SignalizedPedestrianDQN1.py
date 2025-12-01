@@ -33,6 +33,14 @@ stepLength = 0.1
 currentPhase = 0
 currentPhaseDuration = 30
 actionSpace = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+detector_count = 11
+
+#Metrics
+throughput_average = 0
+throughput_total = 0
+jam_length_average = 0
+jam_length_total = 0
+metric_observation_count = 0
 
 # Store previous states and actions for learning
 prevState = None
@@ -50,6 +58,11 @@ epsilon_history = []
 total_reward = 0
 
 #Object Context Subscription in SUMO
+detector_ids = [
+        "e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10",
+        "e2_0", "e2_1", "e2_2", "e2_3"
+    ]
+
 def _junctionSubscription(junction_id):
     traci.junction.subscribeContext(
         junction_id,
@@ -59,18 +72,22 @@ def _junctionSubscription(junction_id):
     )
     
 def _subscribe_all_detectors():
-    detector_ids = [
-        "e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10",
-        "e2_0", "e2_1", "e2_2", "e2_3"
-    ]
+    global detector_ids 
     
-    vehicle_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
     
     for det_id in detector_ids:
         traci.lanearea.subscribeContext(
             det_id,
             traci.constants.CMD_GET_VEHICLE_VARIABLE,
             3,
+            vehicle_context_vars
+        )
+    
+    for det_id in detector_ids:
+        traci.lanearea.subscribe(
+            det_id,
             vehicle_vars
         )
 
@@ -245,10 +262,32 @@ while traci.simulation.getMinExpectedNumber() > 0:
             total_reward = 0
             trafficLightAgent.epsilon = max(trafficLightAgent.epsilon_min, 
                                                trafficLightAgent.epsilon * trafficLightAgent.epsilon_decay_rate)
+            
+    # Periodic tracking (throughput and queue_length)
+    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    if trainMode == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
+        jam_length = 0
+        throughput = 0
+        metric_observation_count += 1
+        
+        for det_id in detector_ids:
+            detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+
+            if not detector_stats:
+                print("Lane Data Error: Undetected")
+                break
+            
+            jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+            throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+                
+        jam_length /= detector_count
+        jam_length_total += jam_length
+        throughput_total += throughput
         
     traci.simulationStep()
 
-
+jam_length_average = jam_length_total / metric_observation_count
+throughput_average = throughput_total / metric_observation_count
 
 
 
