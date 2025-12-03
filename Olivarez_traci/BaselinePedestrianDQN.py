@@ -152,8 +152,8 @@ def _mainIntersection_phase(action_index):
         phase_duration = 5
     else:
         duration_adjustment = actionSpace[action_index]
-        if mainCurrentPhase == 2 or mainCurrentPhase == 4:
-            base_duration = 15
+        if mainCurrentPhase == 4:
+            base_duration = 20
         else:
             base_duration = 30
         

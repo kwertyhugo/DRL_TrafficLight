@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-12-03 15:25:07 by Eclipse SUMO netedit Version 1.24.0
+<!-- generated on 2025-12-03 15:54:17 by Eclipse SUMO netedit Version 1.24.0
 <neteditConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/neteditConfiguration.xsd">
 
     <input>
-        <sumocfg-file value="Olivarez_traci\baselinePed.sumocfg"/>
-        <additional-files value="Olivarez_traci\additionals/map.poly.xml,Olivarez_traci\ additionals/detectors.add.xml"/>
-        <sumo-net-file value="Olivarez_traci\network/baseline.net.xml"/>
+        <sumo-net-file value="K:\Kurt\THESIS\DRL_TrafficLight\Olivarez_traci\network\baseline.net.xml"/>
     </input>
 
     <output>
-        <output-file value="Olivarez_traci\network/baseline.net.xml"/>
+        <output-file value="K:\Kurt\THESIS\DRL_TrafficLight\Olivarez_traci\network\baseline.net.xml"/>
     </output>
 
     <processing>
@@ -32,10 +30,6 @@
     <pedestrian>
         <walkingareas value="0"/>
     </pedestrian>
-
-    <netedit>
-        <ignore.routeelements value="false"/>
-    </netedit>
 
 </neteditConfiguration>
 -->
@@ -5625,10 +5619,10 @@
     </tlLogic>
     <tlLogic id="cluster_295373794_3477931123_7465167861" type="static" programID="0" offset="0">
         <phase duration="30" state="rrrrrrrrGGGrrrrr"/>
-        <phase duration="5"  state="rrrryyyyyyyrrrrr"/>
-        <phase duration="30" state="rrrrGGGGrrrrrrrr"/>
-        <phase duration="5"  state="rrrryGGGrrrrrrry"/>
+        <phase duration="5"  state="rrrrryyyyyyrrrry"/>
         <phase duration="30" state="rrrrrGGGrrrrrrrG"/>
+        <phase duration="5"  state="rrrryGGGrrrrrrry"/>
+        <phase duration="30" state="rrrrGGGGrrrrrrrr"/>
         <phase duration="5"  state="rrrrryyyrrrrrrry"/>
         <phase duration="30" state="GGGGrrrrrrrrrrrr"/>
         <phase duration="5"  state="yyyyrrrrrrryyyyr"/>
