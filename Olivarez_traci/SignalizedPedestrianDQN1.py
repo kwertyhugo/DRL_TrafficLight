@@ -212,7 +212,6 @@ _junctionSubscription("cluster_295373794_3477931123_7465167861")
 _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
 
-detector_ids = traci.lanearea.getIDList()
 currentPhase_onehot = to_categorical(currentPhase//2, num_classes=5).flatten()
 
 
@@ -263,31 +262,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
             trafficLightAgent.epsilon = max(trafficLightAgent.epsilon_min, 
                                                trafficLightAgent.epsilon * trafficLightAgent.epsilon_decay_rate)
             
-    # Periodic tracking (throughput and queue_length)
-    TRACK_INTERVAL_STEPS = int(60 / stepLength)
-    if trainMode == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
-        jam_length = 0
-        throughput = 0
-        metric_observation_count += 1
-        
-        for det_id in detector_ids:
-            detector_stats = traci.lanearea.getSubscriptionResults(det_id)
 
-            if not detector_stats:
-                print("Lane Data Error: Undetected")
-                break
-            
-            jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
-            throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
-                
-        jam_length /= detector_count
-        jam_length_total += jam_length
-        throughput_total += throughput
-        
-    traci.simulationStep()
-
-jam_length_average = jam_length_total / metric_observation_count
-throughput_average = throughput_total / metric_observation_count
 
 
 

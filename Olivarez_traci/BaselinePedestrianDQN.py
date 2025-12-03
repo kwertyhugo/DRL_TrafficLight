@@ -7,7 +7,7 @@ from keras.utils import to_categorical
 
 from models.DQN import DQNAgent as dqn
 
-mainIntersectionAgent = dqn(state_size=13, action_size=11, memory_size=2000, gamma=0.95, epsilon=0.001, epsilon_decay_rate=0.995, epsilon_min=0.001, learning_rate=0.00005, target_update_freq=100, name='ReLU_DQNAgent_Baseline')
+mainIntersectionAgent = dqn(state_size=13, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=100, name='ReLU_DQNAgent_Baseline')
 
 mainIntersectionAgent.load()
 
@@ -18,21 +18,22 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', r'Olivarez_traci\baselinePed.sumocfg',
     '--step-length', '0.05',
-    '--delay', '0',
+    '--delay', '100',
     '--lateral-resolution', '0.1',
     '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats.xml',
     '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips.xml'
 ]
 
 # Simulation Variables
-trainMode = 1
+trainMode = 0
 stepLength = 0.05
 mainCurrentPhase = 0
 mainCurrentPhaseDuration = 30
 actionSpace = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+detector_count = 7
 
 # Store previous states and actions for learning
 mainPrevState = None
@@ -43,6 +44,13 @@ BATCH_SIZE = 32
 TRAIN_FREQUENCY = 100  # Train every 100 steps / 5 seconds
 step_counter = 0
 
+#Metrics
+throughput_average = 0
+throughput_total = 0
+jam_length_average = 0
+jam_length_total = 0
+metric_observation_count = 0
+
 # -- Data storage for plotting --
 main_reward_history = []
 main_loss_history = []
@@ -50,6 +58,8 @@ main_epsilon_history = []
 total_main_reward = 0
 
 #Object Context Subscription in SUMO
+detector_ids = ["e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10"]
+
 def _junctionSubscription(junction_id):
     traci.junction.subscribeContext(
         junction_id,
@@ -59,17 +69,22 @@ def _junctionSubscription(junction_id):
     )
     
 def _subscribe_all_detectors():
-    detector_ids = [
-        "e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10"
-    ]
+    global detector_ids 
     
-    vehicle_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
     
     for det_id in detector_ids:
         traci.lanearea.subscribeContext(
             det_id,
             traci.constants.CMD_GET_VEHICLE_VARIABLE,
             3,
+            vehicle_context_vars
+        )
+    
+    for det_id in detector_ids:
+        traci.lanearea.subscribe(
+            det_id,
             vehicle_vars
         )
 
@@ -116,34 +131,6 @@ def _mainIntersection_queue():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
             
     return [e2_4, e2_5, e2_6, e2_7, e2_8, e2_9, e2_10, pedestrian]
-
-def _swPedXing_queue():
-    e2_0 = _weighted_waits("e2_0")
-    e2_1 = _weighted_waits("e2_1")
-    e2_4 = _weighted_waits("e2_4")
-    e2_5 = _weighted_waits("e2_5")
-    pedestrian = 0
-    junction_subscription = traci.junction.getContextSubscriptionResults("6401523012")
-    
-    if junction_subscription:
-        for pid, data in junction_subscription.items():
-            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
-            
-    return [e2_0, e2_1, e2_4, e2_5, pedestrian]
-
-def _sePedXing_queue():
-    e2_2 = _weighted_waits("e2_2")
-    e2_3 = _weighted_waits("e2_3")
-    e2_6 = _weighted_waits("e2_6")
-    e2_7 = _weighted_waits("e2_7")
-    pedestrian = 0
-    junction_subscription = traci.junction.getContextSubscriptionResults("3285696417")
-    
-    if junction_subscription:
-        for pid, data in junction_subscription.items():
-            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
-
-    return [e2_2, e2_3, e2_6, e2_7, pedestrian]
 
 def calculate_reward(current_state):
     if current_state is None:
@@ -199,7 +186,6 @@ traci.start(Sumo_config)
 _subscribe_all_detectors()
 _junctionSubscription("cluster_295373794_3477931123_7465167861")
 
-detector_ids = traci.lanearea.getIDList()
 main_phase = to_categorical(mainCurrentPhase//2, num_classes=5).flatten()
 
 # Simulation Loop
@@ -248,11 +234,34 @@ while traci.simulation.getMinExpectedNumber() > 0:
             mainIntersectionAgent.epsilon = max(mainIntersectionAgent.epsilon_min, 
                                                mainIntersectionAgent.epsilon * mainIntersectionAgent.epsilon_decay_rate)
         
+    # Periodic tracking (throughput and queue_length)
+    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    if trainMode == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
+        jam_length = 0
+        throughput = 0
+        metric_observation_count += 1
+        
+        for det_id in detector_ids:
+            detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+
+            if not detector_stats:
+                print("Lane Data Error: Undetected")
+                break
+            
+            jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+            throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+                
+        jam_length /= detector_count
+        jam_length_total += jam_length
+        throughput_total += throughput
+        
     traci.simulationStep()
 
+jam_length_average = jam_length_total / metric_observation_count
+throughput_average = throughput_total / metric_observation_count
 
-
-
+print("\n Queue Length:", jam_length_average)
+print("\n Throughput:", throughput_average)
 
 if trainMode == 1:
     # Save trained models
