@@ -18,13 +18,13 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', r'Olivarez_traci\baselinePed.sumocfg',
     '--step-length', '0.05',
-    '--delay', '100',
+    '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats_trafficjam.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips_trafficjam.xml'
 ]
 
 # Simulation Variables
