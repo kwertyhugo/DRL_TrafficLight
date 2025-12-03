@@ -23,8 +23,8 @@ Sumo_config = [
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats_trafficjam.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips_trafficjam.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats_slowtraffic.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips_slowtraffic.xml'
 ]
 
 # Simulation Variables
@@ -235,7 +235,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
                                                mainIntersectionAgent.epsilon * mainIntersectionAgent.epsilon_decay_rate)
         
     # Periodic tracking (throughput and queue_length)
-    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    TRACK_INTERVAL_STEPS = int(6 / stepLength)
     if trainMode == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
         jam_length = 0
         throughput = 0
