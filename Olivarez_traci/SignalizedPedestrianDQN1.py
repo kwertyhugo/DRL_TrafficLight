@@ -7,7 +7,7 @@ from keras.utils import to_categorical
 
 from models.DQN import DQNAgent as dqn
 
-trafficLightAgent = dqn(state_size=19, action_size=11, memory_size=2000, gamma=0.95, epsilon=0.1, epsilon_decay_rate=0.995, epsilon_min=0.1, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent1')
+trafficLightAgent = dqn(state_size=19, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent1')
 
 trafficLightAgent.load()
 
@@ -23,12 +23,12 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats_trafficjam.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips_trafficjam.xml'
 ]
 
 # Simulation Variables
-trainMode = 1
+trainMode = 0
 stepLength = 0.1
 currentPhase = 0
 currentPhaseDuration = 30
@@ -211,7 +211,6 @@ _subscribe_all_detectors()
 _junctionSubscription("cluster_295373794_3477931123_7465167861")
 _junctionSubscription("6401523012")
 _junctionSubscription("3285696417")
-
 currentPhase_onehot = to_categorical(currentPhase//2, num_classes=5).flatten()
 
 
@@ -261,10 +260,35 @@ while traci.simulation.getMinExpectedNumber() > 0:
             total_reward = 0
             trafficLightAgent.epsilon = max(trafficLightAgent.epsilon_min, 
                                                trafficLightAgent.epsilon * trafficLightAgent.epsilon_decay_rate)
+    
+    # Periodic tracking (throughput and queue_length)
+    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    if trainMode == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
+        jam_length = 0
+        throughput = 0
+        metric_observation_count += 1
+        
+        for det_id in detector_ids:
+            detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+
+            if not detector_stats:
+                print("Lane Data Error: Undetected")
+                break
             
+            jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+            throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+                
+        jam_length /= detector_count
+        jam_length_total += jam_length
+        throughput_total += throughput
+        
+    traci.simulationStep()
 
+jam_length_average = jam_length_total / metric_observation_count
+throughput_average = throughput_total / metric_observation_count
 
-
+print("\n Queue Length:", jam_length_average)
+print("\n Throughput:", throughput_average)
 
 if trainMode == 1:
     # Save trained models

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-12-03 18:08:39 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2025-12-03 22:10:57 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="Olivarez_traci\network/map1.net.xml"/>
-        <route-files value="Olivarez_traci\demand/flows_slow_traffic.rou.xml"/>
+        <route-files value="Olivarez_traci\demand/flows_traffic_jam.rou.xml"/>
         <additional-files value="Olivarez_traci\additionals/map.poly.xml,Olivarez_traci\ additionals/detectors.add.xml"/>
     </input>
 
     <output>
-        <tripinfo-output value="Olivarez_traci\output_DQN\SD_DQN_trips.xml"/>
-        <statistic-output value="Olivarez_traci\output_DQN\SD_DQN_stats.xml"/>
+        <tripinfo-output value="Olivarez_traci\output_NoDRL\SP_NoDRL_trips_trafficjam.xml"/>
+        <statistic-output value="Olivarez_traci\output_NoDRL\SP_NoDRL_stats_trafficjam.xml"/>
     </output>
 
     <time>
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="51136"/>
+        <remote-port value="50719"/>
     </traci_server>
 
     <gui_only>
@@ -40,7 +40,3 @@
     </gui_only>
 
 </sumoConfiguration>
--->
-
-<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
-</statistics>
