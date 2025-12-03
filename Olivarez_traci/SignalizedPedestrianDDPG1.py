@@ -24,6 +24,20 @@ action_high = np.array([1.0], dtype=np.float32)
 
 # --------------------------------------------
 
+detector_count = 11
+
+#Metrics
+throughput_average = 0
+throughput_total = 0
+jam_length_average = 0
+jam_length_total = 0
+metric_observation_count = 0
+
+detector_ids = [
+        "e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10",
+        "e2_0", "e2_1", "e2_2", "e2_3"
+    ]
+
 # --- TRAIN/TEST TOGGLE ---
 # 1 = Train (collect experience, update models, save models, decay noise)
 # 0 = Test (load models, no noise, no updates, no saving)
@@ -98,12 +112,10 @@ def _junctionSubscription(junction_id):
 
 def _subscribe_all_detectors():
     """Subscribe to all vehicle detectors for efficient data retrieval"""
-    detector_ids = [
-        "e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10",
-        "e2_0", "e2_1", "e2_2", "e2_3"
-    ]
+    global detector_ids 
     
-    vehicle_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
     
     for det_id in detector_ids:
         try:
@@ -111,10 +123,16 @@ def _subscribe_all_detectors():
                 det_id,
                 traci.constants.CMD_GET_VEHICLE_VARIABLE,
                 3,
-                vehicle_vars
+                vehicle_context_vars
             )
         except Exception as e:
             print(f"[WARN] Detector subscription failed for {det_id}: {e}")
+            
+    for det_id in detector_ids:
+        traci.lanearea.subscribe(
+            det_id,
+            vehicle_vars
+        )
 
 # ------- Simulation variables -------
 
@@ -375,6 +393,34 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
     # Step simulation forward
     traci.simulationStep()
+
+    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    if TRAIN_MODE == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
+        jam_length = 0
+        throughput = 0
+        metric_observation_count += 1
+        
+        for det_id in detector_ids:
+            detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+
+            if not detector_stats:
+                print("Lane Data Error: Undetected")
+                break
+            
+            jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+            throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+                
+        jam_length /= detector_count
+        jam_length_total += jam_length
+        throughput_total += throughput
+        
+    traci.simulationStep()
+
+jam_length_average = jam_length_total / metric_observation_count
+throughput_average = throughput_total / metric_observation_count
+
+print("\n Queue Length:", jam_length_average)
+print("\n Throughput:", throughput_average)
 
 print("\nSimulation completed!")
 
