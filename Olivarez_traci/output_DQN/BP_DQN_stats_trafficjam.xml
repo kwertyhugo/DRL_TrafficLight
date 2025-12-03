@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-12-03 15:37:48 by Eclipse SUMO GUI Version 1.24.0
+<!-- generated on 2025-12-03 16:56:07 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -10,8 +10,8 @@
     </input>
 
     <output>
-        <tripinfo-output value="Olivarez_traci\output_DQN\BP_DQN_trips.xml"/>
-        <statistic-output value="Olivarez_traci\output_DQN\BP_DQN_stats.xml"/>
+        <tripinfo-output value="Olivarez_traci\output_DQN\BP_DQN_trips_trafficjam.xml"/>
+        <statistic-output value="Olivarez_traci\output_DQN\BP_DQN_stats_trafficjam.xml"/>
     </output>
 
     <time>
@@ -32,25 +32,25 @@
     </report>
 
     <traci_server>
-        <remote-port value="49895"/>
+        <remote-port value="50784"/>
     </traci_server>
 
     <gui_only>
-        <delay value="100"/>
+        <delay value="0"/>
     </gui_only>
 
 </sumoConfiguration>
 -->
 
 <statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
-    <performance clockBegin="354.63" clockEnd="1462.96" clockDuration="1108.33" traciDuration="23.96" realTimeFactor="0.37" vehicleUpdatesPerSecond="406.79" personUpdatesPerSecond="259.42" begin="0.00" end="411.30" duration="411.30"/>
-    <vehicles loaded="175" inserted="175" running="83" waiting="0"/>
+    <performance clockBegin="5247.85" clockEnd="5924.01" clockDuration="676.16" traciDuration="89.36" realTimeFactor="6.45" vehicleUpdatesPerSecond="8476.84" personUpdatesPerSecond="4179.36" begin="0.00" end="4363.00" duration="4363.00"/>
+    <vehicles loaded="1627" inserted="1627" running="0" waiting="0"/>
     <teleports total="0" jam="0" yield="0" wrongLane="0"/>
-    <safety collisions="0" emergencyStops="0" emergencyBraking="0"/>
-    <persons loaded="744" running="51" jammed="0"/>
+    <safety collisions="0" emergencyStops="1" emergencyBraking="1"/>
+    <persons loaded="744" running="0" jammed="0"/>
     <personTeleports total="0" abortWait="0" wrongDest="0"/>
-    <vehicleTripStatistics count="92" routeLength="1223.54" speed="9.45" duration="143.54" waitingTime="41.93" timeLoss="82.69" departDelay="0.03" departDelayWaiting="-1.00" totalTravelTime="13206.20" totalDepartDelay="3.20"/>
-    <pedestrianStatistics number="80" routeLength="95.83" duration="78.94" timeLoss="10.36"/>
+    <vehicleTripStatistics count="1627" routeLength="1277.62" speed="10.84" duration="176.14" waitingTime="76.92" timeLoss="110.56" departDelay="69.94" departDelayWaiting="-1.00" totalTravelTime="286584.20" totalDepartDelay="113790.90"/>
+    <pedestrianStatistics number="1224" routeLength="133.21" duration="115.44" timeLoss="19.65"/>
     <rideStatistics number="0"/>
     <transportStatistics number="0"/>
 </statistics>

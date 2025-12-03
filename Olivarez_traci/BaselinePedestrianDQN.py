@@ -18,13 +18,13 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', r'Olivarez_traci\baselinePed.sumocfg',
     '--step-length', '0.05',
-    '--delay', '100',
+    '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats_slowtraffic.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips_slowtraffic.xml'
 ]
 
 # Simulation Variables
@@ -152,8 +152,8 @@ def _mainIntersection_phase(action_index):
         phase_duration = 5
     else:
         duration_adjustment = actionSpace[action_index]
-        if mainCurrentPhase == 2 or mainCurrentPhase == 4:
-            base_duration = 15
+        if mainCurrentPhase == 4:
+            base_duration = 20
         else:
             base_duration = 30
         
@@ -235,7 +235,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
                                                mainIntersectionAgent.epsilon * mainIntersectionAgent.epsilon_decay_rate)
         
     # Periodic tracking (throughput and queue_length)
-    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    TRACK_INTERVAL_STEPS = int(6 / stepLength)
     if trainMode == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
         jam_length = 0
         throughput = 0
