@@ -12,7 +12,7 @@ from models.DDPG import DDPGAgent as ddpg
 # --- TRAIN/TEST TOGGLE ---
 # 1 = Train (collect experience, update models, save models, decay noise)
 # 0 = Test (load models, no noise, no updates, no saving)
-TRAIN_MODE = 0
+TRAIN_MODE = 1
 # -------------------------
 
 # --- NEW STABILITY FEATURES ---
