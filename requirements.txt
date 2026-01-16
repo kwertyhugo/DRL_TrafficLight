@@ -2,3 +2,5 @@ tensorflow
 keras
 traci
 sumolib
+numpy
+pandas
