@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-01-23 16:10:22 by Eclipse SUMO netedit Version 1.24.0
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <!-- Detectors -->
+    <laneAreaDetector id="e2_0" lanes="135398973#4_1 32083256_1 1204127495_1" pos="9.73" endPos="13.83" period="300.00" file="e2_0.xml"/>
+    <laneAreaDetector id="e2_1" lanes="135398973#4_1 32083256_2 1204127495_2" pos="9.66" endPos="13.99" period="300.00" file="e2_1.xml"/>
+    <laneAreaDetector id="e2_10" lanes="-185601451#1_1 -185601451#0_1" pos="0.12" endPos="19.52" period="300.00" file="e2_10.xml"/>
+    <laneAreaDetector id="e2_11" lanes="185930141#2_2 185930141#6_2" pos="0.36" endPos="36.23" period="300.00" file="e2_11.xml"/>
+    <laneAreaDetector id="e2_12" lanes="185930141#2_1 185930141#6_1" pos="0.36" endPos="36.09" period="300.00" file="e2_12.xml"/>
+    <laneAreaDetector id="e2_2" lane="1413610384_1" pos="0.00" length="68.90" period="300.00" file="e2_2.xml"/>
+    <laneAreaDetector id="e2_3" lane="1413610384_2" pos="0.00" length="68.90" period="300.00" file="e2_3.xml" friendlyPos="1"/>
+    <laneAreaDetector id="e2_4" lane="-39469992#0_1" pos="13.36" length="100.00" period="300.00" file="e2_4.xml" friendlyPos="1"/>
+    <laneAreaDetector id="e2_5" lane="-39469992#0_2" pos="13.36" length="100.00" period="300.00" file="e2_5.xml" friendlyPos="1"/>
+    <laneAreaDetector id="e2_6" lanes="32083309#5_1 32083309#6_1 32083309#7_1 32083309#8_1" pos="2.86" endPos="6.78" period="300.00" file="e2_6.xml"/>
+    <laneAreaDetector id="e2_7" lanes="32083309#5_2 32083309#6_2 32083309#7_2 32083309#8_2" pos="3.26" endPos="7.12" period="300.00" file="e2_7.xml"/>
+    <laneAreaDetector id="e2_8" lanes="-186159871#1_2 -186159871#0_2" pos="0.05" endPos="26.99" period="300.00" file="e2_8.xml"/>
+    <laneAreaDetector id="e2_9" lanes="-186159871#1_1 -186159871#0_1" pos="0.33" endPos="26.97" period="300.00" file="e2_9.xml"/>
+</additional>

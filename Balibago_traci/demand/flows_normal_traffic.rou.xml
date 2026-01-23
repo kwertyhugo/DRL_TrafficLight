@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<routes>
+    <vType id="ped" vClass="pedestrian" 
+        impatience="0.2" 
+        mDriveAfterRedTime="-1" 
+        guiShape="pedestrian"/>
+
+    <vTypeDistribution id="AguinaldoHighway">
+        <vType id="car" vClass="passenger" 
+            probability="0.413"
+            guiShape="passenger"/>
+
+        <vType id="jeep" vClass="bus" 
+            probability="0.17"
+            guiShape="passenger/van" 
+            length="8" 
+            width="2" 
+            mass="500" 
+            maxSpeed="100" 
+            desiredMaxSpeed="60" 
+            personCapacity="20"/>
+
+        <vType id="bus" vClass="bus" 
+            probability="0.06"
+            guiShape="bus"/>
+
+        <vType id="truck" vClass="truck" 
+            probability="0.13"
+            guiShape="truck"/>
+
+        <vType id="motorcycle" vClass="motorcycle" 
+            probability="0.1135"
+            width="0.8"
+            minGap="0.5" 
+            guiShape="motorcycle"/>
+
+        <vType id="tricycle" vClass="motorcycle" 
+            probability="0.1135"
+            guiShape="motorcycle" 
+            width="1.5" 
+            accel="2" 
+            maxSpeed="50" 
+            personCapacity="4"/>
+    </vTypeDistribution>
+
+    
+</routes>
+
