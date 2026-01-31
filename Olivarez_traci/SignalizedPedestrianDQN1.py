@@ -5,6 +5,7 @@ import numpy as np
 import csv
 from keras.utils import to_categorical
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.DQN import DQNAgent as dqn
 
 trafficLightAgent = dqn(state_size=19, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent1')
