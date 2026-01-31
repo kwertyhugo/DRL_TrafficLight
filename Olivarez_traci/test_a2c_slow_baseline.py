@@ -167,7 +167,7 @@ while traci.simulation.getMinExpectedNumber() > 0 and sim_step_count < max_sim_s
         if step_count % 100 == 0:
             sim_time = traci.simulation.getTime()
             print(f"[Step {step_count:5d}] Time: {sim_time:7.1f}s | "
-                  f"Queue Total: {sum(main_queue):7.1f} | SimStep: {sim_step_count}")
+                f"Queue Total: {sum(main_queue):7.1f} | SimStep: {sim_step_count}")
         
         step_count += 1
     
