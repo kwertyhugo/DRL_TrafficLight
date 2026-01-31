@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-01-29 21:22:09 by Eclipse SUMO netedit Version 1.24.0
+<!-- generated on 2026-01-31 09:42:16 by Eclipse SUMO netedit Version 1.24.0
 <neteditConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/neteditConfiguration.xsd">
 
     <input>
@@ -5617,20 +5617,27 @@
 
     <tlLogic id="3285696417" type="static" programID="0" offset="0">
         <phase duration="25" state="rrgrrrG"/>
-        <phase duration="5"  state="yygyyyy"/>
-        <phase duration="185" state="GGgGGGr"/>
-        <phase duration="5"  state="yygyyyy"/>
+        <phase duration="5"  state="rrgrrry"/>
+        <phase duration="45" state="GGgGGGr"/>
+        <phase duration="5"  state="GGgGGGr"/>
+        <phase duration="70" state="GGgGGGr"/>
+        <phase duration="5"  state="GGgGGGr"/>
+        <phase duration="30" state="GGgGGGr"/>
+        <phase duration="5"  state="GGgGGGr"/>
+        <phase duration="25" state="GGgGGGr"/>
+        <phase duration="5"  state="yygyyyr"/>
     </tlLogic>
     <tlLogic id="6401523012" type="static" programID="0" offset="0">
-        <phase duration="185" state="GGGGr"/>
-        <phase duration="5"  state="yyyyy"/>
+        <phase duration="25" state="GGGGr"/>
+        <phase duration="5"  state="GGGGr"/>
+        <phase duration="45" state="GGGGr"/>
+        <phase duration="5"  state="GGGGr"/>
+        <phase duration="70" state="GGGGr"/>
+        <phase duration="5"  state="GGGGr"/>
+        <phase duration="30" state="GGGGr"/>
+        <phase duration="5"  state="yyyyr"/>
         <phase duration="25" state="rrrrG"/>
-        <phase duration="5"  state="yyyyy"/>
-    </tlLogic>
-    <tlLogic id="660909495" type="static" programID="0" offset="0">
-        <phase duration="79" state="G"/>
-        <phase duration="6"  state="y"/>
-        <phase duration="5"  state="r"/>
+        <phase duration="5"  state="rrrry"/>
     </tlLogic>
     <tlLogic id="cluster_295373794_3477931123_7465167861" type="static" programID="0" offset="0">
         <phase duration="25" state="GGGrrrGGrrrrrr"/>
@@ -6639,7 +6646,7 @@
         <request index="3" response="10000" foes="10000" cont="0"/>
         <request index="4" response="00000" foes="01111" cont="0"/>
     </junction>
-    <junction id="660909495" type="traffic_light" x="2146.03" y="352.39" incLanes="793339796#3_0 793339796#3_1 793339796#3_2" intLanes=":660909495_0_0" shape="2146.03,352.39 2141.66,345.22 2146.03,352.39">
+    <junction id="660909495" type="priority" x="2146.03" y="352.39" incLanes="793339796#3_0 793339796#3_1 793339796#3_2" intLanes=":660909495_0_0" shape="2146.03,352.39 2141.66,345.22 2146.03,352.39">
         <request index="0" response="0" foes="0" cont="0"/>
     </junction>
     <junction id="6840337295" type="priority" x="1297.21" y="606.36" incLanes="-140483224#8_0 -140483224#8_1 -140483224#8_2 140483224#7_0 140483224#7_1 140483224#7_2" intLanes=":6840337295_0_0 :6840337295_0_1 :6840337295_2_0 :6840337295_2_1" shape="1294.87,615.32 1305.56,602.36 1305.04,601.72 1304.97,601.39 1305.03,601.07 1305.22,600.74 1305.53,600.41 1304.21,598.91 1303.32,599.47 1302.88,599.56 1302.46,599.53 1302.06,599.38 1301.66,599.10 1290.65,611.79">
@@ -7990,7 +7997,7 @@
     <connection from="793339796#2" to="793339796#3" fromLane="1" toLane="1" via=":8997922770_6_0" dir="s" state="M"/>
     <connection from="793339796#2" to="793339796#3" fromLane="2" toLane="2" via=":8997922770_6_1" dir="s" state="M"/>
     <connection from="793339796#2" to="972192877" fromLane="2" toLane="0" via=":8997922770_8_0" dir="l" state="m"/>
-    <connection from="793339796#3" to="-793339796#3" fromLane="2" toLane="2" via=":660909495_0_0" tl="660909495" linkIndex="0" dir="t" state="O"/>
+    <connection from="793339796#3" to="-793339796#3" fromLane="2" toLane="2" via=":660909495_0_0" dir="t" state="M"/>
     <connection from="879004474" to="1084101425" fromLane="0" toLane="0" via=":3285696420_0_0" dir="s" state="M"/>
     <connection from="879004474" to="321801093" fromLane="0" toLane="0" via=":3285696420_1_0" dir="l" state="M"/>
     <connection from="890559887" to="-890559887" fromLane="1" toLane="1" via=":1300439011_0_0" dir="t" state="M"/>

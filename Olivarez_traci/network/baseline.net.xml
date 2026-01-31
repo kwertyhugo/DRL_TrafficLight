@@ -5615,11 +5615,6 @@
         <lane id="E0_0" index="0" allow="pedestrian" speed="13.89" length="0.67" shape="1448.38,765.93 1449.05,765.95"/>
     </edge>
 
-    <tlLogic id="660909495" type="static" programID="0" offset="0">
-        <phase duration="79" state="G"/>
-        <phase duration="6"  state="y"/>
-        <phase duration="5"  state="r"/>
-    </tlLogic>
     <tlLogic id="cluster_295373794_3477931123_7465167861" type="static" programID="0" offset="0">
         <phase duration="25" state="GGGrrrGGrrrrrO"/>
         <phase duration="5"  state="GyyrrrGGyrrrrO"/>
