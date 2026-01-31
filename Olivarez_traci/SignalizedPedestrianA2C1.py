@@ -26,6 +26,7 @@ trafficLightAgent = a2c(
     name='A2C_Unified_Agent'
 )
 
+
 # === LOAD EXISTING MODEL IF IT EXISTS ===
 CONTINUE_TRAINING = True  # Set to False to start fresh
 
@@ -331,9 +332,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
             
             raw_queue_total = sum(queue)
             print(f"\n[Episode {episodeNumber:3d}] Total Reward: {total_reward:7.3f} | "
-                  f"Actor Loss: {actor_loss:7.4f} | Critic Loss: {critic_loss:9.2f} | "
-                  f"Entropy: {entropy:5.3f} (coef: {trafficLightAgent.entropy_coef:.4f}) | "
-                  f"Avg Queue: {raw_queue_total/14:7.1f}\n")
+                f"Actor Loss: {actor_loss:7.4f} | Critic Loss: {critic_loss:9.2f} | "
+                f"Entropy: {entropy:5.3f} (coef: {trafficLightAgent.entropy_coef:.4f}) | "
+                f"Avg Queue: {raw_queue_total/14:7.1f}\n")
     
     # Periodic tracking (throughput and queue_length)
     TRACK_INTERVAL_STEPS = int(60 / stepLength)

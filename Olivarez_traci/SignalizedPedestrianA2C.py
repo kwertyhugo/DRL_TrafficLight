@@ -190,7 +190,7 @@ def _weighted_waits(detector_id):
         return 0
     
     weight_map = {"car": 1.0, "jeep": 1.5, "bus": 2.2, 
-                  "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
+                "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
     
     for data in vehicle_data.values():
         vtype = data.get(traci.constants.VAR_TYPE, "car")

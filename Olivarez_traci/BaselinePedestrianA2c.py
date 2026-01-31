@@ -257,8 +257,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
             
             raw_queue_total = sum(main_queue)
             print(f"[BASELINE Ep {mainEpisodeNumber:3d}] EpisodeRwd: {total_reward:7.3f} | "
-                  f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
-                  f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/8:7.1f}")
+                f"ALoss: {actor_loss:7.4f} CLoss: {critic_loss:9.2f} | "
+                f"Ent: {entropy:5.3f} | AvgQueue: {raw_queue_total/8:7.1f}")
         
         # --- 7. SAVE CURRENT STATE/ACTION for next loop ---
         mainPrevState = mainCurrentState
