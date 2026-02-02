@@ -20,7 +20,7 @@ if gpus:
 class DQNAgent:
 
     def __init__(self, state_size, action_size, memory_size=200, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, 
-                 epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='ReLU_DQNAgent'):
+                 epsilon_min=0.01, learning_rate=0.0002, target_update_freq=500, name='ReLU_DQNAgent', area='Olivarez'):
         
         
         self.state_size = state_size
@@ -32,6 +32,7 @@ class DQNAgent:
         self.epsilon_min = epsilon_min
         self.learning_rate = learning_rate
         self.name = name
+        self.area = area
         
         self.target_update_freq = target_update_freq
         self.train_step_counter = 0
@@ -126,4 +127,4 @@ class DQNAgent:
 
     # Load save the current model
     def save(self):
-        self.model.save('./Olivarez_traci/models_DQN/' + self.name + '.keras')
+        self.model.save('./'+ self.area +'_traci/models_DQN/' + self.name + '.keras')
