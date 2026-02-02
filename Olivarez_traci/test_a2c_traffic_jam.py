@@ -428,8 +428,8 @@ if trainMode == 0:
     print(f"  Average Throughput: {throughput_average:.2f} vehicles/minute")
     print(f"  Total Observations: {metric_observation_count}")
     print(f"\nOutput files saved:")
-    print(f"  - Statistics: Olivarez_traci/output_A2C/SP_A2C_Unified_Normal_stats.xml")
-    print(f"  - Trip Info: Olivarez_traci/output_A2C/SP_A2C_Unified_Normal_trips.xml")
+    print(f"  - Statistics: Olivarez_traci/output_A2C/SP_A2C_Unified_Jam_stats.xml")
+    print(f"  - Trip Info: Olivarez_traci/output_A2C/SP_A2C_Unified_Jam_trips.xml")
     print("\nCompare these with your baseline to evaluate performance!")
     print("=" * 70 + "\n")
 

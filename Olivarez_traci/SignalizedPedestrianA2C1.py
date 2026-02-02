@@ -28,7 +28,7 @@ trafficLightAgent = a2c(
 
 
 # === LOAD EXISTING MODEL IF IT EXISTS ===
-CONTINUE_TRAINING = False  # Set to False to start fresh
+CONTINUE_TRAINING = True  # Set to False to start fresh
 
 if CONTINUE_TRAINING:
     try:

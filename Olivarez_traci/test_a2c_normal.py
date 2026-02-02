@@ -1,14 +1,4 @@
 import os
-    """
-    The code snippet is a Python script that implements a reinforcement learning agent using the
-    Advantage Actor-Critic (A2C) algorithm to control traffic lights in a simulation environment using
-    SUMO.
-    
-    :param junction_id: The `junction_id` is a unique identifier for a junction in the SUMO simulation
-    environment. It is used to specify which junction's context subscription you want to access or
-    interact with in the simulation. In the provided code snippet, functions like
-    `_junctionSubscription(junction_id)` and `_mainIntersection_queue
-    """
 import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
