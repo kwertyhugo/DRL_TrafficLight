@@ -8,7 +8,7 @@ from keras.utils import to_categorical
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.DQN import DQNAgent as dqn
 
-trafficLightAgent = dqn(state_size=19, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent1')
+trafficLightAgent = dqn(state_size=19, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0.01, learning_rate=0.00005, target_update_freq=500, name='ReLU_DQNAgent1')
 
 trafficLightAgent.load()
 
@@ -24,8 +24,8 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats_trafficjam.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips_trafficjam.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats_TESTUPDATEDJAM.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips_testJAM.xml'
 ]
 
 # Simulation Variables
@@ -285,11 +285,13 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
     traci.simulationStep()
 
-jam_length_average = jam_length_total / metric_observation_count
-throughput_average = throughput_total / metric_observation_count
-
-print("\n Queue Length:", jam_length_average)
-print("\n Throughput:", throughput_average)
+if trainMode == 0:
+    jam_length_average = jam_length_total / metric_observation_count
+    throughput_average = throughput_total / metric_observation_count
+    print("\n Queue Length:", jam_length_average)
+    print("\n Throughput:", throughput_average)
+else:
+    print("\n Training mode - metrics not tracked")
 
 if trainMode == 1:
     # Save trained models
