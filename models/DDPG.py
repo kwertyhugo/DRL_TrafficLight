@@ -65,15 +65,21 @@ class ReplayBuffer:
 
 def build_actor(state_size, action_size, action_low, action_high, name='Actor'):
     state_input = Input(shape=(state_size,), name='state_input')
+    
+    # Increased layer width to handle consolidated state information
     x = Dense(512, activation='relu')(state_input)
+    x = LayerNormalization()(x) # Added normalization for stability in continuous space
+    x = Dense(512, activation='relu')(x)
     x = Dense(256, activation='relu')(x)
     x = Dense(128, activation='relu')(x)
-    x = Dense(64, activation='relu')(x)
-    raw_actions = Dense(action_size, activation='tanh')(x)  # -1..1
-    # Scale tanh output to actual action bounds
+    
+    raw_actions = Dense(action_size, activation='tanh')(x)  # Outputs vector of size 3 (-1..1)
+    
+    # Scaling logic remains the same, but it now applies to a vector of 3
     scale = (action_high - action_low) / 2.0
     mean = (action_high + action_low) / 2.0
     out = tf.keras.layers.Lambda(lambda a: a * scale + mean, name='scaled_actions')(raw_actions)
+    
     model = Model(inputs=state_input, outputs=out, name=name)
     return model
 
@@ -81,15 +87,21 @@ def build_actor(state_size, action_size, action_low, action_high, name='Actor'):
 def build_critic(state_size, action_size, name='Critic'):
     state_input = Input(shape=(state_size,), name='state_input')
     action_input = Input(shape=(action_size,), name='action_input')
-    # state branch
+    
+    # State branch
     xs = Dense(512, activation='relu')(state_input)
+    xs = LayerNormalization()(xs)
     xs = Dense(256, activation='relu')(xs)
-    # action branch
+    
+    # Action branch
     xa = Dense(256, activation='relu')(action_input)
-    # combine
+    
+    # Combine - The critic sees all 11 state features and all 3 actions
     x = Concatenate()([xs, xa])
+    x = Dense(512, activation='relu')(x) # Increased depth
     x = Dense(256, activation='relu')(x)
     x = Dense(128, activation='relu')(x)
+    
     q_out = Dense(1, activation='linear')(x)
     model = Model(inputs=[state_input, action_input], outputs=q_out, name=name)
     return model

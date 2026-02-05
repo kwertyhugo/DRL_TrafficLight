@@ -12,7 +12,7 @@ from models.DDPG import DDPGAgent as ddpg
 # --- TRAIN/TEST TOGGLE ---
 # 1 = Train (collect experience, update models, save models, decay noise)
 # 0 = Test (load models, no noise, no updates, no saving)
-TRAIN_MODE = 0
+TRAIN_MODE = 1
 # -------------------------
 
 # --- NEW STABILITY FEATURES ---
@@ -219,6 +219,7 @@ if not se_reward_history:
 total_main_reward = 0
 total_sw_reward = 0
 total_se_reward = 0
+
 
 # ------- Environment state functions -------
 
@@ -560,73 +561,57 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
     # ---- Periodic training ----
     if TRAIN_MODE == 1 and step_counter % TRAIN_FREQUENCY == 0:
-        if len(mainIntersectionAgent.replay_buffer) >= BATCH_SIZE:
-            actor_loss, critic_loss = mainIntersectionAgent.train()
-            if actor_loss is not None:
-                main_actor_loss_history.append(float(actor_loss))
-                main_critic_loss_history.append(float(critic_loss))
-                main_reward_history.append(total_main_reward)
-                total_main_reward = 0
-                print(f"[TRAIN MAIN] Step={step_counter}, Actor={actor_loss:.4f}, Critic={critic_loss:.4f}")
-            else:
-                print(f"[TRAIN MAIN] Step={step_counter}, Not enough samples in buffer.")
-
-
-        if len(swPedXingAgent.replay_buffer) >= BATCH_SIZE:
-            actor_loss, critic_loss = swPedXingAgent.train()
-            if actor_loss is not None:
-                sw_actor_loss_history.append(float(actor_loss))
-                sw_critic_loss_history.append(float(critic_loss))
-                sw_reward_history.append(total_sw_reward)
-                total_sw_reward = 0
-                print(f"[TRAIN SW] Step={step_counter}, Actor={actor_loss:.4f}, Critic={critic_loss:.4f}")
-            else:
-                print(f"[TRAIN SW] Step={step_counter}, Not enough samples in buffer.")
-
-        if len(sePedXingAgent.replay_buffer) >= BATCH_SIZE:
-            actor_loss, critic_loss = sePedXingAgent.train()
-            if actor_loss is not None:
-                se_actor_loss_history.append(float(actor_loss))
-                se_critic_loss_history.append(float(critic_loss))
-                se_reward_history.append(total_se_reward)
-                total_se_reward = 0
-                print(f"[TRAIN SE] Step={step_counter}, Actor={actor_loss:.4f}, Critic={critic_loss:.4f}")
-            else:
-                print(f"[TRAIN SE] Step={step_counter}, Not enough samples in buffer.")
-
-    traci.simulationStep()
-    
-    # Periodic tracking (throughput and queue_length)
-    TRACK_INTERVAL_STEPS = int(60 / stepLength)
-    if TRAIN_MODE == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
-        jam_length = 0
-        throughput = 0
-        metric_observation_count += 1
         
+        # Helper to handle the repetitive training and history logging
+        def perform_training(agent, reward_acc, actor_hist, critic_hist, reward_hist, label):
+            if len(agent.replay_buffer) >= BATCH_SIZE:
+                actor_loss, critic_loss = agent.train()
+                if actor_loss is not None:
+                    actor_hist.append(float(actor_loss))
+                    critic_hist.append(float(critic_loss))
+                    reward_hist.append(reward_acc)
+                    print(f"[TRAIN {label}] Step={step_counter}, Actor={actor_loss:.4f}, Critic={critic_loss:.4f}")
+                    return 0 # Reset the accumulated reward after logging
+            else:
+                print(f"[TRAIN {label}] Step={step_counter}, Buffer filling ({len(agent.replay_buffer)}/{BATCH_SIZE})")
+            return reward_acc
+
+        total_main_reward = perform_training(mainIntersectionAgent, total_main_reward, main_actor_loss_history, main_critic_loss_history, main_reward_history, "MAIN")
+        total_sw_reward = perform_training(swPedXingAgent, total_sw_reward, sw_actor_loss_history, sw_critic_loss_history, sw_reward_history, "SW")
+        total_se_reward = perform_training(sePedXingAgent, total_se_reward, se_actor_loss_history, se_critic_loss_history, se_reward_history, "SE")
+
+    # ---- Periodic tracking (Metrics) ----
+    # Only collect metrics during TEST_MODE to save performance
+    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    if TRAIN_MODE == 0 and step_counter % TRACK_INTERVAL_STEPS == 0:
+        temp_jam = 0
+        temp_throughput = 0
+        
+        # Fetch results once per interval
         for det_id in detector_ids:
             detector_stats = traci.lanearea.getSubscriptionResults(det_id)
-
-            if not detector_stats:
-                print("Lane Data Error: Undetected")
-                break
-            
-            jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
-            throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
-                
-        jam_length /= detector_count
-        jam_length_total += jam_length
-        throughput_total += throughput
+            if detector_stats:
+                temp_jam += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+                temp_throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
         
+        metric_observation_count += 1
+        jam_length_total += (temp_jam / detector_count)
+        throughput_total += temp_throughput
+
+    # Advance the simulation (Call this ONLY ONCE per loop)
     traci.simulationStep()
 
-jam_length_average = jam_length_total / metric_observation_count
-throughput_average = throughput_total / metric_observation_count
+# --- End of Simulation Loop ---
 
-print("\n Queue Length:", jam_length_average)
-print("\n Throughput:", throughput_average)
+print("\nSimulation completed!")
 
-print("\n Simulation completed!")
-
+# Safe metric calculation to avoid ZeroDivisionError
+if metric_observation_count > 0:
+    jam_length_average = jam_length_total / metric_observation_count
+    throughput_average = throughput_total / metric_observation_count
+    print(f"Final Results:\n - Avg Queue Length: {jam_length_average:.2f}m\n - Avg Throughput: {throughput_average:.2f} vehicles")
+else:
+    print("Training session finished. Use TEST_MODE=0 to generate traffic metrics.")
 # Save trained models
 if TRAIN_MODE == 1:
     print("Saving trained models...")
