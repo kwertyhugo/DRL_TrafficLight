@@ -10,12 +10,12 @@ else:
 
 Sumo_config = [
     'sumo',
-    '-c', r'Olivarez_traci\baselinePed.sumocfg',
+    '-c', r'Olivarez_traci\SignalizedPed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_NoDRL\BP_NoDRL_stats_slowtraffic.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_NoDRL\BP_NoDRL_trips_slowtraffic.xml'
+    '--statistic-output', r'Olivarez_traci\output_NoDRL\SP_NoDRL_stats_trafficjam.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_NoDRL\SP_NoDRL_trips_trafficjam.xml'
 ]
 
 #Metrics

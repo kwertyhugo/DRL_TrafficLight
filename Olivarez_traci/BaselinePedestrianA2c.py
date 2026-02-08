@@ -26,7 +26,7 @@ mainIntersectionAgent = a2c(
 )
 
 # === CONTINUE TRAINING FLAG ===
-CONTINUE_TRAINING = True  # set to True to load previous model
+CONTINUE_TRAINING = False  # set to True to load previous model
 
 if CONTINUE_TRAINING:
     try:
@@ -56,7 +56,7 @@ tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
 sys.path.append(tools)
 
 Sumo_config = [
-    'sumo-gui',
+    'sumo',
     '-c', r'Olivarez_traci\baselinePed.sumocfg',
     '--step-length', '0.05',
     '--delay', '0',

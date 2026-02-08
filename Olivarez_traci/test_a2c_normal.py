@@ -350,7 +350,7 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < max_sim_ste
             if trainMode == 0 and decision_step_count % 100 == 0:
                 sim_time = traci.simulation.getTime()
                 print(f"[Step {decision_step_count:5d}] Time: {sim_time:7.1f}s | "
-                      f"Queue: {sum(queue):7.1f} | Action: {actionSpace[actionIndex]:3d} | SimStep: {step_counter}")
+                    f"Queue: {sum(queue):7.1f} | Action: {actionSpace[actionIndex]:3d} | SimStep: {step_counter}")
             
             decision_step_count += 1
         else:
