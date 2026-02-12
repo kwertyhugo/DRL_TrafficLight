@@ -110,7 +110,7 @@ else:
 # ----------------------
 
 
-# Load training histories if available
+#   if available
 main_reward_history, main_actor_loss_history, main_critic_loss_history = mainIntersectionAgent.load_history('./Olivarez_traci/output_DDPG/main_ddpg_history.csv')
 sw_reward_history, sw_actor_loss_history, sw_critic_loss_history = swPedXingAgent.load_history('./Olivarez_traci/output_DDPG/sw_ddpg_history.csv')
 se_reward_history, se_actor_loss_history, se_critic_loss_history = sePedXingAgent.load_history('./Olivarez_traci/output_DDPG/se_ddpg_history.csv')

@@ -6,7 +6,7 @@ import csv
 from models.DDPG import DDPGAgent as ddpg
 
 # ------- Configuration -------
-TRAIN_MODE = 1 
+TRAIN_MODE = 0 
 reward_scale = 10.0  
 noise_decay = 0.9995 
 min_noise_std = 0.01
@@ -30,6 +30,34 @@ globalAgent = ddpg(
     name='Global_Olivarez_DDPG'
 )
 
+
+model_path = './Olivarez_traci/output_DDPG/'
+
+# check if the directory exists and has files
+if os.path.exists(model_path) and len(os.listdir(model_path)) > 0:
+    print("Found saved history. Attempting to load...")
+    
+    try:
+        # 1. Load the Neural Network Weights (Actor/Critic)
+        # This makes the agent "smart" based on previous training
+        globalAgent.load() 
+        print(" - Model weights loaded successfully.")
+    except Exception as e:
+        print(f" - Warning: Could not load model weights. Starting with random weights. Error: {e}")
+
+    try:
+        # 2. Load the Replay Buffer (Memory)
+        # This is CRITICAL for resuming training (Mode 1) so it remembers past data.
+        # It is optional for Testing (Mode 0), but loading it doesn't hurt.
+        globalAgent.load_replay_buffer()
+        print(" - Replay buffer (memory) loaded successfully.")
+    except Exception as e:
+        print(f" - Warning: Could not load replay buffer. Starting with empty memory. Error: {e}")
+
+else:
+    print("No history found. Starting fresh.")
+    
+    
 # Global variables for simulation state
 mainCurrentPhase = 0
 mainCurrentPhaseDuration = 30.0
@@ -170,11 +198,30 @@ def get_global_raw_state():
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
-    sys.path.append(tools)
+    # Check if tools is already in path to avoid duplicates
+    if tools not in sys.path:
+        sys.path.append(tools)
 else:
-    sys.exit("Declare SUMO_HOME")
+    sys.exit("Please declare environment variable 'SUMO_HOME'")
 
-traci.start(['sumo', '-c', 'Olivarez_traci/signalizedPed.sumocfg', '--step-length', '0.05'])
+import traci  # Import traci after setting the path
+
+# Build sumo config path safely
+sumo_cfg_path = os.path.join('Olivarez_traci', 'signalizedPed.sumocfg')
+
+# Define the Sumo command and arguments
+Sumo_config = [
+    'sumo',
+    '-c', sumo_cfg_path,
+    '--step-length', '0.05',
+    '--delay', '0',
+    '--lateral-resolution', '0.1',
+    '--statistic-output', r'Olivarez_traci\output_DDPG\SD_DDPG_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DDPG\SD_DDPG_trips.xml'
+]
+
+# Start TraCI with the new configuration
+traci.start(Sumo_config)
 
 # Initial Subscriptions
 for junc in ["cluster_295373794_3477931123_7465167861", "6401523012", "3285696417"]:
