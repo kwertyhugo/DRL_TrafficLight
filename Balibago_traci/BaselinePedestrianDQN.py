@@ -17,12 +17,12 @@ EPSILON_DECAY = 0.995
 LEARNING_RATE = 0.00005
 
 # --- AGENT INITIALIZATION ---
-NorthAgent = dqn(state_size=13, action_size=11, memory_size=MEMORY_SIZE, gamma=GAMMA, 
+NorthAgent = dqn(state_size=12, action_size=11, memory_size=MEMORY_SIZE, gamma=GAMMA, 
                  epsilon=1.0, epsilon_decay_rate=EPSILON_DECAY, epsilon_min=0.01, 
                  learning_rate=LEARNING_RATE, target_update_freq=500, 
                  name='North_DQNAgent', area='Balibago')
 
-SouthAgent = dqn(state_size=10, action_size=11, memory_size=MEMORY_SIZE, gamma=GAMMA, 
+SouthAgent = dqn(state_size=9, action_size=11, memory_size=MEMORY_SIZE, gamma=GAMMA, 
                  epsilon=1.0, epsilon_decay_rate=EPSILON_DECAY, epsilon_min=0.01, 
                  learning_rate=LEARNING_RATE, target_update_freq=500, 
                  name='South_DQNAgent', area='Balibago')
@@ -83,14 +83,6 @@ epsilon_history_S = []
 total_reward_S = 0
 
 # --- HELPER FUNCTIONS ---
-def _junctionSubscription(junction_id):
-    traci.junction.subscribeContext(
-        junction_id,
-        traci.constants.CMD_GET_PERSON_VARIABLE,
-        10.0,
-        [traci.constants.VAR_WAITING_TIME]
-    )
-    
 def _subscribe_all_detectors():
     vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
     vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
@@ -117,21 +109,11 @@ def _weighted_waits(detector_id):
 
 def _northIntersection_queue():
     queues = [_weighted_waits(f"e2_{i}") for i in range(8)]
-    pedestrian = 0
-    junction_data = traci.junction.getContextSubscriptionResults("4902876117")
-    if junction_data:
-        for data in junction_data.values():
-            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
-    return queues + [pedestrian]
+    return queues
 
 def _southIntersection_queue():
     queues = [_weighted_waits(f"e2_{i}") for i in range(8, 13)]
-    pedestrian = 0
-    junction_data = traci.junction.getContextSubscriptionResults("12188714")
-    if junction_data:
-        for data in junction_data.values():
-            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
-    return queues + [pedestrian]
+    return queues
 
 def calculate_reward(current_state):
     if current_state is None: return 0
@@ -143,7 +125,7 @@ def get_next_phase_duration(current_phase, action_index):
         return 5 # Yellow/Transition
     else: 
         duration_adjustment = actionSpace[action_index]
-        base_durations = {0: 45, 2: 130, 4: 30, 6: 90} if current_phase in [0,2,4,7] else {0: 25, 2: 30, 4: 40, 6: 45}
+        base_durations = {0: 45, 2: 130, 4: 30, 6: 90} if current_phase in [0,2,4,6] else {0: 30, 2: 30, 4: 45}
         # Note: Logic slightly differs per intersection in original code, handled in APPLY block below
         return 0 # Placeholder, logic moved to apply function for clarity
 
@@ -161,8 +143,6 @@ def save_history(filename, headers, reward_hist, loss_hist, epsilon_hist, train_
 # --- MAIN EXECUTION ---
 traci.start(Sumo_config)
 _subscribe_all_detectors()
-_junctionSubscription("4902876117")
-_junctionSubscription("12188714")
 
 while traci.simulation.getMinExpectedNumber() > 0:
     step_counter += 1
@@ -266,7 +246,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
         else:
             idx = next_action_S_idx
             duration_adj = actionSpace[idx]
-            base = {0: 25, 2: 30, 4: 40, 6: 45}.get(southCurrentPhase, 30)
+            base = {0: 30, 2: 30, 4: 45}.get(southCurrentPhase, 30)
             southCurrentPhaseDuration = max(5, min(180, base + duration_adj))
         
         traci.trafficlight.setPhaseDuration("12188714", southCurrentPhaseDuration)

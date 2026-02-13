@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-01-23 17:27:30 by Eclipse SUMO netedit Version 1.24.0
+<!-- generated on 2026-02-13T14:03:43.380182+08:00 by Eclipse SUMO netedit 1.25.0
 -->
 
 <additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
@@ -8,11 +8,7 @@
     <laneAreaDetector id="e2_0" lanes="32425220#7_1 32425220#8_1 549232953#0_1" pos="161.56" endPos="50.69" period="300.00" file="e2_0.xml"/>
     <laneAreaDetector id="e2_1" lanes="32425220#7_2 32425220#8_2 549232953#0_2" pos="160.95" endPos="50.42" period="300.00" file="e2_1.xml"/>
     <laneAreaDetector id="e2_2" lanes="-32425190#1_1 -32425190#0_1" pos="85.35" endPos="33.26" period="300.00" file="e2_2.xml"/>
-    <laneAreaDetector id="e2_3" lane="549232953#1_1" pos="0.00" length="1.00" period="300.00" file="e2_3.xml" friendlyPos="1"/>
-    <laneAreaDetector id="e2_4" lane="549232953#1_2" pos="0.00" length="1.00" period="300.00" file="e2_4.xml" friendlyPos="1"/>
-    <laneAreaDetector id="e2_5" lane="-549232953#1_2" pos="0.00" length="1.00" period="300.00" file="e2_5.xml" friendlyPos="1"/>
-    <laneAreaDetector id="e2_6" lane="-549232953#1_1" pos="0.00" length="1.00" period="300.00" file="e2_6.xml" friendlyPos="1"/>
-    <laneAreaDetector id="e2_7" lanes="1346113028#5_1 1346113028#6_1" pos="83.40" endPos="68.38" period="300.00" file="e2_7.xml"/>
-    <laneAreaDetector id="e2_8" lanes="-549232953#3_2 -549232953#2_2" pos="57.36" endPos="88.89" period="300.00" file="e2_8.xml"/>
-    <laneAreaDetector id="e2_9" lanes="-549232953#3_1 -549232953#2_1" pos="57.53" endPos="89.04" period="300.00" file="e2_9.xml"/>
+    <laneAreaDetector id="e2_3" lanes="-549232953#3_1 -549232953#2_1" pos="57.53" endPos="89.04" period="300.00" file="e2_9.xml"/>
+    <laneAreaDetector id="e2_4" lanes="-549232953#3_2 -549232953#2_2" pos="57.36" endPos="88.89" period="300.00" file="e2_8.xml"/>
+    <laneAreaDetector id="e2_5" lanes="1346113028#5_1 1346113028#6_1" pos="83.40" endPos="68.38" period="300.00" file="e2_7.xml"/>
 </additional>

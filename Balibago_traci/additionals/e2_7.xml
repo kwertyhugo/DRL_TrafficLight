@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-02-10T16:14:33.544406+08:00 by Eclipse SUMO GUI 1.25.0
+<!-- generated on 2026-02-13T11:33:13.991333+08:00 by Eclipse SUMO GUI 1.25.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -28,4 +28,5 @@
 -->
 
 <detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e2_file.xsd">
+   <interval begin="0.00" end="91.00" id="e2_7" sampledSeconds="28.00" nVehEntered="1" nVehLeft="0" nVehSeen="1" meanSpeed="0.68" meanTimeLoss="27.37" meanOccupancy="0.71" maxOccupancy="2.30" meanMaxJamLengthInVehicles="0.27" meanMaxJamLengthInMeters="0.60" maxJamLengthInVehicles="1" maxJamLengthInMeters="2.20" jamLengthInVehiclesSum="25" jamLengthInMetersSum="55.00" meanHaltingDuration="26.00" maxHaltingDuration="26.00" haltingDurationSum="26.00" meanIntervalHaltingDuration="26.00" maxIntervalHaltingDuration="26.00" intervalHaltingDurationSum="26.00" startedHalts="1.00" meanVehicleNumber="0.31" maxVehicleNumber="1" />
 </detector>

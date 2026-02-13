@@ -120,7 +120,8 @@ class DDPGAgent:
         tau=1e-3,
         buffer_size=100000,
         batch_size=64,
-        name='DDPGAgent'
+        name='DDPGAgent',
+        folder="./Olivarez_traci/models_DDPG/"
     ):
         self.state_size = state_size
         self.action_size = action_size
@@ -130,6 +131,7 @@ class DDPGAgent:
         self.tau = tau
         self.batch_size = batch_size
         self.name = name
+        self.folder = folder
 
         # Replay buffer
         self.replay_buffer = ReplayBuffer(maxlen=buffer_size)
@@ -214,23 +216,23 @@ class DDPGAgent:
 
         return float(actor_loss.numpy()), float(critic_loss.numpy())
 
-    def save(self, folder='./Olivarez_traci/models_DDPG/'):
-        os.makedirs(folder, exist_ok=True)
-        self.actor.save_weights(os.path.join(folder, f'{self.name}_actor_weights.weights.h5'))
-        self.critic.save_weights(os.path.join(folder, f'{self.name}_critic_weights.weights.h5'))
-        self.target_actor.save_weights(os.path.join(folder, f'{self.name}_target_actor_weights.weights.h5'))
-        self.target_critic.save_weights(os.path.join(folder, f'{self.name}_target_critic_weights.weights.h5'))
+    def save(self):
+        os.makedirs(self.folder, exist_ok=True)
+        self.actor.save_weights(os.path.join(self.folder, f'{self.name}_actor_weights.weights.h5'))
+        self.critic.save_weights(os.path.join(self.folder, f'{self.name}_critic_weights.weights.h5'))
+        self.target_actor.save_weights(os.path.join(self.folder, f'{self.name}_target_actor_weights.weights.h5'))
+        self.target_critic.save_weights(os.path.join(self.folder, f'{self.name}_target_critic_weights.weights.h5'))
         print("All weights saved successfully.")
 
-    def load(self, folder='./Olivarez_traci/models_DDPG/'):
-        actor_w = os.path.join(folder, f'{self.name}_actor_weights.weights.h5')
-        critic_w = os.path.join(folder, f'{self.name}_critic_weights.weights.h5')
-        target_actor_w = os.path.join(folder, f'{self.name}_target_actor_weights.weights.h5')
-        target_critic_w = os.path.join(folder, f'{self.name}_target_critic_weights.weights.h5')
+    def load(self):
+        actor_w = os.path.join(self.folder, f'{self.name}_actor_weights.weights.h5')
+        critic_w = os.path.join(self.folder, f'{self.name}_critic_weights.weights.h5')
+        target_actor_w = os.path.join(self.folder, f'{self.name}_target_actor_weights.weights.h5')
+        target_critic_w = os.path.join(self.folder, f'{self.name}_target_critic_weights.weights.h5')
 
         # Ensure the folder exists
-        os.makedirs(folder, exist_ok=True)
-        print(f"Loading model weights from '{folder}'...")
+        os.makedirs(self.folder, exist_ok=True)
+        print(f"Loading model weights from '{self.folder}'...")
 
         # Check for missing files
         missing = [p for p in [actor_w, critic_w, target_actor_w, target_critic_w] if not os.path.exists(p)]
@@ -261,9 +263,9 @@ class DDPGAgent:
         except Exception as e:
             print("Error while loading weights:", e)
             
-    def save_replay_buffer(self, folder='./Olivarez_traci/models_DDPG/'):
-        os.makedirs(folder, exist_ok=True)
-        path = os.path.join(folder, f'{self.name}_replay.pkl')
+    def save_replay_buffer(self):
+        os.makedirs(self.folder, exist_ok=True)
+        path = os.path.join(self.folder, f'{self.name}_replay.pkl')
         try:
             with open(path, 'wb') as f:
                 pickle.dump(list(self.replay_buffer.buffer), f)
@@ -271,8 +273,8 @@ class DDPGAgent:
         except Exception as e:
             print(f"[ERROR] Failed to save replay buffer for {self.name}: {e}")
 
-    def load_replay_buffer(self, folder='./Olivarez_traci/models_DDPG/'):
-        path = os.path.join(folder, f'{self.name}_replay.pkl')
+    def load_replay_buffer(self):
+        path = os.path.join(self.folder, f'{self.name}_replay.pkl')
         if os.path.exists(path):
             try:
                 with open(path, 'rb') as f:
