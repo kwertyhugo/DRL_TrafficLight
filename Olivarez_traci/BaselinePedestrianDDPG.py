@@ -7,7 +7,7 @@ from keras.utils import to_categorical
 from models.DDPG import DDPGAgent as ddpg
 
 # ------- Configuration -------
-TRAIN_MODE = 1
+TRAIN_MODE = 0
 reward_scale = 10.0  
 noise_decay = 0.9995 
 min_noise_std = 0.01
@@ -185,8 +185,8 @@ Sumo_config = [
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DDPG\baseline_SD_DDPG_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DDPG\baseline_SD_DDPG_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DDPG\baseline_jam_SD_DDPG_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DDPG\baseline_jam_SD_DDPG_trips.xml'
 ]
 
 traci.start(Sumo_config)
