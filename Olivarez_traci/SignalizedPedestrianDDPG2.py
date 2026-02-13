@@ -88,8 +88,8 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DDPG\slowGlobal_SD_DDPG_stats.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DDPG\slowGlobal_SD_DDPG_trips.xml'
+    '--statistic-output', r'Olivarez_traci\output_DDPG\jamGlobal_SD_DDPG_stats.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DDPG\jamGlobal_SD_DDPG_trips.xml'
 ]
 
 # Simulation Variables
