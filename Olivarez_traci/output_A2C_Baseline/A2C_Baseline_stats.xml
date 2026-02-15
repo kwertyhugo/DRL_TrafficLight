@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-02-08 21:46:06 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-02-15 22:16:57 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="Olivarez_traci\network/map1.net.xml"/>
-        <route-files value="Olivarez_traci\demand/flows_jica.rou.xml"/>
+        <net-file value="Olivarez_traci\network/baseline.net.xml"/>
+        <route-files value="Olivarez_traci\demand/flows_training.rou.xml"/>
         <additional-files value="Olivarez_traci\additionals/map.poly.xml,Olivarez_traci\ additionals/detectors.add.xml"/>
     </input>
 
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="59013"/>
+        <remote-port value="49695"/>
     </traci_server>
 
     <gui_only>
@@ -43,4 +43,14 @@
 -->
 
 <statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="105575.84" clockEnd="108516.45" clockDuration="2940.61" traciDuration="495.24" realTimeFactor="15.14" vehicleUpdatesPerSecond="12210.03" personUpdatesPerSecond="7834.07" begin="0.00" end="44521.85" duration="44521.85"/>
+    <vehicles loaded="8943" inserted="8943" running="0" waiting="0"/>
+    <teleports total="29" jam="29" yield="0" wrongLane="0"/>
+    <safety collisions="0" emergencyStops="1" emergencyBraking="42"/>
+    <persons loaded="5660" running="0" jammed="6"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+    <vehicleTripStatistics count="8943" routeLength="1285.49" speed="10.85" duration="200.74" waitingTime="107.83" timeLoss="134.12" departDelay="2.62" departDelayWaiting="-1.00" totalTravelTime="1795245.90" totalDepartDelay="23392.00"/>
+    <pedestrianStatistics number="8408" routeLength="158.67" duration="136.99" timeLoss="21.27"/>
+    <rideStatistics number="0"/>
+    <transportStatistics number="0"/>
 </statistics>

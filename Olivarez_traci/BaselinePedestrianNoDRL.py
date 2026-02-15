@@ -18,11 +18,42 @@ Sumo_config = [
     '--tripinfo-output', r'Olivarez_traci\output_NoDRL\BP_NoDRL_trips.xml'
 ]
 
-traci.start(Sumo_config)
+# Metrics
+detector_count = 7
+jam_length_average = 0
+jam_length_total = 0
+metric_observation_count = 0
 
-steps = 0
-while steps < 7000:    
-    steps += 0.1
+# Detector IDs
+detector_ids = ["e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10"]
+
+def _subscribe_all_detectors():
+    global detector_ids
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
+    for det_id in detector_ids:
+        traci.lanearea.subscribe(det_id, vehicle_vars)
+
+traci.start(Sumo_config)
+_subscribe_all_detectors()
+
+while traci.simulation.getMinExpectedNumber() > 0:
+    jam_length = 0
+    metric_observation_count += 1
+    
+    for det_id in detector_ids:
+        detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+        if not detector_stats:
+            print("Lane Data Error: Undetected")
+            break
+        jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+    
+    jam_length /= detector_count
+    jam_length_total += jam_length
+    
     traci.simulationStep()
 
 traci.close()
+
+jam_length_average = jam_length_total / metric_observation_count
+print("\nQueue Length (Average):", jam_length_average)
+print(f"Total simulation steps: {metric_observation_count}")

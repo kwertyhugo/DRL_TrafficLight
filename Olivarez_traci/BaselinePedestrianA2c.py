@@ -26,7 +26,7 @@ mainIntersectionAgent = a2c(
 )
 
 # === CONTINUE TRAINING FLAG ===
-CONTINUE_TRAINING = False  # set to True to load previous model
+CONTINUE_TRAINING = True  # set to True to load previous model
 
 if CONTINUE_TRAINING:
     try:
@@ -210,9 +210,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
     current_time = traci.simulation.getTime()
     
     # Stop at target time OR when vehicles are depleted
-    if current_time >= 21500:
-        print("Target time reached (21500). Saving model...")
-        break
     
     # Safety check: stop if no vehicles remain for extended period
     if traci.simulation.getMinExpectedNumber() == 0:
