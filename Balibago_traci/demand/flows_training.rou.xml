@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<routes>
+    <vType id="ped" vClass="pedestrian" 
+        impatience="0.2" 
+        mDriveAfterRedTime="-1" 
+        guiShape="pedestrian"/>
+
+    <vTypeDistribution id="AguinaldoHighway">
+        <vType id="car" vClass="passenger" 
+            probability="0.413"
+            guiShape="passenger"/>
+
+        <vType id="jeep" vClass="bus" 
+            probability="0.17"
+            guiShape="passenger/van" 
+            length="8" 
+            width="2" 
+            mass="500" 
+            maxSpeed="100" 
+            desiredMaxSpeed="60" 
+            personCapacity="20"/>
+
+        <vType id="bus" vClass="bus" 
+            probability="0.06"
+            guiShape="bus"/>
+
+        <vType id="truck" vClass="truck" 
+            probability="0.13"
+            guiShape="truck"/>
+
+        <vType id="motorcycle" vClass="motorcycle" 
+            probability="0.1135"
+            width="0.8"
+            minGap="0.5" 
+            guiShape="motorcycle"/>
+
+        <vType id="tricycle" vClass="motorcycle" 
+            probability="0.1135"
+            guiShape="motorcycle" 
+            width="1.5" 
+            accel="2" 
+            maxSpeed="50" 
+            personCapacity="4"/>
+    </vTypeDistribution>
+
+    <!-- ============================================ -->
+    <!-- 6:00 - 6:30 MODERATE (0-1800 seconds)       -->
+    <!-- TRAINING VERSION - Different from test      -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_1" type="ped" begin="0.00" end="1800.00" personsPerHour="115" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_1" type="ped" begin="0.00" end="1800.00" personsPerHour="160" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_1" type="ped" begin="0.00" end="1800.00" personsPerHour="148" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_1" type="ped" begin="0.00" end="1800.00" personsPerHour="128" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <flow id="A1_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0165" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0252" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0295" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0132" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0108" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0128" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0245" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0152" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0288" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0238" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0158" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_1" type="AguinaldoHighway" begin="0.00" end="1800.00" probability="0.0248" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+    <!-- ============================================ -->
+    <!-- 6:30 - 9:00 HEAVY RUSH (1800-10800 seconds) -->
+    <!-- TRAINING VERSION - Different from test      -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_2" type="ped" begin="1800.00" end="10800.00" personsPerHour="245" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_2" type="ped" begin="1800.00" end="10800.00" personsPerHour="205" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_2" type="ped" begin="1800.00" end="10800.00" personsPerHour="240" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_2" type="ped" begin="1800.00" end="10800.00" personsPerHour="228" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <flow id="A1_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0268" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0422" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0508" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0222" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0182" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0215" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0415" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0272" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0425" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0435" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0265" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_2" type="AguinaldoHighway" begin="1800.00" end="10800.00" probability="0.0518" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+    <!-- ============================================ -->
+    <!-- 9:00 - 10:00 MODERATE (10800-14400 seconds) -->
+    <!-- TRAINING VERSION - Different from test      -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_3" type="ped" begin="10800.00" end="14400.00" personsPerHour="142" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_3" type="ped" begin="10800.00" end="14400.00" personsPerHour="138" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_3" type="ped" begin="10800.00" end="14400.00" personsPerHour="152" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_3" type="ped" begin="10800.00" end="14400.00" personsPerHour="132" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <flow id="A1_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0155" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0245" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0305" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0128" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0105" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0135" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0238" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0162" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0252" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0312" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0148" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_3" type="AguinaldoHighway" begin="10800.00" end="14400.00" probability="0.0245" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+    <!-- ============================================ -->
+    <!-- 10:00 - 4:00 LIGHT (14400-36000 seconds)    -->
+    <!-- TRAINING VERSION - Different from test      -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_4" type="ped" begin="14400.00" end="36000.00" personsPerHour="82" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_4" type="ped" begin="14400.00" end="36000.00" personsPerHour="62" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_4" type="ped" begin="14400.00" end="36000.00" personsPerHour="88" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_4" type="ped" begin="14400.00" end="36000.00" personsPerHour="78" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <flow id="A1_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0092" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0138" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0175" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0075" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0058" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0072" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0142" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0095" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0148" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0168" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0088" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_4" type="AguinaldoHighway" begin="14400.00" end="36000.00" probability="0.0152" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+    <!-- ============================================ -->
+    <!-- 4:00 - 5:00 MODERATE (36000-39600 seconds)  -->
+    <!-- TRAINING VERSION - Different from test      -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_5" type="ped" begin="36000.00" end="39600.00" personsPerHour="162" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_5" type="ped" begin="36000.00" end="39600.00" personsPerHour="185" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_5" type="ped" begin="36000.00" end="39600.00" personsPerHour="158" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_5" type="ped" begin="36000.00" end="39600.00" personsPerHour="168" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <flow id="A1_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0168" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0262" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0312" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0138" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0112" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0135" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0255" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0172" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0265" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0325" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0165" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_5" type="AguinaldoHighway" begin="36000.00" end="39600.00" probability="0.0248" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+    <!-- ============================================ -->
+    <!-- 5:00 - 8:00 HEAVY RUSH (39600-50400 seconds) -->
+    <!-- TRAINING VERSION - Different directional bias -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_6" type="ped" begin="39600.00" end="50400.00" personsPerHour="225" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_6" type="ped" begin="39600.00" end="50400.00" personsPerHour="218" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_6" type="ped" begin="39600.00" end="50400.00" personsPerHour="235" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_6" type="ped" begin="39600.00" end="50400.00" personsPerHour="242" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <!-- Balanced evening rush - slightly heavier A and B routes -->
+    <flow id="A1_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0445" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0532" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0395" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0368" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0315" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0342" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0408" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0272" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0525" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0515" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0328" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_6" type="AguinaldoHighway" begin="39600.00" end="50400.00" probability="0.0418" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+    <!-- ============================================ -->
+    <!-- 8:00 - 9:00 MODERATE (50400-54000 seconds)  -->
+    <!-- TRAINING VERSION - Different from test      -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_7" type="ped" begin="50400.00" end="54000.00" personsPerHour="158" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_7" type="ped" begin="50400.00" end="54000.00" personsPerHour="148" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_7" type="ped" begin="50400.00" end="54000.00" personsPerHour="172" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_7" type="ped" begin="50400.00" end="54000.00" personsPerHour="138" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <flow id="A1_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0162" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0258" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0315" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0135" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0108" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0142" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0248" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0172" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0268" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0308" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0165" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_7" type="AguinaldoHighway" begin="50400.00" end="54000.00" probability="0.0262" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+    <!-- ============================================ -->
+    <!-- 9:00 - 10:00 LIGHT (54000-57600 seconds)    -->
+    <!-- TRAINING VERSION - Different from test      -->
+    <!-- ============================================ -->
+
+    <personFlow id="pf_1_8" type="ped" begin="54000.00" end="57600.00" personsPerHour="95" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_2_8" type="ped" begin="54000.00" end="57600.00" personsPerHour="68" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <personFlow id="pf_3_8" type="ped" begin="54000.00" end="57600.00" personsPerHour="92" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <personFlow id="pf_4_8" type="ped" begin="54000.00" end="57600.00" personsPerHour="75" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>
+
+    <flow id="A1_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0095" from="-793339796#2" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="A2_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0148" from="-793339796#2" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="A3_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0182" from="-793339796#2" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="B1_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0078" from="-361257727#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="B2_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0062" from="-361257727#0" to="-440471861#0" departLane="best" departSpeed="max"/>
+    <flow id="B3_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0075" from="-361257727#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="C1_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0152" from="440471861#0" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="C2_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0098" from="440471861#0" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="C3_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0158" from="440471861#0" to="-140483224#1" departLane="best" departSpeed="max"/>
+    
+    <flow id="D1_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0175" from="140483224#1" to="-793339796#2" departLane="best" departSpeed="max"/>
+    <flow id="D2_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0092" from="140483224#1" to="-145894807#0" departLane="best" departSpeed="max"/>
+    <flow id="D3_1_8" type="AguinaldoHighway" begin="54000.00" end="57600.00" probability="0.0152" from="140483224#1" to="-440471861#0" departLane="best" departSpeed="max"/>
+
+</routes>
