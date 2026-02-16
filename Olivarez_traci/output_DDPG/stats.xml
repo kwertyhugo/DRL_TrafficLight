@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-02-17 00:48:37 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-02-17 00:04:06 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="Balibago_traci/network/balibago_signalized.net.xml"/>
-        <route-files value="Balibago_traci/demand/flows_training.rou.xml"/>
-        <additional-files value="Balibago_traci/additionals/balibago.poly.xml,Balibago_traci/ additionals/balibago.add.xml"/>
+        <net-file value="Olivarez_traci/network/map1.net.xml"/>
+        <route-files value="Olivarez_traci/demand/flows_slow_traffic.rou.xml"/>
+        <additional-files value="Olivarez_traci/additionals/map.poly.xml,Olivarez_traci/ additionals/detectors.add.xml"/>
     </input>
 
     <output>
-        <tripinfo-output value="Balibago_traci\output_DDPG\trips.xml"/>
-        <statistic-output value="Balibago_traci\output_DDPG\stats.xml"/>
+        <statistic-output value="Olivarez_traci\output_DDPG\stats.xml"/>
     </output>
 
     <time>
@@ -21,7 +20,6 @@
     </time>
 
     <processing>
-        <lateral-resolution value="0.1"/>
         <collision.action value="none"/>
         <collision.check-junctions value="false"/>
         <collision.mingap-factor value="0"/>
@@ -32,7 +30,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="56960"/>
+        <remote-port value="53796"/>
     </traci_server>
 
     <gui_only>
