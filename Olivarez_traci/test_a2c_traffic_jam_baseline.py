@@ -64,6 +64,14 @@ stepLength = 0.1
 mainCurrentPhase = 0
 mainCurrentPhaseDuration = 30
 actionSpace = (-15, -10, -5, 0, 5, 10, 15)
+detector_count = 7  # e2_4 through e2_10
+
+# === METRICS TRACKING ===
+throughput_average = 0
+throughput_total = 0
+jam_length_average = 0
+jam_length_total = 0
+metric_observation_count = 0
 
 # === HELPER FUNCTIONS ===
 def _junctionSubscription(junction_id):
@@ -74,11 +82,18 @@ def _junctionSubscription(junction_id):
     
 def _subscribe_all_detectors():
     detector_ids = ["e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10"]
-    vehicle_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    
+    # Subscribe to vehicle context for wait time calculations
+    vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
     for det_id in detector_ids:
         traci.lanearea.subscribeContext(
-            det_id, traci.constants.CMD_GET_VEHICLE_VARIABLE, 3, vehicle_vars
+            det_id, traci.constants.CMD_GET_VEHICLE_VARIABLE, 3, vehicle_context_vars
         )
+    
+    # Subscribe to detector statistics for throughput and jam length
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
+    for det_id in detector_ids:
+        traci.lanearea.subscribe(det_id, vehicle_vars)
 
 def _weighted_waits(detector_id):
     sumWait = 0
@@ -127,6 +142,8 @@ traci.start(Sumo_config)
 _subscribe_all_detectors()
 _junctionSubscription("cluster_295373794_3477931123_7465167861")
 
+detector_ids = ["e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10"]
+
 print("\n" + "=" * 70)
 print("TESTING BASELINE A2C AGENT ON TRAFFIC JAM SCENARIO")
 print("=" * 70)
@@ -171,6 +188,26 @@ while traci.simulation.getMinExpectedNumber() > 0 and sim_step_count < max_sim_s
         
         step_count += 1
     
+    # === PERIODIC METRICS TRACKING (every 60 seconds) ===
+    if sim_step_count % int(60 / stepLength) == 0:
+        jam_length = 0
+        throughput = 0
+        metric_observation_count += 1
+        
+        for det_id in detector_ids:
+            detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+            
+            if not detector_stats:
+                print("Lane Data Error: Undetected")
+                break
+            
+            jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+            throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+        
+        jam_length /= detector_count
+        jam_length_total += jam_length
+        throughput_total += throughput
+    
     traci.simulationStep()
     sim_step_count += 1
     
@@ -179,12 +216,20 @@ while traci.simulation.getMinExpectedNumber() > 0 and sim_step_count < max_sim_s
         print(f"\nReached simulation step limit ({max_sim_steps}). Stopping.")
         break
 
+# === CALCULATE AVERAGES ===
+jam_length_average = jam_length_total / metric_observation_count if metric_observation_count > 0 else 0
+throughput_average = throughput_total / metric_observation_count if metric_observation_count > 0 else 0
+
 # === CLOSE SIMULATION ===
 print("\n" + "=" * 70)
 print("TEST COMPLETE!")
 print("=" * 70)
 print(f"Total decision steps executed: {step_count}")
 print(f"Total simulation steps executed: {sim_step_count}")
+print(f"\nPerformance Metrics:")
+print(f"  Average Jam Length: {jam_length_average:.2f} meters")
+print(f"  Average Throughput: {throughput_average:.2f} vehicles/minute")
+print(f"  Total Observations: {metric_observation_count}")
 print(f"\nOutput files saved:")
 print(f"  - Statistics: Olivarez_traci/output_A2C_Baseline/SP_A2C_Baseline_Jam_stats.xml")
 print(f"  - Trip Info: Olivarez_traci/output_A2C_Baseline/SP_A2C_Baseline_Jam_trips.xml")
