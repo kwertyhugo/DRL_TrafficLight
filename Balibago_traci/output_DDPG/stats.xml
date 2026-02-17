@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-02-17 16:16:06 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-02-18 06:44:33 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="Balibago_traci/network/balibago_signalized.net.xml"/>
-        <route-files value="Balibago_traci/demand/flows_slow_traffic.rou.xml"/>
+        <route-files value="Balibago_traci/demand/flows_training.rou.xml"/>
         <additional-files value="Balibago_traci/additionals/balibago.poly.xml,Balibago_traci/ additionals/balibago.add.xml"/>
     </input>
 
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="51436"/>
+        <remote-port value="63873"/>
     </traci_server>
 
     <gui_only>
@@ -40,17 +40,3 @@
     </gui_only>
 
 </sumoConfiguration>
--->
-
-<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
-    <performance clockBegin="3539.95" clockEnd="3804.84" clockDuration="264.89" traciDuration="32.76" realTimeFactor="3.78" vehicleUpdatesPerSecond="6737.14" personUpdatesPerSecond="6259.41" begin="0.00" end="1000.00" duration="1000.00"/>
-    <vehicles loaded="623" inserted="623" running="278" waiting="0"/>
-    <teleports total="6" jam="1" yield="5" wrongLane="0"/>
-    <safety collisions="0" emergencyStops="0" emergencyBraking="1"/>
-    <persons loaded="1760" running="290" jammed="14"/>
-    <personTeleports total="0" abortWait="0" wrongDest="0"/>
-    <vehicleTripStatistics count="345" routeLength="1849.21" speed="8.92" duration="279.95" waitingTime="127.76" timeLoss="172.17" departDelay="0.97" departDelayWaiting="-1.00" totalTravelTime="96582.30" totalDepartDelay="335.70"/>
-    <pedestrianStatistics number="205" routeLength="370.49" duration="329.84" timeLoss="63.30"/>
-    <rideStatistics number="0"/>
-    <transportStatistics number="0"/>
-</statistics>

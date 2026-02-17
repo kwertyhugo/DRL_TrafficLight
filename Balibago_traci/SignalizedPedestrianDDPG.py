@@ -210,17 +210,6 @@ try:
     while traci.simulation.getMinExpectedNumber() > 0:
         step_counter += 1
         
-        # --- 0. TERMINATION CHECK ---
-        # Stop if simulation goes too long
-        if step_counter > MAX_STEPS:
-            print("Max steps reached. Stopping.")
-            break
-            
-        # Stop if network is empty (after warm-up period of 200 steps)
-        if step_counter > 200 and traci.vehicle.getIDCount() == 0:
-            print("Network is empty. Stopping.")
-            break
-
         northCurrentPhaseDuration -= stepLength
         southCurrentPhaseDuration -= stepLength
 
