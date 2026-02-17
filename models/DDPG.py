@@ -121,7 +121,7 @@ class DDPGAgent:
         buffer_size=100000,
         batch_size=64,
         name='DDPGAgent',
-        folder="./Olivarez_traci/models_DDPG/"
+        folder="./Balibago_traci/models_DDPG/"
     ):
         self.state_size = state_size
         self.action_size = action_size
