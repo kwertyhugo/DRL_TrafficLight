@@ -5,9 +5,10 @@ import numpy as np
 import csv
 from keras.utils import to_categorical
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.DQN import DQNAgent as dqn
 
-mainIntersectionAgent = dqn(state_size=13, action_size=11, memory_size=2000, gamma=0.95, epsilon=0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=100, name='ReLU_DQNAgent_Baseline')
+mainIntersectionAgent = dqn(state_size=13, action_size=11, memory_size=2000, gamma=0.95, epsilon=1.0, epsilon_decay_rate=0.995, epsilon_min=0, learning_rate=0.00005, target_update_freq=100, name='ReLU_DQNAgent_Baseline')
 
 mainIntersectionAgent.load()
 
@@ -23,8 +24,8 @@ Sumo_config = [
     '--step-length', '0.05',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats_slowtraffic.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips_slowtraffic.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\BP_DQN_stats_trafficjamNEW.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\BP_DQN_trips_trafficjamNEW.xml'
 ]
 
 # Simulation Variables
@@ -257,8 +258,12 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
     traci.simulationStep()
 
-jam_length_average = jam_length_total / metric_observation_count
-throughput_average = throughput_total / metric_observation_count
+if metric_observation_count > 0:
+    jam_length_average = jam_length_total / metric_observation_count
+    throughput_average = throughput_total / metric_observation_count
+else:
+    jam_length_average = 0
+    throughput_average = 0
 
 print("\n Queue Length:", jam_length_average)
 print("\n Throughput:", throughput_average)
@@ -270,7 +275,7 @@ if trainMode == 1:
     print("Models saved successfully!")
 
     print("Saving training history...")
-    save_history('./Olivarez_traci/output_DQN/baseline_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
+    save_history('./Olivarez_traci/output_DQN_Baseline/baseline_agent_history.csv', ['Step', 'Reward', 'Loss', 'Epsilon'], 
                 main_reward_history, main_loss_history, main_epsilon_history, TRAIN_FREQUENCY)
     print("History saved successfully!")
 
