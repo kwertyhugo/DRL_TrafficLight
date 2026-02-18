@@ -109,7 +109,7 @@ southPrevState = None
 southPrevAction = None
 
 step_counter = 0
-MAX_STEPS = 10000 # Safety limit (1000 seconds)
+MAX_STEPS = 150000 # Safety limit (1000 seconds)
 
 # History Buffers
 reward_history_N, actor_loss_N, critic_loss_N = [], [], []
@@ -207,7 +207,7 @@ _junctionSubscription("12188714")
 print(f"STARTING DDPG | Unified Mode")
 
 try:
-    while traci.simulation.getMinExpectedNumber() > 0:
+    while traci.simulation.getMinExpectedNumber() > 0 and step_counter < MAX_STEPS:
         step_counter += 1
         
         northCurrentPhaseDuration -= stepLength
