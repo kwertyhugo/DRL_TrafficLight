@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-02-19 17:58:17 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-02-19 17:05:24 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -10,8 +10,7 @@
     </input>
 
     <output>
-        <tripinfo-output value="Balibago_traci/output_DDPG/baseline_slow_trips.xml"/>
-        <statistic-output value="Balibago_traci/output_DDPG/baseline_slow_stats.xml"/>
+        <statistic-output value="Balibago_traci/output_DDPG/baseline_stats.xml"/>
     </output>
 
     <time>
@@ -31,7 +30,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="56501"/>
+        <remote-port value="58199"/>
     </traci_server>
 
     <gui_only>
@@ -39,3 +38,13 @@
     </gui_only>
 
 </sumoConfiguration>
+-->
+
+<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="8190.81" clockEnd="9862.87" clockDuration="1672.06" traciDuration="138.54" realTimeFactor="10.46" vehicleUpdatesPerSecond="19514.82" personUpdatesPerSecond="51073.32" begin="0.00" end="17483.50" duration="17483.50"/>
+    <vehicles loaded="2230" inserted="2230" running="0" waiting="0"/>
+    <teleports total="501" jam="291" yield="179" wrongLane="31"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="15"/>
+    <persons loaded="1760" running="0" jammed="2267"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+</statistics>
