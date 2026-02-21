@@ -35,12 +35,12 @@ else:
 
 Sumo_config = [
     'sumo', 
-    '-c', 'Balibago_traci/signalizedPed.sumocfg',
+    '-c', 'Balibago_traci/baselinePed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DQN/SD_DQN_stats_trafficjam.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DQN/SD_DQN_trips_trafficjam.xml'
+    '--statistic-output', r'Balibago_traci/output_DQN/BP_DQN_stats_TRAINING.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DQN/BP_DQN_trips_TRAINING.xml'
 ]
 
 # --- SIMULATION VARIABLES ---
@@ -71,16 +71,20 @@ southPrevAction = None
 
 step_counter = 0
 
+MAX_STEPS = 567000
+
 # --- DATA LOGGING ---
 reward_history_N = []
+step_history_N = []
 loss_history_N = []
 epsilon_history_N = []
-total_reward_N = 0
+training_steps_N = []
 
 reward_history_S = []
+step_history_S = []
 loss_history_S = []
 epsilon_history_S = []
-total_reward_S = 0
+training_steps_S = []
 
 # --- HELPER FUNCTIONS ---
 def _subscribe_all_detectors():
@@ -129,7 +133,7 @@ def get_next_phase_duration(current_phase, action_index):
         # Note: Logic slightly differs per intersection in original code, handled in APPLY block below
         return 0 # Placeholder, logic moved to apply function for clarity
 
-def save_history(filename, headers, reward_hist, loss_hist, epsilon_hist, train_frequency):
+def save_history(filename, headers, step_hist, reward_hist, training_steps, loss_hist, epsilon_hist):
     file_exists = os.path.exists(filename) and os.path.getsize(filename) > 0
     os.makedirs(os.path.dirname(filename), exist_ok=True) 
     
@@ -137,14 +141,26 @@ def save_history(filename, headers, reward_hist, loss_hist, epsilon_hist, train_
         writer = csv.writer(f)
         if not file_exists:
             writer.writerow(headers)
-        for i in range(len(reward_hist)):
-            writer.writerow([i * train_frequency, reward_hist[i], loss_hist[i], epsilon_hist[i]])
+        
+        for i, reward in enumerate(reward_hist):
+            reward_step = step_hist[i]
+            
+            # Find the most recent training step at or before this reward step
+            loss_val = None
+            epsilon_val = None
+            for j in range(len(training_steps) - 1, -1, -1):
+                if training_steps[j] <= reward_step:
+                    loss_val = loss_hist[j]
+                    epsilon_val = epsilon_hist[j]
+                    break
+            
+            writer.writerow([reward_step, reward, loss_val, epsilon_val])
 
 # --- MAIN EXECUTION ---
-traci.start(Sumo_config)
+traci.start(Sumo_config, port=8813)
 _subscribe_all_detectors()
 
-while traci.simulation.getMinExpectedNumber() > 0:
+while traci.simulation.getMinExpectedNumber() > 0 and step_counter < MAX_STEPS:
     step_counter += 1
     northCurrentPhaseDuration -= stepLength
     southCurrentPhaseDuration -= stepLength
@@ -169,7 +185,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
         if trainMode == 1:
             reward_north = calculate_reward(n_norm_queue*10)
-            total_reward_N += reward_north
+            reward_history_N.append(reward_north)
+            step_history_N.append(step_counter)
 
     # Capture South State if needed
     if south_decision_needed:
@@ -180,7 +197,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
         if trainMode == 1:
             reward_south = calculate_reward(s_norm_queue*10)
-            total_reward_S += reward_south
+            reward_history_S.append(reward_south)
+            step_history_S.append(step_counter)
 
     # 2. MEMORY PHASE
     # ---------------
@@ -222,7 +240,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
     
     # Apply North
     if northCurrentPhaseDuration <= 0:
-        northCurrentPhase = (northCurrentPhase + 1) % 8
+        northCurrentPhase = (northCurrentPhase + 1) % 6
         traci.trafficlight.setPhase("4902876117", northCurrentPhase)
 
         if northCurrentPhase % 2 == 1:
@@ -238,7 +256,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
     # Apply South
     if southCurrentPhaseDuration <= 0:
-        southCurrentPhase = (southCurrentPhase + 1) % 8
+        southCurrentPhase = (southCurrentPhase + 1) % 6
         traci.trafficlight.setPhase("12188714", southCurrentPhase)
 
         if southCurrentPhase % 2 == 1:
@@ -257,17 +275,15 @@ while traci.simulation.getMinExpectedNumber() > 0:
         if len(NorthAgent.memory) >= BATCH_SIZE:
             loss_n = NorthAgent.replay(BATCH_SIZE)
             loss_history_N.append(loss_n)
-            reward_history_N.append(total_reward_N)
             epsilon_history_N.append(NorthAgent.epsilon)
-            total_reward_N = 0
+            training_steps_N.append(step_counter)
             NorthAgent.epsilon = max(NorthAgent.epsilon_min, NorthAgent.epsilon * NorthAgent.epsilon_decay_rate)
         
         if len(SouthAgent.memory) >= BATCH_SIZE:
             loss_s = SouthAgent.replay(BATCH_SIZE)
             loss_history_S.append(loss_s)
-            reward_history_S.append(total_reward_S)
             epsilon_history_S.append(SouthAgent.epsilon)
-            total_reward_S = 0
+            training_steps_S.append(step_counter)
             SouthAgent.epsilon = max(SouthAgent.epsilon_min, SouthAgent.epsilon * SouthAgent.epsilon_decay_rate)
     
     # --- METRICS ---
@@ -303,11 +319,11 @@ if trainMode == 1:
     print("Saving training history...")
     headers = ['Step', 'Reward', 'Loss', 'Epsilon']
     
-    save_history('./Balibago_traci/output_DQN/North_history.csv', headers, 
-                reward_history_N, loss_history_N, epsilon_history_N, TRAIN_FREQUENCY)
+    save_history('./Balibago_traci/output_DQN/BP_North_history.csv', headers, 
+                step_history_N, reward_history_N, training_steps_N, loss_history_N, epsilon_history_N)
     
-    save_history('./Balibago_traci/output_DQN/South_history.csv', headers, 
-                reward_history_S, loss_history_S, epsilon_history_S, TRAIN_FREQUENCY)
+    save_history('./Balibago_traci/output_DQN/BP_South_history.csv', headers, 
+                step_history_S, reward_history_S, training_steps_S, loss_history_S, epsilon_history_S)
     
     print("All histories saved successfully!")
 

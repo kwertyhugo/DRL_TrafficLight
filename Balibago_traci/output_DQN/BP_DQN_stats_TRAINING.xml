@@ -4,14 +4,14 @@
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="Balibago_traci/network/balibago_signalized.net.xml"/>
+        <net-file value="Balibago_traci/network/balibago_baseline.net.xml"/>
         <route-files value="Balibago_traci/demand/flows_training.rou.xml"/>
         <additional-files value="Balibago_traci/additionals/balibago.poly.xml,Balibago_traci/ additionals/balibago.add.xml"/>
     </input>
 
     <output>
-        <tripinfo-output value="Balibago_traci/output_DQN/SD_DQN_trips_trafficjam.xml"/>
-        <statistic-output value="Balibago_traci/output_DQN/SD_DQN_stats_trafficjam.xml"/>
+        <tripinfo-output value="Balibago_traci/output_DQN/BP_DQN_trips_TRAINING.xml"/>
+        <statistic-output value="Balibago_traci/output_DQN/BP_DQN_stats_TRAINING.xml"/>
     </output>
 
     <time>
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="8814"/>
+        <remote-port value="8813"/>
     </traci_server>
 
     <gui_only>
