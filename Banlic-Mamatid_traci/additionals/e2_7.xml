@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-02-21 10:00:45 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Banlic-Mamatid_traci/network/banlic-mamatid_baseline.net.xml"/>
+        <route-files value="Banlic-Mamatid_traci/demand/flows_normal_traffic.rou.xml"/>
+        <additional-files value="Banlic-Mamatid_traci/additionals/banlic-mamatid.poly.xml,Banlic-Mamatid_traci/ additionals/banlic-mamatid.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Banlic-Mamatid_traci/output_DQN/BP_DQN_trips_trafficjam.xml"/>
+        <statistic-output value="Banlic-Mamatid_traci/output_DQN/BP_DQN_stats_trafficjam.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="50276"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<detector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/det_e2_file.xsd">
+   <interval begin="0.00" end="300.00" id="e2_5" sampledSeconds="279.12" nVehEntered="7" nVehLeft="3" nVehSeen="7" meanSpeed="2.46" meanTimeLoss="27.65" meanOccupancy="5.97" maxOccupancy="25.32" meanMaxJamLengthInVehicles="0.60" meanMaxJamLengthInMeters="4.75" maxJamLengthInVehicles="4" maxJamLengthInMeters="34.05" jamLengthInVehiclesSum="1815" jamLengthInMetersSum="14259.87" meanHaltingDuration="37.30" maxHaltingDuration="84.00" haltingDurationSum="186.50" meanIntervalHaltingDuration="37.30" maxIntervalHaltingDuration="84.00" intervalHaltingDurationSum="186.50" startedHalts="5.00" meanVehicleNumber="0.93" maxVehicleNumber="4" />

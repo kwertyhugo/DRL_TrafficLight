@@ -29,12 +29,12 @@ else:
 
 Sumo_config = [
     'sumo', 
-    '-c', 'Banlic-Mamatid_traci/signalizedPed.sumocfg',
+    '-c', 'Banlic-Mamatid_traci/baselinePed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Banlic-Mamatid_traci/output_DQN/SD_DQN_stats_trafficjam.xml',
-    '--tripinfo-output', r'Banlic-Mamatid_traci/output_DQN/SD_DQN_trips_trafficjam.xml'
+    '--statistic-output', r'Banlic-Mamatid_traci/output_DQN/BP_DQN_stats_trafficjam.xml',
+    '--tripinfo-output', r'Banlic-Mamatid_traci/output_DQN/BP_DQN_trips_trafficjam.xml'
 ]
 
 # --- SIMULATION VARIABLES ---
@@ -159,7 +159,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
     if currentPhaseDuration <= 0:
         currentPhase = (currentPhase + 1) % 8
         # NOTE: Replace with your actual traffic light junction ID from .sumocfg
-        traci.trafficlight.setPhase("BANLIC_MAMATID_TL", currentPhase)
+        traci.trafficlight.setPhase("253768576", currentPhase)
+        traci.trafficlight.setPhase("253499548", currentPhase)
 
         if currentPhase % 2 == 1:
             currentPhaseDuration = 5
@@ -169,7 +170,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
             base = {0: 45, 2: 30, 4: 45, 6: 30}.get(currentPhase, 30)
             currentPhaseDuration = max(5, min(180, base + duration_adj))
 
-        traci.trafficlight.setPhaseDuration("BANLIC_MAMATID_TL", currentPhaseDuration)
+        traci.trafficlight.setPhaseDuration("253768576", currentPhaseDuration)
+        traci.trafficlight.setPhaseDuration("253499548", currentPhaseDuration)
 
     # 5. TRAINING REPLAY
     if trainMode == 1 and step_counter % TRAIN_FREQUENCY == 0 and step_counter > 1200 / stepLength:

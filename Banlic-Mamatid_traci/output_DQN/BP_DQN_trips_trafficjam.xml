@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-02-21 10:00:45 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Banlic-Mamatid_traci/network/banlic-mamatid_baseline.net.xml"/>
+        <route-files value="Banlic-Mamatid_traci/demand/flows_normal_traffic.rou.xml"/>
+        <additional-files value="Banlic-Mamatid_traci/additionals/banlic-mamatid.poly.xml,Banlic-Mamatid_traci/ additionals/banlic-mamatid.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Banlic-Mamatid_traci/output_DQN/BP_DQN_trips_trafficjam.xml"/>
+        <statistic-output value="Banlic-Mamatid_traci/output_DQN/BP_DQN_stats_trafficjam.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="50276"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+    <personinfo id="PalengketoInasal.0" depart="0.00" type="ped" speedFactor="1.15" duration="40.70" waitingTime="0.00" timeLoss="4.21" traveltime="40.70">
+        <walk depart="0.00" departPos="0.00" arrival="40.70" arrivalPos="44.65" duration="40.70" routeLength="58.43" timeLoss="4.21" maxSpeed="1.60" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="InasaltoPalengke.0" depart="0.00" type="ped" speedFactor="0.93" duration="41.70" waitingTime="0.70" timeLoss="4.57" traveltime="41.70">
+        <walk depart="0.00" departPos="0.00" arrival="41.70" arrivalPos="34.28" duration="41.70" routeLength="48.06" timeLoss="4.57" maxSpeed="1.29" waitingTime="0.70"/>
+    </personinfo>
+    <personinfo id="PalengketoJeepPila.0" depart="0.00" type="ped" speedFactor="1.06" duration="44.70" waitingTime="0.60" timeLoss="4.93" traveltime="44.70">
+        <walk depart="0.00" departPos="0.00" arrival="44.70" arrivalPos="25.71" duration="44.70" routeLength="58.82" timeLoss="4.93" maxSpeed="1.48" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="InasaltoSavemore.0" depart="0.00" type="ped" speedFactor="0.97" duration="54.40" waitingTime="2.80" timeLoss="7.94" traveltime="54.40">
+        <walk depart="0.00" departPos="0.00" arrival="54.40" arrivalPos="44.65" duration="54.40" routeLength="62.53" timeLoss="7.94" maxSpeed="1.35" waitingTime="2.80"/>
+    </personinfo>
+    <personinfo id="InasaltoJeepPila.0" depart="0.00" type="ped" speedFactor="0.97" duration="55.00" waitingTime="0.00" timeLoss="5.40" traveltime="55.00">
+        <walk depart="0.00" departPos="0.00" arrival="55.00" arrivalPos="25.71" duration="55.00" routeLength="67.08" timeLoss="5.40" maxSpeed="1.35" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="JeepPilatoPalengke.0" depart="0.00" type="ped" speedFactor="0.92" duration="59.70" waitingTime="0.90" timeLoss="6.92" traveltime="59.70">
+        <walk depart="0.00" departPos="0.00" arrival="59.70" arrivalPos="34.28" duration="59.70" routeLength="67.39" timeLoss="6.92" maxSpeed="1.28" waitingTime="0.90"/>
+    </personinfo>
+    <personinfo id="PalengketoSavemore.0" depart="0.00" type="ped" speedFactor="0.98" duration="60.10" waitingTime="0.90" timeLoss="6.93" traveltime="60.10">
+        <walk depart="0.00" departPos="0.00" arrival="60.10" arrivalPos="44.65" duration="60.10" routeLength="72.73" timeLoss="6.93" maxSpeed="1.37" waitingTime="0.90"/>
+    </personinfo>
+    <personinfo id="JeepPilatoSavemore.0" depart="0.00" type="ped" speedFactor="0.96" duration="61.20" waitingTime="2.50" timeLoss="8.43" traveltime="61.20">
+        <walk depart="0.00" departPos="0.00" arrival="61.20" arrivalPos="44.65" duration="61.20" routeLength="70.59" timeLoss="8.43" maxSpeed="1.34" waitingTime="2.50"/>
+    </personinfo>
+    <personinfo id="JeepPilatoInasal.0" depart="0.00" type="ped" speedFactor="0.95" duration="72.70" waitingTime="0.00" timeLoss="7.33" traveltime="72.70">
+        <walk depart="0.00" departPos="0.00" arrival="72.70" arrivalPos="44.65" duration="72.70" routeLength="86.02" timeLoss="7.33" maxSpeed="1.32" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="NeighborhoodtoCalamba.0" depart="15.30" departLane="-32425190#1_1" departPos="12.10" departPosLat="0.00" departSpeed="13.89" departDelay="0.00" arrival="76.40" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.72" duration="61.10" routeLength="1049.50" waitingTime="0.40" waitingCount="1" stopTime="0.00" timeLoss="15.84" rerouteNo="1" devices="tripinfo_NeighborhoodtoCalamba.0 routing_NeighborhoodtoCalamba.0" vType="bus" speedFactor="1.00" vaporized=""/>
+    <personinfo id="SavemoretoPalengke.0" depart="0.00" type="ped" speedFactor="1.06" duration="124.90" waitingTime="0.80" timeLoss="21.89" traveltime="124.90">
+        <walk depart="0.00" departPos="0.00" arrival="124.90" arrivalPos="34.28" duration="124.90" routeLength="151.65" timeLoss="21.89" maxSpeed="1.47" waitingTime="0.80"/>
+    </personinfo>
+    <personinfo id="SavemoretoJeepPila.0" depart="0.00" type="ped" speedFactor="0.87" duration="131.90" waitingTime="2.50" timeLoss="15.61" traveltime="131.90">
+        <walk depart="0.00" departPos="0.00" arrival="131.90" arrivalPos="25.71" duration="131.90" routeLength="140.94" timeLoss="15.61" maxSpeed="1.21" waitingTime="2.50"/>
+    </personinfo>
+    <personinfo id="SavemoretoInasal.0" depart="0.00" type="ped" speedFactor="0.85" duration="142.00" waitingTime="0.00" timeLoss="89.34" traveltime="142.00">
+        <walk depart="0.00" departPos="0.00" arrival="142.00" arrivalPos="44.65" duration="142.00" routeLength="62.53" timeLoss="89.34" maxSpeed="1.19" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="Banlic-MamatidtoCalamba.0" depart="13.90" departLane="1346113028#0_1" departPos="5.10" departPosLat="0.00" departSpeed="7.97" departDelay="0.00" arrival="159.80" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="26.54" duration="145.90" routeLength="1742.53" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.20" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoCalamba.0 routing_Banlic-MamatidtoCalamba.0" vType="car" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.0" depart="35.30" departLane="32425220#0_1" departPos="5.10" departPosLat="0.00" departSpeed="23.28" departDelay="0.00" arrival="171.30" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="23.25" duration="136.00" routeLength="3155.57" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.37" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.0 routing_CalambatoStaRosa.0" vType="car" speedFactor="0.84" vaporized=""/>
+    <personinfo id="InasaltoSavemore.1" depart="144.00" type="ped" speedFactor="1.24" duration="42.40" waitingTime="2.10" timeLoss="6.16" traveltime="42.40">
+        <walk depart="144.00" departPos="0.00" arrival="186.40" arrivalPos="44.65" duration="42.40" routeLength="62.53" timeLoss="6.16" maxSpeed="1.73" waitingTime="2.10"/>
+    </personinfo>
+    <personinfo id="InasaltoPalengke.1" depart="144.00" type="ped" speedFactor="0.88" duration="44.30" waitingTime="0.70" timeLoss="4.88" traveltime="44.30">
+        <walk depart="144.00" departPos="0.00" arrival="188.30" arrivalPos="34.28" duration="44.30" routeLength="48.06" timeLoss="4.88" maxSpeed="1.22" waitingTime="0.70"/>
+    </personinfo>
+    <personinfo id="PalengketoInasal.1" depart="144.00" type="ped" speedFactor="1.03" duration="45.30" waitingTime="0.00" timeLoss="4.55" traveltime="45.30">
+        <walk depart="144.00" departPos="0.00" arrival="189.30" arrivalPos="44.65" duration="45.30" routeLength="58.43" timeLoss="4.55" maxSpeed="1.43" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="CalambatoBanlic-Mamatid.0" depart="40.30" departLane="32425220#0_2" departPos="2.30" departPosLat="0.00" departSpeed="25.10" departDelay="0.00" arrival="193.60" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="-0.00" arrivalSpeed="7.34" duration="153.30" routeLength="1740.27" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.38" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.0 routing_CalambatoBanlic-Mamatid.0" vType="motorcycle" speedFactor="0.90" vaporized=""/>
+    <personinfo id="PalengketoJeepPila.1" depart="144.00" type="ped" speedFactor="0.96" duration="49.90" waitingTime="0.70" timeLoss="5.63" traveltime="49.90">
+        <walk depart="144.00" departPos="0.00" arrival="193.90" arrivalPos="25.71" duration="49.90" routeLength="58.82" timeLoss="5.63" maxSpeed="1.33" waitingTime="0.70"/>
+    </personinfo>
+    <personinfo id="JeepPilatoPalengke.1" depart="144.00" type="ped" speedFactor="1.09" duration="50.10" waitingTime="0.70" timeLoss="5.57" traveltime="50.10">
+        <walk depart="144.00" departPos="0.00" arrival="194.10" arrivalPos="34.28" duration="50.10" routeLength="67.39" timeLoss="5.57" maxSpeed="1.51" waitingTime="0.70"/>
+    </personinfo>
+    <tripinfo id="CalambatoStaRosa.1" depart="57.10" departLane="32425220#0_2" departPos="7.20" departPosLat="0.00" departSpeed="26.46" departDelay="0.00" arrival="194.60" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="26.40" duration="137.50" routeLength="3153.47" waitingTime="1.40" waitingCount="1" stopTime="0.00" timeLoss="18.34" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.1 routing_CalambatoStaRosa.1" vType="truck" speedFactor="0.95" vaporized=""/>
+    <tripinfo id="CalambatoBanlic-Mamatid.1" depart="54.60" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="195.60" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.31" duration="141.00" routeLength="1734.47" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.76" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.1 routing_CalambatoBanlic-Mamatid.1" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="JeepPilatoSavemore.1" depart="144.00" type="ped" speedFactor="1.00" duration="58.30" waitingTime="1.70" timeLoss="7.71" traveltime="58.30">
+        <walk depart="144.00" departPos="0.00" arrival="202.30" arrivalPos="44.65" duration="58.30" routeLength="70.59" timeLoss="7.71" maxSpeed="1.40" waitingTime="1.70"/>
+    </personinfo>
+    <personinfo id="PalengketoSavemore.1" depart="144.00" type="ped" speedFactor="1.03" duration="58.70" waitingTime="2.10" timeLoss="7.98" traveltime="58.70">
+        <walk depart="144.00" departPos="0.00" arrival="202.70" arrivalPos="44.65" duration="58.70" routeLength="72.73" timeLoss="7.98" maxSpeed="1.43" waitingTime="2.10"/>
+    </personinfo>
+    <personinfo id="InasaltoJeepPila.1" depart="144.00" type="ped" speedFactor="0.87" duration="61.50" waitingTime="0.00" timeLoss="6.06" traveltime="61.50">
+        <walk depart="144.00" departPos="0.00" arrival="205.50" arrivalPos="25.71" duration="61.50" routeLength="67.08" timeLoss="6.06" maxSpeed="1.21" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="Banlic-MamatidtoCalamba.1" depart="62.00" departLane="1346113028#0_1" departPos="7.20" departPosLat="0.00" departSpeed="8.23" departDelay="0.00" arrival="215.90" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.42" duration="153.90" routeLength="1740.43" waitingTime="0.80" waitingCount="1" stopTime="0.00" timeLoss="16.94" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoCalamba.1 routing_Banlic-MamatidtoCalamba.1" vType="truck" speedFactor="0.99" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.0" depart="8.90" departLane="-549232953#10_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="217.90" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.72" duration="209.00" routeLength="3149.27" waitingTime="76.90" waitingCount="1" stopTime="0.00" timeLoss="95.62" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.0 routing_StaRosatoCalamba.0" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.2" depart="41.40" departLane="-549232953#10_2" departPos="7.20" departPosLat="0.00" departSpeed="28.37" departDelay="0.00" arrival="219.30" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="28.36" duration="177.90" routeLength="3150.17" waitingTime="42.40" waitingCount="1" stopTime="0.00" timeLoss="66.79" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.2 routing_StaRosatoCalamba.2" vType="truck" speedFactor="1.02" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.1" depart="16.40" departLane="-549232953#10_2" departPos="7.20" departPosLat="0.00" departSpeed="27.60" departDelay="0.00" arrival="220.10" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.55" duration="203.70" routeLength="3150.17" waitingTime="70.90" waitingCount="1" stopTime="0.00" timeLoss="89.50" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.1 routing_StaRosatoCalamba.1" vType="truck" speedFactor="0.99" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.3" depart="48.40" departLane="-549232953#10_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="220.70" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.75" duration="172.30" routeLength="3149.27" waitingTime="15.90" waitingCount="2" stopTime="0.00" timeLoss="58.89" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.3 routing_StaRosatoCalamba.3" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.4" depart="54.10" departLane="-549232953#10_2" departPos="2.30" departPosLat="0.00" departSpeed="31.64" departDelay="0.00" arrival="221.40" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="29.73" duration="167.30" routeLength="3155.07" waitingTime="29.90" waitingCount="2" stopTime="0.00" timeLoss="67.52" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.4 routing_StaRosatoCalamba.4" vType="tricycle" speedFactor="1.14" vaporized=""/>
+    <personinfo id="JeepPilatoInasal.1" depart="144.00" type="ped" speedFactor="0.87" duration="78.50" waitingTime="0.00" timeLoss="7.71" traveltime="78.50">
+        <walk depart="144.00" departPos="0.00" arrival="222.50" arrivalPos="44.65" duration="78.50" routeLength="86.02" timeLoss="7.71" maxSpeed="1.22" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="StaRosatoCalamba.5" depart="125.80" departLane="-549232953#10_1" departPos="5.10" departPosLat="0.00" departSpeed="27.99" departDelay="0.00" arrival="238.70" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.91" duration="112.90" routeLength="3152.27" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.26" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.5 routing_StaRosatoCalamba.5" vType="car" speedFactor="1.01" vaporized=""/>
+    <personinfo id="SavemoretoInasal.1" depart="144.00" type="ped" speedFactor="1.17" duration="104.30" waitingTime="0.20" timeLoss="65.78" traveltime="104.30">
+        <walk depart="144.00" departPos="0.00" arrival="248.30" arrivalPos="44.65" duration="104.30" routeLength="62.53" timeLoss="65.78" maxSpeed="1.62" waitingTime="0.20"/>
+    </personinfo>
+    <tripinfo id="NeighborhoodtoCalamba.1" depart="201.70" departLane="-32425190#1_1" departPos="12.10" departPosLat="0.00" departSpeed="13.89" departDelay="0.00" arrival="264.50" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.78" duration="62.80" routeLength="1049.50" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="17.50" rerouteNo="1" devices="tripinfo_NeighborhoodtoCalamba.1 routing_NeighborhoodtoCalamba.1" vType="bus" speedFactor="1.00" vaporized=""/>
+    <personinfo id="SavemoretoJeepPila.1" depart="144.00" type="ped" speedFactor="0.92" duration="123.60" waitingTime="0.50" timeLoss="12.96" traveltime="123.60">
+        <walk depart="144.00" departPos="0.00" arrival="267.60" arrivalPos="25.71" duration="123.60" routeLength="140.94" timeLoss="12.96" maxSpeed="1.27" waitingTime="0.50"/>
+    </personinfo>
+    <tripinfo id="Banlic-MamatidtoStaRosa.0" depart="75.60" departLane="1346113028#0_1" departPos="12.10" departPosLat="0.00" departSpeed="8.33" departDelay="0.00" arrival="276.10" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.76" duration="200.50" routeLength="3118.43" waitingTime="0.80" waitingCount="1" stopTime="0.00" timeLoss="16.38" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoStaRosa.0 routing_Banlic-MamatidtoStaRosa.0" vType="bus" speedFactor="1.00" vaporized=""/>
+    <personinfo id="SavemoretoPalengke.1" depart="144.00" type="ped" speedFactor="0.94" duration="133.10" waitingTime="3.00" timeLoss="16.73" traveltime="133.10">
+        <walk depart="144.00" departPos="0.00" arrival="277.10" arrivalPos="34.28" duration="133.10" routeLength="151.65" timeLoss="16.73" maxSpeed="1.30" waitingTime="3.00"/>
+    </personinfo>
+    <tripinfo id="StaRosatoBanlic-Mamatid.0" depart="84.00" departLane="-549232953#10_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="287.00" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.31" duration="203.00" routeLength="3132.81" waitingTime="2.10" waitingCount="1" stopTime="0.00" timeLoss="17.15" rerouteNo="1" devices="tripinfo_StaRosatoBanlic-Mamatid.0 routing_StaRosatoBanlic-Mamatid.0" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="CalambatoNeighborhood.0" depart="156.50" departLane="32425220#0_1" departPos="12.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="298.70" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="0.00" arrivalSpeed="13.84" duration="142.20" routeLength="1063.05" waitingTime="80.70" waitingCount="1" stopTime="0.00" timeLoss="95.70" rerouteNo="1" devices="tripinfo_CalambatoNeighborhood.0 routing_CalambatoNeighborhood.0" vType="bus" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.3" depart="82.10" departLane="32425220#0_1" departPos="7.20" departPosLat="0.00" departSpeed="27.35" departDelay="0.00" arrival="309.30" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.28" duration="227.20" routeLength="3153.47" waitingTime="84.10" waitingCount="2" stopTime="0.00" timeLoss="111.81" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.3 routing_CalambatoStaRosa.3" vType="truck" speedFactor="0.98" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.4" depart="125.70" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="314.00" arrivalLane="549232953#10_2" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="27.73" duration="188.30" routeLength="3152.57" waitingTime="44.60" waitingCount="2" stopTime="0.00" timeLoss="74.74" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.4 routing_CalambatoStaRosa.4" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="NeighborhoodtoStaRosa.0" depart="92.30" departLane="-32425190#1_1" departPos="5.10" departPosLat="0.00" departSpeed="14.95" departDelay="0.00" arrival="315.30" arrivalLane="549232953#10_2" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="29.83" duration="223.00" routeLength="2483.86" waitingTime="105.50" waitingCount="2" stopTime="0.00" timeLoss="132.42" rerouteNo="1" devices="tripinfo_NeighborhoodtoStaRosa.0 routing_NeighborhoodtoStaRosa.0" vType="car" speedFactor="1.08" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.2" depart="63.70" departLane="32425220#0_1" departPos="7.20" departPosLat="0.00" departSpeed="26.35" departDelay="0.00" arrival="315.60" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="26.29" duration="251.90" routeLength="3153.47" waitingTime="110.90" waitingCount="2" stopTime="0.00" timeLoss="132.20" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.2 routing_CalambatoStaRosa.2" vType="truck" speedFactor="0.95" vaporized=""/>
+    <personinfo id="InasaltoPalengke.2" depart="288.00" type="ped" speedFactor="0.99" duration="39.60" waitingTime="0.60" timeLoss="4.56" traveltime="39.60">
+        <walk depart="288.00" departPos="0.00" arrival="327.60" arrivalPos="34.28" duration="39.60" routeLength="48.06" timeLoss="4.56" maxSpeed="1.37" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="InasaltoJeepPila.2" depart="288.00" type="ped" speedFactor="1.21" duration="44.60" waitingTime="0.00" timeLoss="4.59" traveltime="44.60">
+        <walk depart="288.00" departPos="0.00" arrival="332.60" arrivalPos="25.71" duration="44.60" routeLength="67.08" timeLoss="4.59" maxSpeed="1.68" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="InasaltoSavemore.2" depart="288.00" type="ped" speedFactor="1.11" duration="46.00" waitingTime="0.90" timeLoss="5.43" traveltime="46.00">
+        <walk depart="288.00" departPos="0.00" arrival="334.00" arrivalPos="44.65" duration="46.00" routeLength="62.53" timeLoss="5.43" maxSpeed="1.54" waitingTime="0.90"/>
+    </personinfo>
+    <personinfo id="PalengketoJeepPila.2" depart="288.00" type="ped" speedFactor="0.97" duration="51.70" waitingTime="3.30" timeLoss="7.96" traveltime="51.70">
+        <walk depart="288.00" departPos="0.00" arrival="339.70" arrivalPos="25.71" duration="51.70" routeLength="58.82" timeLoss="7.96" maxSpeed="1.34" waitingTime="3.30"/>
+    </personinfo>
+    <tripinfo id="NeighborhoodtoStaRosa.1" depart="236.00" departLane="-32425190#1_1" departPos="8.10" departPosLat="0.00" departSpeed="13.89" departDelay="0.00" arrival="340.80" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="27.74" duration="104.80" routeLength="2480.86" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="7.49" rerouteNo="1" devices="tripinfo_NeighborhoodtoStaRosa.1 routing_NeighborhoodtoStaRosa.1" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="JeepPilatoPalengke.2" depart="288.00" type="ped" speedFactor="1.03" duration="53.70" waitingTime="1.50" timeLoss="6.63" traveltime="53.70">
+        <walk depart="288.00" departPos="0.00" arrival="341.70" arrivalPos="34.28" duration="53.70" routeLength="67.39" timeLoss="6.63" maxSpeed="1.43" waitingTime="1.50"/>
+    </personinfo>
+    <personinfo id="JeepPilatoSavemore.2" depart="288.00" type="ped" speedFactor="1.07" duration="55.60" waitingTime="2.80" timeLoss="8.17" traveltime="55.60">
+        <walk depart="288.00" departPos="0.00" arrival="343.60" arrivalPos="44.65" duration="55.60" routeLength="70.59" timeLoss="8.17" maxSpeed="1.49" waitingTime="2.80"/>
+    </personinfo>
+    <personinfo id="PalengketoInasal.2" depart="288.00" type="ped" speedFactor="0.82" duration="56.50" waitingTime="0.00" timeLoss="5.33" traveltime="56.50">
+        <walk depart="288.00" departPos="0.00" arrival="344.50" arrivalPos="44.65" duration="56.50" routeLength="58.43" timeLoss="5.33" maxSpeed="1.14" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="StaRosatoCalamba.6" depart="129.90" departLane="-549232953#10_2" departPos="2.30" departPosLat="0.00" departSpeed="27.90" departDelay="0.00" arrival="347.60" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.65" duration="217.70" routeLength="3155.07" waitingTime="97.80" waitingCount="2" stopTime="0.00" timeLoss="104.60" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.6 routing_StaRosatoCalamba.6" vType="motorcycle" speedFactor="1.00" vaporized=""/>
+    <personinfo id="PalengketoSavemore.2" depart="288.00" type="ped" speedFactor="0.98" duration="60.50" waitingTime="1.10" timeLoss="7.17" traveltime="60.50">
+        <walk depart="288.00" departPos="0.00" arrival="348.50" arrivalPos="44.65" duration="60.50" routeLength="72.73" timeLoss="7.17" maxSpeed="1.36" waitingTime="1.10"/>
+    </personinfo>
+    <personinfo id="JeepPilatoInasal.2" depart="288.00" type="ped" speedFactor="1.03" duration="66.30" waitingTime="0.00" timeLoss="6.46" traveltime="66.30">
+        <walk depart="288.00" departPos="0.00" arrival="354.30" arrivalPos="44.65" duration="66.30" routeLength="86.02" timeLoss="6.46" maxSpeed="1.44" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="Banlic-MamatidtoCalamba.4" depart="150.30" departLane="1346113028#0_1" departPos="5.10" departPosLat="0.00" departSpeed="7.79" departDelay="0.00" arrival="362.60" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="25.95" duration="212.30" routeLength="1742.53" waitingTime="47.40" waitingCount="2" stopTime="0.00" timeLoss="67.29" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoCalamba.4 routing_Banlic-MamatidtoCalamba.4" vType="car" speedFactor="0.93" vaporized=""/>
+    <tripinfo id="Banlic-MamatidtoCalamba.2" depart="113.40" departLane="1346113028#0_1" departPos="8.10" departPosLat="0.00" departSpeed="8.33" departDelay="0.00" arrival="364.20" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="27.41" duration="250.80" routeLength="1739.53" waitingTime="91.80" waitingCount="2" stopTime="0.00" timeLoss="115.61" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoCalamba.2 routing_Banlic-MamatidtoCalamba.2" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.5" depart="131.40" departLane="32425220#0_2" departPos="5.10" departPosLat="0.00" departSpeed="27.91" departDelay="0.00" arrival="364.50" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.90" duration="233.10" routeLength="3155.57" waitingTime="100.50" waitingCount="2" stopTime="0.00" timeLoss="120.05" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.5 routing_CalambatoStaRosa.5" vType="car" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="Banlic-MamatidtoCalamba.3" depart="129.20" departLane="1346113028#0_1" departPos="5.10" departPosLat="0.00" departSpeed="7.12" departDelay="0.00" arrival="367.50" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="23.63" duration="238.30" routeLength="1742.53" waitingTime="54.00" waitingCount="1" stopTime="0.00" timeLoss="79.69" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoCalamba.3 routing_Banlic-MamatidtoCalamba.3" vType="car" speedFactor="0.85" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.6" depart="136.00" departLane="32425220#0_1" departPos="5.10" departPosLat="0.00" departSpeed="26.58" departDelay="0.00" arrival="368.40" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="26.48" duration="232.40" routeLength="3155.57" waitingTime="101.70" waitingCount="1" stopTime="0.00" timeLoss="113.67" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.6 routing_CalambatoStaRosa.6" vType="car" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.7" depart="142.00" departLane="32425220#0_2" departPos="5.10" departPosLat="0.00" departSpeed="28.06" departDelay="0.00" arrival="370.20" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="27.98" duration="228.20" routeLength="3155.57" waitingTime="86.90" waitingCount="2" stopTime="0.00" timeLoss="115.68" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.7 routing_CalambatoStaRosa.7" vType="car" speedFactor="1.01" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.8" depart="160.50" departLane="32425220#0_2" departPos="5.10" departPosLat="0.00" departSpeed="27.52" departDelay="0.00" arrival="371.10" arrivalLane="549232953#10_2" arrivalPos="967.06" arrivalPosLat="-0.45" arrivalSpeed="27.50" duration="210.60" routeLength="3155.57" waitingTime="77.00" waitingCount="1" stopTime="0.00" timeLoss="95.86" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.8 routing_CalambatoStaRosa.8" vType="car" speedFactor="0.99" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.9" depart="227.40" departLane="32425220#0_1" departPos="7.20" departPosLat="0.00" departSpeed="28.45" departDelay="0.00" arrival="374.30" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="28.45" duration="146.90" routeLength="3153.47" waitingTime="11.90" waitingCount="1" stopTime="0.00" timeLoss="36.04" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.9 routing_CalambatoStaRosa.9" vType="truck" speedFactor="1.02" vaporized=""/>
+    <tripinfo id="CalambatoBanlic-Mamatid.2" depart="136.50" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="21.66" departDelay="0.00" arrival="386.70" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.28" duration="250.20" routeLength="1734.47" waitingTime="90.40" waitingCount="2" stopTime="0.00" timeLoss="114.94" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.2 routing_CalambatoBanlic-Mamatid.2" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="Banlic-MamatidtoCalamba.5" depart="247.80" departLane="1346113028#0_1" departPos="5.10" departPosLat="0.00" departSpeed="7.91" departDelay="0.00" arrival="394.60" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="26.30" duration="146.80" routeLength="1742.53" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.15" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoCalamba.5 routing_Banlic-MamatidtoCalamba.5" vType="car" speedFactor="0.95" vaporized=""/>
+    <tripinfo id="StaRosatoNeighborhood.0" depart="214.60" departLane="-549232953#10_1" departPos="5.10" departPosLat="0.00" departSpeed="26.79" departDelay="0.00" arrival="396.10" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="0.00" arrivalSpeed="13.27" duration="181.50" routeLength="2475.52" waitingTime="72.50" waitingCount="1" stopTime="0.00" timeLoss="80.98" rerouteNo="1" devices="tripinfo_StaRosatoNeighborhood.0 routing_StaRosatoNeighborhood.0" vType="car" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="StaRosatoNeighborhood.1" depart="297.00" departLane="-549232953#10_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="401.60" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="-0.00" arrivalSpeed="13.86" duration="104.60" routeLength="2472.52" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="7.78" rerouteNo="1" devices="tripinfo_StaRosatoNeighborhood.1 routing_StaRosatoNeighborhood.1" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="SavemoretoInasal.2" depart="288.00" type="ped" speedFactor="1.02" duration="119.50" waitingTime="0.00" timeLoss="75.22" traveltime="119.50">
+        <walk depart="288.00" departPos="0.00" arrival="407.50" arrivalPos="44.65" duration="119.50" routeLength="62.53" timeLoss="75.22" maxSpeed="1.41" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="SavemoretoJeepPila.2" depart="288.00" type="ped" speedFactor="0.95" duration="119.60" waitingTime="0.60" timeLoss="12.65" traveltime="119.60">
+        <walk depart="288.00" departPos="0.00" arrival="407.60" arrivalPos="25.71" duration="119.60" routeLength="140.94" timeLoss="12.65" maxSpeed="1.32" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="SavemoretoPalengke.2" depart="288.00" type="ped" speedFactor="1.01" duration="120.30" waitingTime="0.60" timeLoss="12.23" traveltime="120.30">
+        <walk depart="288.00" departPos="0.00" arrival="408.30" arrivalPos="34.28" duration="120.30" routeLength="151.65" timeLoss="12.23" maxSpeed="1.40" waitingTime="0.60"/>
+    </personinfo>
+    <tripinfo id="CalambatoBanlic-Mamatid.3" depart="263.00" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="411.40" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.28" duration="148.40" routeLength="1734.47" waitingTime="4.20" waitingCount="1" stopTime="0.00" timeLoss="13.20" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.3 routing_CalambatoBanlic-Mamatid.3" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="Banlic-MamatidtoStaRosa.1" depart="191.50" departLane="1346113028#0_1" departPos="8.10" departPosLat="0.00" departSpeed="8.33" departDelay="0.00" arrival="413.90" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.72" duration="222.40" routeLength="3122.43" waitingTime="12.40" waitingCount="1" stopTime="0.00" timeLoss="37.92" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoStaRosa.1 routing_Banlic-MamatidtoStaRosa.1" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.7" depart="261.90" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="26.12" departDelay="0.00" arrival="418.90" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="26.06" duration="157.00" routeLength="3152.27" waitingTime="19.70" waitingCount="1" stopTime="0.00" timeLoss="36.23" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.7 routing_StaRosatoCalamba.7" vType="car" speedFactor="0.94" vaporized=""/>
+    <tripinfo id="Banlic-MamatidtoStaRosa.2" depart="232.20" departLane="1346113028#0_1" departPos="7.20" departPosLat="0.00" departSpeed="7.76" departDelay="0.00" arrival="438.50" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="25.83" duration="206.30" routeLength="3123.33" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="8.14" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoStaRosa.2 routing_Banlic-MamatidtoStaRosa.2" vType="truck" speedFactor="0.93" vaporized=""/>
+    <tripinfo id="CalambatoNeighborhood.1" depart="323.90" departLane="32425220#0_1" departPos="5.10" departPosLat="0.00" departSpeed="23.77" departDelay="0.00" arrival="438.70" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="0.00" arrivalSpeed="14.56" duration="114.80" routeLength="1070.05" waitingTime="57.20" waitingCount="1" stopTime="0.00" timeLoss="70.27" rerouteNo="1" devices="tripinfo_CalambatoNeighborhood.1 routing_CalambatoNeighborhood.1" vType="car" speedFactor="1.05" vaporized=""/>
+    <tripinfo id="CalambatoNeighborhood.2" depart="361.50" departLane="32425220#0_1" departPos="2.30" departPosLat="0.00" departSpeed="26.42" departDelay="0.00" arrival="441.20" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="0.00" arrivalSpeed="13.11" duration="79.70" routeLength="1072.85" waitingTime="21.20" waitingCount="1" stopTime="0.00" timeLoss="30.42" rerouteNo="1" devices="tripinfo_CalambatoNeighborhood.2 routing_CalambatoNeighborhood.2" vType="motorcycle" speedFactor="0.95" vaporized=""/>
+    <tripinfo id="NeighborhoodtoCalamba.2" depart="416.60" departLane="-32425190#1_1" departPos="7.20" departPosLat="0.00" departSpeed="14.69" departDelay="0.00" arrival="469.30" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="29.35" duration="52.70" routeLength="1054.40" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="9.53" rerouteNo="1" devices="tripinfo_NeighborhoodtoCalamba.2 routing_NeighborhoodtoCalamba.2" vType="truck" speedFactor="1.06" vaporized=""/>
+    <personinfo id="InasaltoPalengke.3" depart="432.00" type="ped" speedFactor="0.98" duration="39.80" waitingTime="0.70" timeLoss="4.47" traveltime="39.80">
+        <walk depart="432.00" departPos="0.00" arrival="471.80" arrivalPos="34.28" duration="39.80" routeLength="48.06" timeLoss="4.47" maxSpeed="1.36" waitingTime="0.70"/>
+    </personinfo>
+    <personinfo id="PalengketoInasal.3" depart="432.00" type="ped" speedFactor="1.12" duration="42.10" waitingTime="0.00" timeLoss="4.49" traveltime="42.10">
+        <walk depart="432.00" departPos="0.00" arrival="474.10" arrivalPos="44.65" duration="42.10" routeLength="58.43" timeLoss="4.49" maxSpeed="1.55" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="InasaltoSavemore.3" depart="432.00" type="ped" speedFactor="1.09" duration="47.60" waitingTime="1.20" timeLoss="6.36" traveltime="47.60">
+        <walk depart="432.00" departPos="0.00" arrival="479.60" arrivalPos="44.65" duration="47.60" routeLength="62.53" timeLoss="6.36" maxSpeed="1.52" waitingTime="1.20"/>
+    </personinfo>
+    <personinfo id="PalengketoJeepPila.3" depart="432.00" type="ped" speedFactor="0.95" duration="50.10" waitingTime="0.60" timeLoss="5.64" traveltime="50.10">
+        <walk depart="432.00" departPos="0.00" arrival="482.10" arrivalPos="25.71" duration="50.10" routeLength="58.82" timeLoss="5.64" maxSpeed="1.32" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="JeepPilatoPalengke.3" depart="432.00" type="ped" speedFactor="1.08" duration="50.80" waitingTime="1.20" timeLoss="6.01" traveltime="50.80">
+        <walk depart="432.00" departPos="0.00" arrival="482.80" arrivalPos="34.28" duration="50.80" routeLength="67.39" timeLoss="6.01" maxSpeed="1.50" waitingTime="1.20"/>
+    </personinfo>
+    <tripinfo id="StaRosatoBanlic-Mamatid.1" depart="142.10" departLane="-549232953#10_1" departPos="2.30" departPosLat="0.00" departSpeed="27.09" departDelay="0.00" arrival="485.90" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.05" duration="343.80" routeLength="3138.61" waitingTime="138.20" waitingCount="2" stopTime="0.00" timeLoss="152.97" rerouteNo="1" devices="tripinfo_StaRosatoBanlic-Mamatid.1 routing_StaRosatoBanlic-Mamatid.1" vType="tricycle" speedFactor="0.98" vaporized=""/>
+    <personinfo id="InasaltoJeepPila.3" depart="432.00" type="ped" speedFactor="0.99" duration="54.40" waitingTime="0.00" timeLoss="5.62" traveltime="54.40">
+        <walk depart="432.00" departPos="0.00" arrival="486.40" arrivalPos="25.71" duration="54.40" routeLength="67.08" timeLoss="5.62" maxSpeed="1.38" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="StaRosatoBanlic-Mamatid.2" depart="157.90" departLane="-549232953#10_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="488.00" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.29" duration="330.10" routeLength="3132.81" waitingTime="128.40" waitingCount="1" stopTime="0.00" timeLoss="144.25" rerouteNo="1" devices="tripinfo_StaRosatoBanlic-Mamatid.2 routing_StaRosatoBanlic-Mamatid.2" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="StaRosatoBanlic-Mamatid.3" depart="251.30" departLane="-549232953#10_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="490.30" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.32" duration="239.00" routeLength="3132.81" waitingTime="36.30" waitingCount="1" stopTime="0.00" timeLoss="53.10" rerouteNo="1" devices="tripinfo_StaRosatoBanlic-Mamatid.3 routing_StaRosatoBanlic-Mamatid.3" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="PalengketoSavemore.3" depart="432.00" type="ped" speedFactor="1.01" duration="58.50" waitingTime="0.90" timeLoss="6.51" traveltime="58.50">
+        <walk depart="432.00" departPos="0.00" arrival="490.50" arrivalPos="44.65" duration="58.50" routeLength="72.73" timeLoss="6.51" maxSpeed="1.40" waitingTime="0.90"/>
+    </personinfo>
+    <tripinfo id="CalambatoStaRosa.10" depart="265.90" departLane="32425220#0_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="493.10" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.72" duration="227.20" routeLength="3152.57" waitingTime="93.20" waitingCount="1" stopTime="0.00" timeLoss="113.65" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.10 routing_CalambatoStaRosa.10" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.8" depart="314.00" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="28.21" departDelay="1.10" arrival="493.80" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="28.11" duration="179.80" routeLength="3152.27" waitingTime="57.60" waitingCount="1" stopTime="0.00" timeLoss="68.00" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.8 routing_StaRosatoCalamba.8" vType="car" speedFactor="1.02" vaporized=""/>
+    <personinfo id="JeepPilatoInasal.3" depart="432.00" type="ped" speedFactor="1.11" duration="62.10" waitingTime="0.00" timeLoss="6.24" traveltime="62.10">
+        <walk depart="432.00" departPos="0.00" arrival="494.10" arrivalPos="44.65" duration="62.10" routeLength="86.02" timeLoss="6.24" maxSpeed="1.54" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="JeepPilatoSavemore.3" depart="432.00" type="ped" speedFactor="0.93" duration="62.50" waitingTime="1.60" timeLoss="7.68" traveltime="62.50">
+        <walk depart="432.00" departPos="0.00" arrival="494.50" arrivalPos="44.65" duration="62.50" routeLength="70.59" timeLoss="7.68" maxSpeed="1.29" waitingTime="1.60"/>
+    </personinfo>
+    <tripinfo id="CalambatoStaRosa.11" depart="294.40" departLane="32425220#0_1" departPos="2.30" departPosLat="0.00" departSpeed="24.40" departDelay="0.00" arrival="497.50" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="24.30" duration="203.10" routeLength="3158.37" waitingTime="63.50" waitingCount="1" stopTime="0.00" timeLoss="73.57" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.11 routing_CalambatoStaRosa.11" vType="tricycle" speedFactor="0.88" vaporized=""/>
+    <tripinfo id="CalambatoBanlic-Mamatid.4" depart="322.00" departLane="32425220#0_1" departPos="2.30" departPosLat="0.00" departSpeed="28.47" departDelay="0.00" arrival="501.30" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.49" duration="179.30" routeLength="1740.27" waitingTime="37.30" waitingCount="1" stopTime="0.00" timeLoss="47.14" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.4 routing_CalambatoBanlic-Mamatid.4" vType="tricycle" speedFactor="1.02" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.13" depart="365.10" departLane="32425220#0_2" departPos="2.30" departPosLat="0.00" departSpeed="29.51" departDelay="0.00" arrival="502.00" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="29.37" duration="136.90" routeLength="3158.37" waitingTime="21.90" waitingCount="1" stopTime="0.00" timeLoss="29.86" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.13 routing_CalambatoStaRosa.13" vType="motorcycle" speedFactor="1.06" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.12" depart="326.10" departLane="32425220#0_2" departPos="2.30" departPosLat="0.00" departSpeed="26.97" departDelay="0.00" arrival="514.60" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="26.95" duration="188.50" routeLength="3158.37" waitingTime="48.30" waitingCount="2" stopTime="0.00" timeLoss="71.36" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.12 routing_CalambatoStaRosa.12" vType="tricycle" speedFactor="0.97" vaporized=""/>
+    <tripinfo id="CalambatoStaRosa.14" depart="384.60" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="518.70" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="27.74" duration="134.10" routeLength="3152.57" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="20.57" rerouteNo="1" devices="tripinfo_CalambatoStaRosa.14 routing_CalambatoStaRosa.14" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="CalambatoBanlic-Mamatid.5" depart="322.20" departLane="32425220#0_2" departPos="5.10" departPosLat="0.00" departSpeed="22.64" departDelay="0.00" arrival="529.70" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="-0.00" arrivalSpeed="6.76" duration="207.50" routeLength="1737.47" waitingTime="29.30" waitingCount="1" stopTime="0.00" timeLoss="41.41" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.5 routing_CalambatoBanlic-Mamatid.5" vType="car" speedFactor="0.82" vaporized=""/>
+    <personinfo id="SavemoretoJeepPila.3" depart="432.00" type="ped" speedFactor="1.13" duration="99.90" waitingTime="0.60" timeLoss="10.24" traveltime="99.90">
+        <walk depart="432.00" departPos="0.00" arrival="531.90" arrivalPos="25.71" duration="99.90" routeLength="140.94" timeLoss="10.24" maxSpeed="1.57" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="SavemoretoInasal.3" depart="432.00" type="ped" speedFactor="1.10" duration="110.90" waitingTime="0.00" timeLoss="69.81" traveltime="110.90">
+        <walk depart="432.00" departPos="0.00" arrival="542.90" arrivalPos="44.65" duration="110.90" routeLength="62.53" timeLoss="69.81" maxSpeed="1.52" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="SavemoretoPalengke.3" depart="432.00" type="ped" speedFactor="1.08" duration="112.60" waitingTime="0.60" timeLoss="11.75" traveltime="112.60">
+        <walk depart="432.00" departPos="0.00" arrival="544.60" arrivalPos="34.28" duration="112.60" routeLength="151.65" timeLoss="11.75" maxSpeed="1.50" waitingTime="0.60"/>
+    </personinfo>
+    <tripinfo id="CalambatoBanlic-Mamatid.6" depart="402.00" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="549.20" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.32" duration="147.20" routeLength="1734.47" waitingTime="4.90" waitingCount="1" stopTime="0.00" timeLoss="11.89" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.6 routing_CalambatoBanlic-Mamatid.6" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="Banlic-MamatidtoStaRosa.3" depart="342.60" departLane="1346113028#0_1" departPos="5.10" departPosLat="0.00" departSpeed="8.13" departDelay="0.00" arrival="550.30" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.10" duration="207.70" routeLength="3125.43" waitingTime="8.70" waitingCount="2" stopTime="0.00" timeLoss="18.24" rerouteNo="1" devices="tripinfo_Banlic-MamatidtoStaRosa.3 routing_Banlic-MamatidtoStaRosa.3" vType="car" speedFactor="0.98" vaporized=""/>
+    <tripinfo id="CalambatoBanlic-Mamatid.7" depart="420.60" departLane="32425220#0_1" departPos="5.10" departPosLat="0.00" departSpeed="31.67" departDelay="0.00" arrival="551.20" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="9.45" duration="130.60" routeLength="1737.47" waitingTime="2.50" waitingCount="1" stopTime="0.00" timeLoss="11.90" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.7 routing_CalambatoBanlic-Mamatid.7" vType="car" speedFactor="1.14" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.9" depart="348.20" departLane="-549232953#10_2" departPos="2.30" departPosLat="0.00" departSpeed="24.80" departDelay="0.00" arrival="554.60" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="24.66" duration="206.40" routeLength="3155.07" waitingTime="74.10" waitingCount="1" stopTime="0.00" timeLoss="79.19" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.9 routing_StaRosatoCalamba.9" vType="motorcycle" speedFactor="0.89" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.10" depart="419.00" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="28.18" departDelay="0.00" arrival="557.10" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="28.06" duration="138.10" routeLength="3152.27" waitingTime="8.90" waitingCount="1" stopTime="0.00" timeLoss="26.25" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.10 routing_StaRosatoCalamba.10" vType="car" speedFactor="1.01" vaporized=""/>
+    <tripinfo id="StaRosatoNeighborhood.2" depart="454.30" departLane="-549232953#10_1" departPos="7.20" departPosLat="0.00" departSpeed="25.16" departDelay="0.00" arrival="565.50" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="0.00" arrivalSpeed="12.53" duration="111.20" routeLength="2473.42" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.15" rerouteNo="1" devices="tripinfo_StaRosatoNeighborhood.2 routing_StaRosatoNeighborhood.2" vType="truck" speedFactor="0.91" vaporized=""/>
+    <tripinfo id="CalambatoBanlic-Mamatid.8" depart="439.30" departLane="32425220#0_1" departPos="7.20" departPosLat="0.00" departSpeed="29.52" departDelay="0.00" arrival="569.70" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.80" duration="130.40" routeLength="1735.37" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.06" rerouteNo="1" devices="tripinfo_CalambatoBanlic-Mamatid.8 routing_CalambatoBanlic-Mamatid.8" vType="truck" speedFactor="1.06" vaporized=""/>
