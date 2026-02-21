@@ -8,7 +8,7 @@
 
     <input>
         <net-file value="network/balibago_baseline.net.xml"/>
-        <route-files value="demand/flows_jam_traffic.rou.xml"/>
+        <route-files value="demand/flows_training.rou.xml"/>
         <additional-files value="additionals/balibago.poly.xml, additionals/balibago.add.xml"/>
     </input>
 
