@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<routes>
+    <vType id="ped" vClass="pedestrian" 
+        impatience="0.2" 
+        mDriveAfterRedTime="-1" 
+        guiShape="pedestrian"/>
+
+    <vTypeDistribution id="AguinaldoHighway">
+        <vType id="car" vClass="passenger" 
+            probability="0.413"
+            guiShape="passenger"/>
+
+        <vType id="jeep" vClass="bus" 
+            probability="0.17"
+            guiShape="passenger/van" 
+            length="8" 
+            width="2" 
+            mass="500" 
+            maxSpeed="100" 
+            desiredMaxSpeed="60" 
+            personCapacity="20"/>
+
+        <vType id="bus" vClass="bus" 
+            probability="0.06"
+            guiShape="bus"/>
+
+        <vType id="truck" vClass="truck" 
+            probability="0.13"
+            guiShape="truck"/>
+
+        <vType id="motorcycle" vClass="motorcycle" 
+            probability="0.1135"
+            width="0.8"
+            minGap="0.5" 
+            guiShape="motorcycle"/>
+
+        <vType id="tricycle" vClass="motorcycle" 
+            probability="0.1135"
+            guiShape="motorcycle" 
+            width="1.5" 
+            accel="2" 
+            maxSpeed="50" 
+            personCapacity="4"/>
+    </vTypeDistribution>
+
+    <!--Pedestrians-->
+    <personFlow id="SavemoretoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-549232953#2" to="-1346113028#6"/>
+    </personFlow>
+    <personFlow id="SavemoretoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-549232953#2" to="-549232953#0"/>
+    </personFlow>
+    <personFlow id="SavemoretoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-549232953#2" to="549232953#2"/>
+    </personFlow>
+
+    <personFlow id="PalengketoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-1346113028#6" to="-549232953#2"/>
+    </personFlow>
+    <personFlow id="PalengketoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-1346113028#6" to="-549232953#0"/>
+    </personFlow>
+    <personFlow id="PalengketoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-1346113028#6" to="549232953#2"/>
+    </personFlow>
+
+    <personFlow id="JeepPilatoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-549232953#0" to="-549232953#2"/>
+    </personFlow>
+    <personFlow id="JeepPilatoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-549232953#0" to="-1346113028#6"/>
+    </personFlow>
+    <personFlow id="JeepPilatoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="-549232953#0" to="549232953#2"/>
+    </personFlow>
+
+    <personFlow id="InasaltoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="549232953#2" to="-549232953#2"/>
+    </personFlow>
+    <personFlow id="InasaltoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="549232953#2" to="-1346113028#6"/>
+    </personFlow>
+    <personFlow id="InasaltoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="50" departPos="0">
+        <personTrip from="549232953#2" to="-549232953#0"/>
+    </personFlow>
+
+    <!--From Sta Rosa (236.25 veh/hr, 26.25% of 900)-->
+    <flow id="StaRosatoBanlic-Mamatid" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.04544" from="-549232953#10" to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoCalamba"        type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.06816" from="-549232953#10" to="-32425220#0" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoNeighborhood"   type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.01515" from="-549232953#10" to="32425190#1" departLane="best" departSpeed="max"/>
+
+    <!--From Banlic-Mamatid (157.50 veh/hr, 26.25% of 600)-->
+    <flow id="Banlic-MamatidtoStaRosa"      type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.03863" from="1346113028#0" to="549232953#10" departLane="best" departSpeed="max"/>
+    <flow id="Banlic-MamatidtoCalamba"      type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.03863" from="1346113028#0" to="-32425220#0" departLane="best" departSpeed="max"/>
+    <flow id="Banlic-MamatidtoNeighborhood" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.00859" from="1346113028#0" to="32425190#1" departLane="best" departSpeed="max"/>
+
+    <!--From Calamba (236.25 veh/hr, 26.25% of 900)-->
+    <flow id="CalambatoStaRosa"        type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.06816" from="32425220#0" to="549232953#10" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoBanlic-Mamatid" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.04544" from="32425220#0" to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoNeighborhood"   type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.01515" from="32425220#0" to="32425190#1" departLane="best" departSpeed="max"/>
+
+    <!--From Neighborhood (52.50 veh/hr, 26.25% of 200)-->
+    <flow id="NeighborhoodtoStaRosa"        type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.01073" from="-32425190#1" to="549232953#10" departLane="best" departSpeed="max"/>
+    <flow id="NeighborhoodtoBanlic-Mamatid" type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.00716" from="-32425190#1" to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="NeighborhoodtoCalamba"        type="AguinaldoHighway" begin="0.00" end="3600.00" probability="0.01073" from="-32425190#1" to="-32425220#0" departLane="best" departSpeed="max"/>
+
+</routes>

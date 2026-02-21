@@ -45,43 +45,43 @@
     </vTypeDistribution>
 
     <!--Pedestrians-->
-    <personFlow id="SavemoretoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="SavemoretoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-549232953#2" to="-1346113028#6"/>
     </personFlow>
-    <personFlow id="SavemoretoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="SavemoretoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-549232953#2" to="-549232953#0"/>
     </personFlow>
-    <personFlow id="SavemoretoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="SavemoretoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-549232953#2" to="549232953#2"/>
     </personFlow>
 
-    <personFlow id="PalengketoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="PalengketoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-1346113028#6" to="-549232953#2"/>
     </personFlow>
-    <personFlow id="PalengketoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="PalengketoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-1346113028#6" to="-549232953#0"/>
     </personFlow>
-    <personFlow id="PalengketoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="PalengketoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-1346113028#6" to="549232953#2"/>
     </personFlow>
 
-    <personFlow id="JeepPilatoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="JeepPilatoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-549232953#0" to="-549232953#2"/>
     </personFlow>
-    <personFlow id="JeepPilatoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="JeepPilatoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-549232953#0" to="-1346113028#6"/>
     </personFlow>
-    <personFlow id="JeepPilatoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="JeepPilatoInasal" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="-549232953#0" to="549232953#2"/>
     </personFlow>
 
-    <personFlow id="InasaltoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="InasaltoSavemore" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="549232953#2" to="-549232953#2"/>
     </personFlow>
-    <personFlow id="InasaltoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="InasaltoPalengke" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="549232953#2" to="-1346113028#6"/>
     </personFlow>
-    <personFlow id="InasaltoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="80" departPos="25">
+    <personFlow id="InasaltoJeepPila" type="ped" begin="0.00" end="3600.00" personsPerHour="25" departPos="0">
         <personTrip from="549232953#2" to="-549232953#0"/>
     </personFlow>
 
