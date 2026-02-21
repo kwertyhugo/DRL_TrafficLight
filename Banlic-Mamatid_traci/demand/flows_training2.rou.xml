@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Unified Demand File — Aguinaldo Highway
+    ========================================
+    Simulation clock : 6:00 → 22:00
+    Simulation time  : t=0  → t=57600 (seconds offset from 06:00)
+
+    Schedule:
+      06:00–07:00  |  t=     0 –  3,600  |  SLOW         morning ramp-up
+      07:00–09:00  |  t= 3,600 – 10,800  |  TRAFFIC JAM  AM peak
+      09:00–10:00  |  t=10,800 – 14,400  |  SLOW         AM wind-down
+      10:00–17:00  |  t=14,400 – 39,600  |  NORMAL       midday off-peak
+      17:00–18:00  |  t=39,600 – 43,200  |  SLOW         evening ramp-up
+      18:00–20:00  |  t=43,200 – 50,400  |  TRAFFIC JAM  PM peak
+      20:00–21:00  |  t=50,400 – 54,000  |  SLOW         PM wind-down
+      21:00–22:00  |  t=54,000 – 57,600  |  NORMAL       late evening
+-->
+
+<routes>
+
+    <!-- ══════════════════════════════════════════════
+         VEHICLE TYPES  (defined once, shared by all)
+    ══════════════════════════════════════════════ -->
+
+    <vType id="ped" vClass="pedestrian"
+        impatience="0.2"
+        mDriveAfterRedTime="-1"
+        guiShape="pedestrian"/>
+
+    <vTypeDistribution id="AguinaldoHighway">
+        <vType id="car" vClass="passenger"
+            probability="0.413"
+            guiShape="passenger"/>
+        <vType id="jeep" vClass="bus"
+            probability="0.17"
+            guiShape="passenger/van"
+            length="8"
+            width="2"
+            mass="500"
+            maxSpeed="100"
+            desiredMaxSpeed="60"
+            personCapacity="20"/>
+        <vType id="bus" vClass="bus"
+            probability="0.06"
+            guiShape="bus"/>
+        <vType id="truck" vClass="truck"
+            probability="0.13"
+            guiShape="truck"/>
+        <vType id="motorcycle" vClass="motorcycle"
+            probability="0.1135"
+            width="0.8"
+            minGap="0.5"
+            guiShape="motorcycle"/>
+        <vType id="tricycle" vClass="motorcycle"
+            probability="0.1135"
+            guiShape="motorcycle"
+            width="1.5"
+            accel="2"
+            maxSpeed="50"
+            personCapacity="4"/>
+    </vTypeDistribution>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         10:00–17:00  |  t=14400–39600  |  NORMAL  (midday off-peak)
+    ══════════════════════════════════════════════════════════════ -->
+
+    <!-- Pedestrians — 25 persons/hr -->
+    <personFlow id="normal_SavemoretoPalengke" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="-1346113028#6"/></personFlow>
+    <personFlow id="normal_SavemoretoJeepPila" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="-549232953#0"/></personFlow>
+    <personFlow id="normal_SavemoretoInasal"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="549232953#2"/></personFlow>
+    <personFlow id="normal_PalengketoSavemore" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="-549232953#2"/></personFlow>
+    <personFlow id="normal_PalengketoJeepPila" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="-549232953#0"/></personFlow>
+    <personFlow id="normal_PalengketoInasal"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="549232953#2"/></personFlow>
+    <personFlow id="normal_JeepPilatoSavemore" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="-549232953#2"/></personFlow>
+    <personFlow id="normal_JeepPilatoPalengke" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="-1346113028#6"/></personFlow>
+    <personFlow id="normal_JeepPilatoInasal"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="549232953#2"/></personFlow>
+    <personFlow id="normal_InasaltoSavemore"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-549232953#2"/></personFlow>
+    <personFlow id="normal_InasaltoPalengke"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-1346113028#6"/></personFlow>
+    <personFlow id="normal_InasaltoJeepPila"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-549232953#0"/></personFlow>
+
+    <!-- Vehicles — normal probabilities -->
+    <flow id="normal_StaRosatoBanlic"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.02316" from="-549232953#10" to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="normal_StaRosatoCalamba"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.03474" from="-549232953#10" to="-32425220#0"   departLane="best" departSpeed="max"/>
+    <flow id="normal_StaRosatoNeighbor"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00772" from="-549232953#10" to="32425190#1"    departLane="best" departSpeed="max"/>
+    <flow id="normal_BanlictoStaRosa"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.01969" from="1346113028#0"  to="549232953#10"  departLane="best" departSpeed="max"/>
+    <flow id="normal_BanlictoCalamba"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.01969" from="1346113028#0"  to="-32425220#0"   departLane="best" departSpeed="max"/>
+    <flow id="normal_BanlictoNeighbor"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.00438" from="1346113028#0"  to="32425190#1"    departLane="best" departSpeed="max"/>
+    <flow id="normal_CalambatoStaRosa"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.03474" from="32425220#0"    to="549232953#10"  departLane="best" departSpeed="max"/>
+    <flow id="normal_CalambatoBanlic"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.02316" from="32425220#0"    to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="normal_CalambatoNeighbor"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00772" from="32425220#0"    to="32425190#1"    departLane="best" departSpeed="max"/>
+    <flow id="normal_NeighbortoStaRosa"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00547" from="-32425190#1"   to="549232953#10"  departLane="best" departSpeed="max"/>
+    <flow id="normal_NeighbortoBanlic"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.00365" from="-32425190#1"   to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="normal_NeighbortoCalamba"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00547" from="-32425190#1"   to="-32425220#0"   departLane="best" departSpeed="max"/>
+</routes>

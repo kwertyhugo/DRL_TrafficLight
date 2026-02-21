@@ -75,14 +75,14 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DDPG/stats.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DDPG/trips.xml'
+    '--statistic-output', r'Balibago_traci/output_DDPG/jam1_stats.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DDPG/jam1_trips.xml'
 ]
 
 # ==========================================
 # SIMULATION VARIABLES
 # ==========================================
-trainMode = 1
+trainMode = 0
 stepLength = 0.1
 
 northCurrentPhase = 0
@@ -109,7 +109,7 @@ southPrevState = None
 southPrevAction = None
 
 step_counter = 0
-MAX_STEPS = 150000 # Safety limit (1000 seconds)
+MAX_STEPS = 50000 # Safety limit (1000 seconds)
 
 # History Buffers
 reward_history_N, actor_loss_N, critic_loss_N = [], [], []
@@ -199,7 +199,7 @@ def save_history(filename, headers, reward_hist, a_loss_hist, c_loss_hist):
 # ==========================================
 # MAIN EXECUTION
 # ==========================================
-traci.start(Sumo_config)
+traci.start(Sumo_config, port=8814)
 _subscribe_all_detectors()
 _junctionSubscription("4902876117")
 _junctionSubscription("12188714")
