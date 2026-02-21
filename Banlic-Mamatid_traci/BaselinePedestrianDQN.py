@@ -19,7 +19,12 @@ LEARNING_RATE = 0.00005
 MainAgent = dqn(state_size=10, action_size=11, memory_size=MEMORY_SIZE, gamma=GAMMA, 
                  epsilon=1.0, epsilon_decay_rate=EPSILON_DECAY, epsilon_min=0.01, 
                  learning_rate=LEARNING_RATE, target_update_freq=500, 
-                 name='Main_DQNAgent', area='Banlic-Mamatid')
+                 name='Main_DQNAgent_Baseline', area='Banlic-Mamatid')
+
+model_path = "models_DQN/Main_DQNAgent_Baseline.keras"
+
+if os.path.isfile(model_path):
+    MainAgent.load()
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')

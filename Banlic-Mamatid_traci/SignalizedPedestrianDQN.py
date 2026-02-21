@@ -19,7 +19,12 @@ LEARNING_RATE = 0.00005
 MainAgent = dqn(state_size=11, action_size=11, memory_size=MEMORY_SIZE, gamma=GAMMA, 
                  epsilon=1.0, epsilon_decay_rate=EPSILON_DECAY, epsilon_min=0.01, 
                  learning_rate=LEARNING_RATE, target_update_freq=500, 
-                 name='Main_DQNAgent', area='Banlic-Mamatid')
+                 name='Main_DQNAgent_Signalized', area='Banlic-Mamatid')
+
+model_path = "models_DQN/Main_DQNAgent_Signalized.keras"
+
+if os.path.isfile(model_path):
+    MainAgent.load()
 
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
@@ -168,7 +173,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
     if currentPhaseDuration <= 0:
         currentPhase = (currentPhase + 1) % 10
         # NOTE: Replace with your actual traffic light junction ID from .sumocfg
-        traci.trafficlight.setPhase("BANLIC_MAMATID_TL", currentPhase)
+        traci.trafficlight.setPhase("253768576", currentPhase)
+        traci.trafficlight.setPhase("253499548", currentPhase)
 
         if currentPhase % 2 == 1:
             currentPhaseDuration = 5
@@ -178,7 +184,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
             base = {0: 30, 2: 30, 4: 45, 6: 60, 8: 25}.get(currentPhase, 30)
             currentPhaseDuration = max(5, min(180, base + duration_adj))
 
-        traci.trafficlight.setPhaseDuration("BANLIC_MAMATID_TL", currentPhaseDuration)
+        traci.trafficlight.setPhaseDuration("253768576", currentPhaseDuration)
+        traci.trafficlight.setPhaseDuration("253499548", currentPhaseDuration)
 
     # 5. TRAINING REPLAY
     if trainMode == 1 and step_counter % TRAIN_FREQUENCY == 0 and step_counter > 1200 / stepLength:
