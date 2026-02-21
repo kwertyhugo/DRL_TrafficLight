@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-02-21 10:00:45 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-02-21 11:14:43 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="Banlic-Mamatid_traci/network/banlic-mamatid_baseline.net.xml"/>
-        <route-files value="Banlic-Mamatid_traci/demand/flows_normal_traffic.rou.xml"/>
+        <route-files value="Banlic-Mamatid_traci/demand/flows_slow_traffic.rou.xml"/>
         <additional-files value="Banlic-Mamatid_traci/additionals/banlic-mamatid.poly.xml,Banlic-Mamatid_traci/ additionals/banlic-mamatid.add.xml"/>
     </input>
 
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="50276"/>
+        <remote-port value="51706"/>
     </traci_server>
 
     <gui_only>
@@ -43,3 +43,14 @@
 -->
 
 <statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="6347.06" clockEnd="9068.07" clockDuration="2721.01" traciDuration="922.33" realTimeFactor="2.67" vehicleUpdatesPerSecond="7756.71" personUpdatesPerSecond="215.94" begin="0.00" end="7273.20" duration="7273.20"/>
+    <vehicles loaded="1354" inserted="1354" running="0" waiting="0"/>
+    <teleports total="161" jam="111" yield="50" wrongLane="0"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="20"/>
+    <persons loaded="600" running="0" jammed="23"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+    <vehicleTripStatistics count="1354" routeLength="2653.10" speed="3.51" duration="1558.79" waitingTime="1205.38" timeLoss="1413.73" departDelay="221.55" departDelayWaiting="-1.00" totalTravelTime="2110605.50" totalDepartDelay="299978.70"/>
+    <pedestrianStatistics number="600" routeLength="78.90" duration="97.93" timeLoss="41.04"/>
+    <rideStatistics number="0"/>
+    <transportStatistics number="0"/>
+</statistics>
