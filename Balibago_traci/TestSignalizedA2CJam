@@ -1,0 +1,305 @@
+import os
+import sys
+import traci
+import numpy as np
+import csv
+from keras.utils import to_categorical
+from keras.models import load_model
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# === OUTPUT DIRECTORY ===
+os.makedirs('./Balibago_traci/output_A2C', exist_ok=True)
+
+# === LOAD TRAINED MODELS ===
+print("\n" + "=" * 70)
+print("Loading Trained A2C Models for Testing - JAM TRAFFIC")
+print("=" * 70)
+
+north_model_path = './Balibago_traci/models_A2C/North_A2CAgent.keras'
+south_model_path = './Balibago_traci/models_A2C/South_A2CAgent.keras'
+
+if not os.path.exists(north_model_path):
+    sys.exit(f"ERROR: North model not found at {north_model_path}")
+if not os.path.exists(south_model_path):
+    sys.exit(f"ERROR: South model not found at {south_model_path}")
+
+north_model = load_model(north_model_path)
+south_model = load_model(south_model_path)
+print(f"  ✓ Loaded North Agent from {north_model_path}")
+print(f"  ✓ Loaded South Agent from {south_model_path}")
+print("=" * 70)
+
+# === SUMO ENVIRONMENT ===
+if 'SUMO_HOME' in os.environ:
+    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    sys.path.append(tools)
+else:
+    sys.exit("Please declare environment variable 'SUMO_HOME'")
+
+# --- SIMULATION VARIABLES ---
+stepLength = 0.1
+actionSpace = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+
+detector_ids = [
+    "e2_0", "e2_1", "e2_2", "e2_3", "e2_4",
+    "e2_5", "e2_6", "e2_7", "e2_8", "e2_9",
+    "e2_10", "e2_11", "e2_12"
+]
+detector_count = len(detector_ids)
+
+# ============================================================
+# HELPER FUNCTIONS
+# ============================================================
+
+def _junctionSubscription(junction_id):
+    traci.junction.subscribeContext(
+        junction_id,
+        traci.constants.CMD_GET_PERSON_VARIABLE,
+        10.0,
+        [traci.constants.VAR_WAITING_TIME]
+    )
+
+def _subscribe_all_detectors():
+    vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
+    for det_id in detector_ids:
+        traci.lanearea.subscribeContext(
+            det_id, traci.constants.CMD_GET_VEHICLE_VARIABLE, 3, vehicle_context_vars)
+        traci.lanearea.subscribe(det_id, vehicle_vars)
+
+def _weighted_waits(detector_id):
+    sumWait = 0
+    vehicle_data = traci.lanearea.getContextSubscriptionResults(detector_id)
+    if not vehicle_data:
+        return 0
+    weights = {"car": 1.0, "jeep": 1.5, "bus": 2.2,
+               "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
+    for data in vehicle_data.values():
+        v_type   = data.get(traci.constants.VAR_TYPE, "car")
+        waitTime = data.get(traci.constants.VAR_WAITING_TIME, 0)
+        sumWait += waitTime * weights.get(v_type, 1.0)
+    return sumWait
+
+def _northIntersection_queue():
+    queues = [_weighted_waits(f"e2_{i}") for i in range(8)]
+    pedestrian = 0
+    junction_data = traci.junction.getContextSubscriptionResults("4902876117")
+    if junction_data:
+        for data in junction_data.values():
+            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
+    return queues + [pedestrian]
+
+def _southIntersection_queue():
+    queues = [_weighted_waits(f"e2_{i}") for i in range(8, 13)]
+    pedestrian = 0
+    junction_data = traci.junction.getContextSubscriptionResults("12188714")
+    if junction_data:
+        for data in junction_data.values():
+            pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
+    return queues + [pedestrian]
+
+def predict_action(model, state):
+    """Get action from trained model (greedy - no exploration)"""
+    state_batch = np.expand_dims(state, axis=0)
+    action_probs = model.predict(state_batch, verbose=0)[0]
+    return np.argmax(action_probs)
+
+def save_metrics_csv(filename, metrics_list):
+    """Save test metrics to CSV"""
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Time_min', 'Avg_Jam_Length_m', 'Throughput_veh_per_min', 
+                        'North_Queue', 'South_Queue', 'Total_Queue',
+                        'North_Jam_Length_m', 'South_Jam_Length_m'])
+        writer.writerows(metrics_list)
+
+# ============================================================
+# RUN JAM TRAFFIC TEST
+# ============================================================
+
+print("\n" + "=" * 70)
+print("Testing Scenario: JAM TRAFFIC")
+print("=" * 70)
+
+Sumo_config = [
+    'sumo',
+    '-c', 'Balibago_traci/signalizedPed.sumocfg',
+    '--route-files', 'Balibago_traci/demand/flows_jam_traffic.rou.xml',
+    '--step-length', '0.1',
+    '--delay', '0',
+    '--lateral-resolution', '0.1',
+    '--statistic-output', 'Balibago_traci/output_A2C/test_jam_stats.xml',
+    '--tripinfo-output', 'Balibago_traci/output_A2C/test_jam_trips.xml'
+]
+
+northCurrentPhase = 0
+northCurrentPhaseDuration = 30
+southCurrentPhase = 0
+southCurrentPhaseDuration = 30
+
+step_counter = 0
+metric_observation_count = 0
+throughput_total = 0
+jam_length_total = 0
+total_queue_north = 0
+total_queue_south = 0
+north_jam_length_total = 0
+south_jam_length_total = 0
+
+metrics_timeline = []
+
+traci.start(Sumo_config)
+_subscribe_all_detectors()
+_junctionSubscription("4902876117")
+_junctionSubscription("12188714")
+
+print("  Running test for jam_traffic...")
+
+while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
+    step_counter += 1
+    northCurrentPhaseDuration -= stepLength
+    southCurrentPhaseDuration -= stepLength
+    
+    north_decision_needed = (northCurrentPhaseDuration <= 0) and (northCurrentPhase % 2 == 0)
+    south_decision_needed = (southCurrentPhaseDuration <= 0) and (southCurrentPhase % 2 == 0)
+    
+    next_action_N_idx = None
+    next_action_S_idx = None
+    
+    if north_decision_needed:
+        queue = np.array(_northIntersection_queue())
+        norm_q_north = queue / 2000.0
+        n_phase_oh = to_categorical(northCurrentPhase // 2, num_classes=4).flatten()
+        obs_north = np.concatenate([norm_q_north, n_phase_oh]).astype(np.float32)
+        next_action_N_idx = predict_action(north_model, obs_north)
+    elif northCurrentPhaseDuration <= 0:
+        next_action_N_idx = 5
+    
+    if south_decision_needed:
+        queue = np.array(_southIntersection_queue())
+        norm_q_south = queue / 1000.0
+        s_phase_oh = to_categorical(southCurrentPhase // 2, num_classes=4).flatten()
+        obs_south = np.concatenate([norm_q_south, s_phase_oh]).astype(np.float32)
+        next_action_S_idx = predict_action(south_model, obs_south)
+    elif southCurrentPhaseDuration <= 0:
+        next_action_S_idx = 5
+    
+    if northCurrentPhaseDuration <= 0:
+        northCurrentPhase = (northCurrentPhase + 1) % 8
+        traci.trafficlight.setPhase("4902876117", northCurrentPhase)
+        
+        if northCurrentPhase % 2 == 1:
+            northCurrentPhaseDuration = 5
+        else:
+            duration_adj = actionSpace[next_action_N_idx]
+            base = {0: 45, 2: 130, 4: 30, 6: 90}.get(northCurrentPhase, 30)
+            northCurrentPhaseDuration = max(5, min(180, base + duration_adj))
+        
+        traci.trafficlight.setPhaseDuration("4902876117", northCurrentPhaseDuration)
+    
+    if southCurrentPhaseDuration <= 0:
+        southCurrentPhase = (southCurrentPhase + 1) % 8
+        traci.trafficlight.setPhase("12188714", southCurrentPhase)
+        
+        if southCurrentPhase % 2 == 1:
+            southCurrentPhaseDuration = 5
+        else:
+            duration_adj = actionSpace[next_action_S_idx]
+            base = {0: 25, 2: 30, 4: 40, 6: 45}.get(southCurrentPhase, 30)
+            southCurrentPhaseDuration = max(5, min(180, base + duration_adj))
+        
+        traci.trafficlight.setPhaseDuration("12188714", southCurrentPhaseDuration)
+    
+    TRACK_INTERVAL_STEPS = int(60 / stepLength)
+    if step_counter % TRACK_INTERVAL_STEPS == 0:
+        jam_length = 0
+        throughput = 0
+        north_jam_length = 0
+        south_jam_length = 0
+        metric_observation_count += 1
+        
+        for i, det_id in enumerate(detector_ids):
+            detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+            if not detector_stats:
+                continue
+            
+            det_jam = detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+            det_throughput = detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+            
+            jam_length += det_jam
+            throughput += det_throughput
+            
+            if i < 8:
+                north_jam_length += det_jam
+            else:
+                south_jam_length += det_jam
+        
+        jam_length /= detector_count
+        jam_length_total += jam_length
+        throughput_total += throughput
+        
+        north_jam_length /= 8
+        south_jam_length /= 5
+        north_jam_length_total += north_jam_length
+        south_jam_length_total += south_jam_length
+        
+        north_queue = sum(_northIntersection_queue())
+        south_queue = sum(_southIntersection_queue())
+        total_queue_north += north_queue
+        total_queue_south += south_queue
+        
+        time_min = step_counter * stepLength / 60
+        metrics_timeline.append([
+            f"{time_min:.1f}",
+            f"{jam_length:.2f}",
+            f"{throughput:.2f}",
+            f"{north_queue:.2f}",
+            f"{south_queue:.2f}",
+            f"{north_queue + south_queue:.2f}",
+            f"{north_jam_length:.2f}",
+            f"{south_jam_length:.2f}"
+        ])
+    
+    traci.simulationStep()
+
+traci.close()
+
+if metric_observation_count > 0:
+    avg_jam = jam_length_total / metric_observation_count
+    avg_throughput = throughput_total / metric_observation_count
+    avg_queue_north = total_queue_north / metric_observation_count
+    avg_queue_south = total_queue_south / metric_observation_count
+    avg_north_jam = north_jam_length_total / metric_observation_count
+    avg_south_jam = south_jam_length_total / metric_observation_count
+    
+    print(f"\n  Results for jam_traffic:")
+    print(f"    Average Jam Length (Overall)    : {avg_jam:.2f} m")
+    print(f"    Average Jam Length (North)      : {avg_north_jam:.2f} m")
+    print(f"    Average Jam Length (South)      : {avg_south_jam:.2f} m")
+    print(f"    Average Throughput              : {avg_throughput:.2f} veh/min")
+    print(f"    Average North Queue             : {avg_queue_north:.2f}")
+    print(f"    Average South Queue             : {avg_queue_south:.2f}")
+    print(f"    Average Total Queue             : {avg_queue_north + avg_queue_south:.2f}")
+    
+    csv_filename = './Balibago_traci/output_A2C/test_jam_metrics.csv'
+    save_metrics_csv(csv_filename, metrics_timeline)
+    print(f"    ✓ Saved metrics to {csv_filename}")
+    
+    summary_file = './Balibago_traci/output_A2C/test_jam_summary.txt'
+    with open(summary_file, 'w') as f:
+        f.write("Test Results - jam_traffic\n")
+        f.write("=" * 70 + "\n\n")
+        f.write(f"Average Jam Length (Overall)    : {avg_jam:.2f} m\n")
+        f.write(f"Average Jam Length (North)      : {avg_north_jam:.2f} m\n")
+        f.write(f"Average Jam Length (South)      : {avg_south_jam:.2f} m\n")
+        f.write(f"Average Throughput              : {avg_throughput:.2f} veh/min\n\n")
+        f.write(f"Average North Queue             : {avg_queue_north:.2f}\n")
+        f.write(f"Average South Queue             : {avg_queue_south:.2f}\n")
+        f.write(f"Average Total Queue             : {avg_queue_north + avg_queue_south:.2f}\n")
+    print(f"    ✓ Saved summary to {summary_file}")
+
+print("\n" + "=" * 70)
+print("JAM TRAFFIC Test Completed!")
+print("=" * 70)
