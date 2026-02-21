@@ -22,7 +22,7 @@ except ImportError:
 # CONFIGURATION
 # ==========================================
 BATCH_SIZE = 64
-TRAIN_FREQUENCY = 1  # DDPG usually trains every step or frequently
+TRAIN_FREQUENCY = 1  
 GAMMA = 0.99
 TAU = 0.001
 ACTOR_LR = 0.0001
@@ -31,7 +31,6 @@ NOISE_STD_INIT = 0.2
 NOISE_DECAY = 0.9999
 
 # Action bounds (DDPG outputs -1 to 1)
-# We will scale this later to -25s to +25s
 action_low = np.array([-1.0], dtype=np.float32)
 action_high = np.array([1.0], dtype=np.float32)
 
@@ -39,7 +38,6 @@ action_high = np.array([1.0], dtype=np.float32)
 # AGENT INITIALIZATION
 # ==========================================
 # North: 8 Detectors + 4 Phase One-Hot = 12 State Size
-# Action: 1 Continuous Value (Duration Adjustment)
 NorthAgent = ddpg(
     state_size=12, 
     action_size=1, 
@@ -51,7 +49,6 @@ NorthAgent = ddpg(
 )
 
 # South: 5 Detectors + 4 Phase One-Hot = 9 State Size
-# Action: 1 Continuous Value
 SouthAgent = ddpg(
     state_size=9, 
     action_size=1, 
@@ -73,19 +70,19 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo', # Use 'sumo-gui' to see the simulation
     '-c', 'Balibago_traci/signalizedPed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DDPG/stats.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DDPG/trips.xml'
+    '--statistic-output', r'Balibago_traci/output_DDPG/jam1_stats.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DDPG/jam1_trips.xml'
 ]
 
 # ==========================================
 # SIMULATION VARIABLES
 # ==========================================
-trainMode = 1
+trainMode = 0
 stepLength = 0.1
 
 northCurrentPhase = 0
@@ -112,6 +109,7 @@ southPrevState = None
 southPrevAction = None
 
 step_counter = 0
+MAX_STEPS = 50000 # Safety limit (1000 seconds)
 
 # History Buffers
 reward_history_N, actor_loss_N, critic_loss_N = [], [], []
@@ -163,13 +161,8 @@ def _northIntersection_queue():
     if junction_data:
         for data in junction_data.values():
             pedestrian += data.get(traci.constants.VAR_WAITING_TIME, 0)
-    return queues + [pedestrian] # Note: Ensure this matches state size logic. 8 det + 1 ped? 
-    # Logic adjustment: The state size setup assumed 8 detectors + 4 phase. 
-    # If using pedestrian, append it to queue list.
-    # Current code below uses 8 queues + 4 phase = 12 inputs. Pedestrian is implicitly part of reward or ignored in state if not reshaped.
-    # We will stick to queues only for state to match standard inputs, or append ped if desired.
-    # For strict consistency with your DQN Queue logic, we return the list.
-    
+    return queues + [pedestrian]
+
 def _southIntersection_queue():
     # Detectors 8-12
     queues = [_weighted_waits(f"e2_{i}") for i in range(8, 13)]
@@ -193,13 +186,20 @@ def save_history(filename, headers, reward_hist, a_loss_hist, c_loss_hist):
         writer = csv.writer(f)
         if not file_exists:
             writer.writerow(headers)
-        for i in range(len(reward_hist)):
-            writer.writerow([i, reward_hist[i], a_loss_hist[i], c_loss_hist[i]])
+        # Pad shorter lists with None to match length if necessary, 
+        # though in this loop structure they should be synced.
+        length = len(reward_hist)
+        for i in range(length):
+            # Safe access in case lists differ slightly due to timing
+            r = reward_hist[i] if i < len(reward_hist) else 0
+            a = a_loss_hist[i] if i < len(a_loss_hist) else 0
+            c = c_loss_hist[i] if i < len(c_loss_hist) else 0
+            writer.writerow([i, r, a, c])
 
 # ==========================================
 # MAIN EXECUTION
 # ==========================================
-traci.start(Sumo_config)
+traci.start(Sumo_config, port=8814)
 _subscribe_all_detectors()
 _junctionSubscription("4902876117")
 _junctionSubscription("12188714")
@@ -207,8 +207,9 @@ _junctionSubscription("12188714")
 print(f"STARTING DDPG | Unified Mode")
 
 try:
-    while traci.simulation.getMinExpectedNumber() > 0:
+    while traci.simulation.getMinExpectedNumber() > 0 and step_counter < MAX_STEPS:
         step_counter += 1
+        
         northCurrentPhaseDuration -= stepLength
         southCurrentPhaseDuration -= stepLength
 
@@ -226,15 +227,12 @@ try:
 
         # --- Capture North State ---
         if north_decision_needed:
-            # Get Queues (Size 9: 8 detectors + 1 ped)
-            # We slice [:8] to get just detectors for state consistency, or adjust state size.
-            # Let's use detectors only for state to keep it clean (Size 8).
-            raw_q = _northIntersection_queue() # returns list
+            raw_q = _northIntersection_queue() 
             queue = np.array(raw_q[:8]) 
-            n_norm_queue = queue / 100.0 # Normalize
+            n_norm_queue = queue / 100.0 
             
             n_phase_oh = to_categorical(northCurrentPhase//2, num_classes=4).flatten()
-            obs_north = np.concatenate([n_norm_queue, n_phase_oh]).astype(np.float32) # 8+4 = 12
+            obs_north = np.concatenate([n_norm_queue, n_phase_oh]).astype(np.float32)
 
             if trainMode == 1:
                 reward_north = calculate_reward(n_norm_queue * 10)
@@ -242,13 +240,12 @@ try:
 
         # --- Capture South State ---
         if south_decision_needed:
-            # Get Queues (Size 6: 5 detectors + 1 ped)
             raw_q = _southIntersection_queue()
             queue = np.array(raw_q[:5]) 
             s_norm_queue = queue / 100.0
             
             s_phase_oh = to_categorical(southCurrentPhase//2, num_classes=4).flatten()
-            obs_south = np.concatenate([s_norm_queue, s_phase_oh]).astype(np.float32) # 5+4 = 9
+            obs_south = np.concatenate([s_norm_queue, s_phase_oh]).astype(np.float32) 
 
             if trainMode == 1:
                 reward_south = calculate_reward(s_norm_queue * 10)
@@ -260,7 +257,6 @@ try:
         if trainMode == 1:
             if north_decision_needed and northPrevState is not None:
                 NorthAgent.remember(northPrevState, northPrevAction, reward_north, obs_north, False)
-                # DDPG typically trains at every step or frequent intervals
                 if len(NorthAgent.replay_buffer) >= BATCH_SIZE:
                     a_loss, c_loss = NorthAgent.train()
                     if a_loss is not None:
@@ -295,7 +291,6 @@ try:
                 print(f"North | Q: {np.sum(obs_north[:8]):.2f} | R: {reward_north:.2f} | Act: {north_action_val[0]:.2f}")
         
         elif northCurrentPhaseDuration <= 0:
-            # Yellow Phase: Carry over previous action (or 0)
             north_action_val = northPrevAction if northPrevAction is not None else np.zeros(1)
 
         # SOUTH
@@ -320,11 +315,8 @@ try:
             traci.trafficlight.setPhase("4902876117", northCurrentPhase)
 
             if northCurrentPhase % 2 == 1:
-                # Yellow
-                northCurrentPhaseDuration = 5
+                northCurrentPhaseDuration = 5 # Yellow
             else:
-                # Green - Apply Continuous Action
-                # Logic: Base + (Action[-1 to 1] * 25)
                 base = {0: 45, 2: 130, 4: 30, 6: 90}.get(northCurrentPhase, 30)
                 adjustment = float(north_action_val[0]) * ACTION_SCALE
                 northCurrentPhaseDuration = max(5.0, min(180.0, base + adjustment))
@@ -337,10 +329,8 @@ try:
             traci.trafficlight.setPhase("12188714", southCurrentPhase)
 
             if southCurrentPhase % 2 == 1:
-                # Yellow
-                southCurrentPhaseDuration = 5
+                southCurrentPhaseDuration = 5 # Yellow
             else:
-                # Green - Apply Continuous Action
                 base = {0: 25, 2: 30, 4: 40, 6: 45}.get(southCurrentPhase, 30)
                 adjustment = float(south_action_val[0]) * ACTION_SCALE
                 southCurrentPhaseDuration = max(5.0, min(180.0, base + adjustment))
@@ -350,8 +340,8 @@ try:
         # -------------------------------------------------
         # 5. METRICS & LOGGING
         # -------------------------------------------------
-        TRACK_INTERVAL_STEPS = int(60 / stepLength)
-        if trainMode == 0 and step_counter % TRACK_INTERVAL_STEPS == 0 :
+        # Use simple modulo to track every N steps
+        if step_counter % 600 == 0: # Check roughly every minute (60s / 0.1s step = 600 steps)
             jam_length = 0
             throughput = 0
             metric_observation_count += 1
@@ -372,13 +362,18 @@ try:
 
 except Exception as e:
     print(f"Simulation interrupted: {e}")
+    import traceback
+    traceback.print_exc()
 
 finally:
     # -------------------------------------------------
     # END OF SIMULATION & SAVING
     # -------------------------------------------------
     print("Cleaning up...")
-    traci.close()
+    try:
+        traci.close()
+    except:
+        pass # Ignore close errors if already closed
 
     if metric_observation_count > 0:
         print("\n Queue Length Avg:", jam_length_total / metric_observation_count)

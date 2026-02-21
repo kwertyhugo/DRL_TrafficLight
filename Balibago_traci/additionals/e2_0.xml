@@ -5,13 +5,18 @@
 
     <input>
         <net-file value="Balibago_traci/network/balibago_signalized.net.xml"/>
-        <route-files value="Balibago_traci/demand/flows_slow_traffic.rou.xml"/>
+        <route-files value="Balibago_traci/demand/flows_jam_traffic.rou.xml"/>
         <additional-files value="Balibago_traci/additionals/balibago.poly.xml,Balibago_traci/ additionals/balibago.add.xml"/>
     </input>
 
     <output>
+<<<<<<< HEAD
         <tripinfo-output value="Balibago_traci/output_NoDRL/SD_NoDRL_jam_trips.xml"/>
         <statistic-output value="Balibago_traci/output_NoDRL/SD_NoDRL_jam_stats.xml"/>
+=======
+        <tripinfo-output value="Balibago_traci/output_DDPG/jam1_trips.xml"/>
+        <statistic-output value="Balibago_traci/output_DDPG/jam1_stats.xml"/>
+>>>>>>> 83f35561c0f68c70545e1a299bb093d4c926aa30
     </output>
 
     <time>
@@ -32,7 +37,11 @@
     </report>
 
     <traci_server>
+<<<<<<< HEAD
         <remote-port value="61595"/>
+=======
+        <remote-port value="8814"/>
+>>>>>>> 83f35561c0f68c70545e1a299bb093d4c926aa30
     </traci_server>
 
     <gui_only>
