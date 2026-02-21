@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-02-21 15:33:36 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Balibago_traci/network/balibago_baseline.net.xml"/>
+        <route-files value="Balibago_traci/demand/flows_jam_traffic.rou.xml"/>
+        <additional-files value="Balibago_traci/additionals/balibago.poly.xml,Balibago_traci/ additionals/balibago.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Balibago_traci/output_NoDRL_baseline/SD_NoDRL_baseline_jam_trips.xml"/>
+        <statistic-output value="Balibago_traci/output_NoDRL_baseline/SD_NoDRL_baseline_jam_stats.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="57717"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+    <tripinfo id="BalibagotoNuvali.0" depart="9.20" departLane="777619905_1" departPos="5.10" departPosLat="0.00" departSpeed="0.00" departDelay="0.00" arrival="87.70" arrivalLane="145507700#3_1" arrivalPos="783.31" arrivalPosLat="-0.00" arrivalSpeed="27.73" duration="78.50" routeLength="1312.87" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="25.44" rerouteNo="1" devices="tripinfo_BalibagotoNuvali.0 routing_BalibagotoNuvali.0" vType="bus" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="NuvalitoBiñan.0" depart="0.70" departLane="-145507700#3_1" departPos="2.30" departPosLat="0.00" departSpeed="25.95" departDelay="0.00" arrival="91.10" arrivalLane="-553887793#0_2" arrivalPos="201.31" arrivalPosLat="0.00" arrivalSpeed="25.94" duration="90.40" routeLength="2096.19" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="8.27" rerouteNo="1" devices="tripinfo_NuvalitoBiñan.0 routing_NuvalitoBiñan.0" vType="tricycle" speedFactor="0.93" vaporized=""/>
+    <personinfo id="JollibeetoPalengke.0" depart="0.00" type="ped" speedFactor="1.06" duration="118.80" waitingTime="0.00" timeLoss="11.97" traveltime="118.80">
+        <walk depart="0.00" departPos="10.42" arrival="118.80" arrivalPos="27.04" duration="118.80" routeLength="157.27" timeLoss="11.97" maxSpeed="1.47" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="PalengketoJollibee.0" depart="0.00" type="ped" speedFactor="1.07" duration="123.10" waitingTime="0.00" timeLoss="12.41" traveltime="123.10">
+        <walk depart="0.00" departPos="25.00" arrival="123.10" arrivalPos="5.21" duration="123.10" routeLength="164.52" timeLoss="12.41" maxSpeed="1.49" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="NuvalitoBalibago.0" depart="8.30" departLane="-145507700#3_1" departPos="2.30" departPosLat="0.00" departSpeed="32.64" departDelay="0.00" arrival="128.60" arrivalLane="32083201#1_1" arrivalPos="58.53" arrivalPosLat="0.00" arrivalSpeed="16.29" duration="120.30" routeLength="2060.89" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="30.10" rerouteNo="1" devices="tripinfo_NuvalitoBalibago.0 routing_NuvalitoBalibago.0" vType="tricycle" speedFactor="1.17" vaporized=""/>
