@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-02-22 09:56:12 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-02-22 17:14:19 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="Balibago_traci/network/balibago_signalized.net.xml"/>
-        <route-files value="Balibago_traci/demand/flows_training3.rou.xml"/>
+        <route-files value="Balibago_traci/demand/flows_training.rou.xml"/>
         <additional-files value="Balibago_traci/additionals/balibago.poly.xml,Balibago_traci/ additionals/balibago.add.xml"/>
     </input>
 
@@ -40,3 +40,17 @@
     </gui_only>
 
 </sumoConfiguration>
+-->
+
+<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="108441.45" clockEnd="125681.29" clockDuration="17239.85" traciDuration="3340.83" realTimeFactor="4.52" vehicleUpdatesPerSecond="724.61" personUpdatesPerSecond="56962.07" begin="0.00" end="77966.50" duration="77966.50"/>
+    <vehicles loaded="5698" inserted="5698" running="0" waiting="0"/>
+    <teleports total="42" jam="28" yield="14" wrongLane="0"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="45"/>
+    <persons loaded="12912" running="0" jammed="21622"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+    <vehicleTripStatistics count="5698" routeLength="1775.30" speed="10.42" duration="219.24" waitingTime="80.68" timeLoss="111.96" departDelay="0.06" departDelayWaiting="-1.00" totalTravelTime="1249217.80" totalDepartDelay="361.00"/>
+    <pedestrianStatistics number="12912" routeLength="418.54" duration="7605.46" timeLoss="7300.39"/>
+    <rideStatistics number="0"/>
+    <transportStatistics number="0"/>
+</statistics>
