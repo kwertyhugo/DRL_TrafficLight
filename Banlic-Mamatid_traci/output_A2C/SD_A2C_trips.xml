@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-02-23 00:15:54 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Banlic-Mamatid_traci/network/banlic-mamatid_signalized.net.xml"/>
+        <route-files value="Banlic-Mamatid_traci/demand/flows_training.rou.xml"/>
+        <additional-files value="Banlic-Mamatid_traci/additionals/banlic-mamatid.poly.xml,Banlic-Mamatid_traci/ additionals/banlic-mamatid.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Banlic-Mamatid_traci/output_A2C/SD_A2C_trips.xml"/>
+        <statistic-output value="Banlic-Mamatid_traci/output_A2C/SD_A2C_stats.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="62097"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+    <tripinfo id="slow_am_ramp_NeighbortoCalamba.0" depart="15.30" departLane="-32425190#1_1" departPos="2.30" departPosLat="0.00" departSpeed="14.03" departDelay="0.00" arrival="66.60" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="28.00" duration="51.30" routeLength="1059.30" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.77" rerouteNo="1" devices="tripinfo_slow_am_ramp_NeighbortoCalamba.0 routing_slow_am_ramp_NeighbortoCalamba.0" vType="tricycle" speedFactor="1.01" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoNeighbor.0" depart="22.80" departLane="32425220#0_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="73.40" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="0.00" arrivalSpeed="13.84" duration="50.60" routeLength="1067.05" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.95" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoNeighbor.0 routing_slow_am_ramp_CalambatoNeighbor.0" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_NeighbortoStaRosa.0" depart="1.20" departLane="-32425190#1_1" departPos="5.10" departPosLat="0.00" departSpeed="13.68" departDelay="0.00" arrival="103.80" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="27.27" duration="102.60" routeLength="2483.86" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.61" rerouteNo="1" devices="tripinfo_slow_am_ramp_NeighbortoStaRosa.0 routing_slow_am_ramp_NeighbortoStaRosa.0" vType="car" speedFactor="0.99" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoStaRosa.0" depart="6.60" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="141.30" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="27.76" duration="134.70" routeLength="3152.57" waitingTime="2.10" waitingCount="1" stopTime="0.00" timeLoss="21.15" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoStaRosa.0 routing_slow_am_ramp_CalambatoStaRosa.0" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoStaRosa.1" depart="17.30" departLane="32425220#0_1" departPos="12.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="142.70" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.77" duration="125.40" routeLength="3148.57" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="11.96" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoStaRosa.1 routing_slow_am_ramp_CalambatoStaRosa.1" vType="bus" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoStaRosa.3" depart="30.30" departLane="32425220#0_2" departPos="5.10" departPosLat="0.00" departSpeed="28.29" departDelay="0.00" arrival="144.20" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="28.17" duration="113.90" routeLength="3155.57" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.27" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoStaRosa.3 routing_slow_am_ramp_CalambatoStaRosa.3" vType="car" speedFactor="1.02" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoStaRosa.2" depart="26.60" departLane="32425220#0_1" departPos="5.10" departPosLat="0.00" departSpeed="26.65" departDelay="0.00" arrival="146.50" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="26.59" duration="119.90" routeLength="3155.57" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="1.45" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoStaRosa.2 routing_slow_am_ramp_CalambatoStaRosa.2" vType="car" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="slow_am_ramp_BanlictoCalamba.0" depart="13.90" departLane="1346113028#0_1" departPos="7.20" departPosLat="0.00" departSpeed="8.31" departDelay="0.00" arrival="156.50" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.68" duration="142.60" routeLength="1740.43" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="6.97" rerouteNo="1" devices="tripinfo_slow_am_ramp_BanlictoCalamba.0 routing_slow_am_ramp_BanlictoCalamba.0" vType="truck" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoStaRosa.4" depart="35.30" departLane="32425220#0_1" departPos="5.10" departPosLat="0.00" departSpeed="24.66" departDelay="0.00" arrival="163.70" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="0.00" arrivalSpeed="24.64" duration="128.40" routeLength="3155.57" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.33" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoStaRosa.4 routing_slow_am_ramp_CalambatoStaRosa.4" vType="car" speedFactor="0.89" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.0" depart="3.00" departLane="-549232953#10_1" departPos="2.30" departPosLat="0.00" departSpeed="28.93" departDelay="0.00" arrival="168.90" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="28.81" duration="165.90" routeLength="3155.07" waitingTime="51.80" waitingCount="1" stopTime="0.00" timeLoss="56.76" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.0 routing_slow_am_ramp_StaRosatoCalamba.0" vType="motorcycle" speedFactor="1.04" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoBanlic.0" depart="40.30" departLane="32425220#0_2" departPos="2.30" departPosLat="0.00" departSpeed="29.34" departDelay="0.00" arrival="173.00" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="-0.00" arrivalSpeed="8.65" duration="132.70" routeLength="1740.27" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.38" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoBanlic.0 routing_slow_am_ramp_CalambatoBanlic.0" vType="motorcycle" speedFactor="1.06" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.4" depart="41.40" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="31.78" departDelay="0.00" arrival="174.10" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="31.67" duration="132.70" routeLength="3152.27" waitingTime="14.70" waitingCount="1" stopTime="0.00" timeLoss="33.43" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.4 routing_slow_am_ramp_StaRosatoCalamba.4" vType="car" speedFactor="1.14" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.1" depart="6.90" departLane="-549232953#10_2" departPos="2.30" departPosLat="0.00" departSpeed="26.42" departDelay="0.00" arrival="177.20" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="26.35" duration="170.30" routeLength="3155.07" waitingTime="40.80" waitingCount="1" stopTime="0.00" timeLoss="50.84" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.1 routing_slow_am_ramp_StaRosatoCalamba.1" vType="tricycle" speedFactor="0.95" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.6" depart="48.10" departLane="-549232953#10_1" departPos="5.10" departPosLat="0.00" departSpeed="29.67" departDelay="0.00" arrival="178.10" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="29.57" duration="130.00" routeLength="3152.27" waitingTime="0.90" waitingCount="1" stopTime="0.00" timeLoss="23.75" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.6 routing_slow_am_ramp_StaRosatoCalamba.6" vType="car" speedFactor="1.07" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.8" depart="53.80" departLane="-549232953#10_1" departPos="7.20" departPosLat="0.00" departSpeed="28.29" departDelay="0.00" arrival="181.60" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="28.24" duration="127.80" routeLength="3150.17" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="16.38" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.8 routing_slow_am_ramp_StaRosatoCalamba.8" vType="truck" speedFactor="1.02" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.2" depart="8.90" departLane="-549232953#10_1" departPos="7.20" departPosLat="0.00" departSpeed="26.64" departDelay="0.00" arrival="182.50" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="26.62" duration="173.60" routeLength="3150.17" waitingTime="33.90" waitingCount="1" stopTime="0.00" timeLoss="55.34" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.2 routing_slow_am_ramp_StaRosatoCalamba.2" vType="truck" speedFactor="0.96" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.7" depart="48.40" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="22.74" departDelay="0.00" arrival="183.30" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.74" duration="134.90" routeLength="3152.27" waitingTime="2.10" waitingCount="1" stopTime="0.00" timeLoss="21.56" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.7 routing_slow_am_ramp_StaRosatoCalamba.7" vType="car" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.3" depart="16.40" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="26.25" departDelay="0.00" arrival="184.10" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="26.25" duration="167.70" routeLength="3152.27" waitingTime="26.10" waitingCount="1" stopTime="0.00" timeLoss="47.53" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.3 routing_slow_am_ramp_StaRosatoCalamba.3" vType="car" speedFactor="0.94" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.9" depart="54.10" departLane="-549232953#10_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="185.70" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="27.53" duration="131.60" routeLength="3149.27" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="18.16" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.9 routing_slow_am_ramp_StaRosatoCalamba.9" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_CalambatoBanlic.1" depart="54.60" departLane="32425220#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="192.80" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.28" duration="138.20" routeLength="1734.47" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.92" rerouteNo="1" devices="tripinfo_slow_am_ramp_CalambatoBanlic.1 routing_slow_am_ramp_CalambatoBanlic.1" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.5" depart="46.60" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="21.17" departDelay="0.00" arrival="200.60" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="-0.00" arrivalSpeed="21.04" duration="154.00" routeLength="3152.27" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.00" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.5 routing_slow_am_ramp_StaRosatoCalamba.5" vType="car" speedFactor="0.76" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoNeighbor.0" depart="127.10" departLane="-549232953#10_1" departPos="5.10" departPosLat="0.00" departSpeed="29.43" departDelay="0.00" arrival="222.20" arrivalLane="32425190#1_1" arrivalPos="142.43" arrivalPosLat="0.00" arrivalSpeed="14.60" duration="95.10" routeLength="2475.52" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="3.59" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoNeighbor.0 routing_slow_am_ramp_StaRosatoNeighbor.0" vType="car" speedFactor="1.06" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoBanlic.0" depart="18.00" departLane="-549232953#10_1" departPos="2.30" departPosLat="0.00" departSpeed="31.62" departDelay="0.00" arrival="231.80" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="9.39" duration="213.80" routeLength="3138.61" waitingTime="35.90" waitingCount="1" stopTime="0.00" timeLoss="50.28" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoBanlic.0 routing_slow_am_ramp_StaRosatoBanlic.0" vType="tricycle" speedFactor="1.14" vaporized=""/>
+    <personinfo id="slow_am_ramp_SavemoretoJeepPila.1" depart="72.00" type="ped" speedFactor="1.17" duration="169.80" waitingTime="72.90" timeLoss="82.99" traveltime="169.80">
+        <walk depart="72.00" departPos="0.00" arrival="241.80" arrivalPos="25.71" duration="169.80" routeLength="140.94" timeLoss="82.99" maxSpeed="1.62" waitingTime="72.90"/>
+    </personinfo>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.10" depart="125.80" departLane="-549232953#10_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="244.00" arrivalLane="-32425220#0_2" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.75" duration="118.20" routeLength="3149.27" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="4.77" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.10 routing_slow_am_ramp_StaRosatoCalamba.10" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="slow_am_ramp_BanlictoStaRosa.0" depart="50.20" departLane="1346113028#0_1" departPos="5.10" departPosLat="0.00" departSpeed="8.16" departDelay="0.00" arrival="244.20" arrivalLane="549232953#10_1" arrivalPos="967.06" arrivalPosLat="-0.00" arrivalSpeed="27.12" duration="194.00" routeLength="3125.43" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="5.19" rerouteNo="1" devices="tripinfo_slow_am_ramp_BanlictoStaRosa.0 routing_slow_am_ramp_BanlictoStaRosa.0" vType="car" speedFactor="0.98" vaporized=""/>
+    <tripinfo id="slow_am_ramp_StaRosatoCalamba.12" depart="129.90" departLane="-549232953#10_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="244.20" arrivalLane="-32425220#0_1" arrivalPos="290.87" arrivalPosLat="0.00" arrivalSpeed="27.74" duration="114.30" routeLength="3149.27" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.93" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoCalamba.12 routing_slow_am_ramp_StaRosatoCalamba.12" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="slow_am_ramp_InasaltoPalengke.0" depart="0.00" type="ped" speedFactor="1.07" duration="249.10" waitingTime="213.00" timeLoss="216.61" traveltime="249.10">
+        <walk depart="0.00" departPos="0.00" arrival="249.10" arrivalPos="34.28" duration="249.10" routeLength="48.06" timeLoss="216.61" maxSpeed="1.48" waitingTime="213.00"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoJeepPila.0" depart="0.00" type="ped" speedFactor="0.85" duration="249.30" waitingTime="117.60" timeLoss="130.60" traveltime="249.30">
+        <walk depart="0.00" departPos="0.00" arrival="249.30" arrivalPos="25.71" duration="249.30" routeLength="140.94" timeLoss="130.60" maxSpeed="1.19" waitingTime="117.60"/>
+    </personinfo>
+    <tripinfo id="slow_am_ramp_StaRosatoBanlic.1" depart="42.70" departLane="-549232953#10_1" departPos="5.10" departPosLat="0.00" departSpeed="27.03" departDelay="0.00" arrival="250.60" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="7.99" duration="207.90" routeLength="3135.81" waitingTime="2.80" waitingCount="1" stopTime="0.00" timeLoss="16.77" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoBanlic.1 routing_slow_am_ramp_StaRosatoBanlic.1" vType="car" speedFactor="0.97" vaporized=""/>
+    <personinfo id="slow_am_ramp_InasaltoPalengke.2" depart="144.00" type="ped" speedFactor="0.93" duration="108.40" waitingTime="66.90" timeLoss="71.07" traveltime="108.40">
+        <walk depart="144.00" departPos="0.00" arrival="252.40" arrivalPos="34.28" duration="108.40" routeLength="48.06" timeLoss="71.07" maxSpeed="1.29" waitingTime="66.90"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoPalengke.1" depart="72.00" type="ped" speedFactor="0.92" duration="181.60" waitingTime="139.50" timeLoss="143.89" traveltime="181.60">
+        <walk depart="72.00" departPos="0.00" arrival="253.60" arrivalPos="34.28" duration="181.60" routeLength="48.06" timeLoss="143.89" maxSpeed="1.27" waitingTime="139.50"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoJeepPila.2" depart="144.00" type="ped" speedFactor="1.02" duration="111.30" waitingTime="0.60" timeLoss="11.50" traveltime="111.30">
+        <walk depart="144.00" departPos="0.00" arrival="255.30" arrivalPos="25.71" duration="111.30" routeLength="140.94" timeLoss="11.50" maxSpeed="1.41" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoPalengke.3" depart="216.00" type="ped" speedFactor="0.96" duration="40.80" waitingTime="0.70" timeLoss="4.58" traveltime="40.80">
+        <walk depart="216.00" departPos="0.00" arrival="256.80" arrivalPos="34.28" duration="40.80" routeLength="48.06" timeLoss="4.58" maxSpeed="1.33" waitingTime="0.70"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoPalengke.0" depart="0.00" type="ped" speedFactor="1.06" duration="260.20" waitingTime="145.80" timeLoss="157.19" traveltime="260.20">
+        <walk depart="0.00" departPos="0.00" arrival="260.20" arrivalPos="34.28" duration="260.20" routeLength="151.65" timeLoss="157.19" maxSpeed="1.47" waitingTime="145.80"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoSavemore.0" depart="0.00" type="ped" speedFactor="1.07" duration="260.30" waitingTime="212.90" timeLoss="218.10" traveltime="260.30">
+        <walk depart="0.00" departPos="0.00" arrival="260.30" arrivalPos="44.65" duration="260.30" routeLength="62.53" timeLoss="218.10" maxSpeed="1.48" waitingTime="212.90"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoInasal.0" depart="0.00" type="ped" speedFactor="1.06" duration="260.40" waitingTime="145.60" timeLoss="218.13" traveltime="260.40">
+        <walk depart="0.00" departPos="0.00" arrival="260.40" arrivalPos="44.65" duration="260.40" routeLength="62.53" timeLoss="218.13" maxSpeed="1.48" waitingTime="145.60"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoInasal.2" depart="144.00" type="ped" speedFactor="0.99" duration="117.00" waitingTime="69.70" timeLoss="74.40" traveltime="117.00">
+        <walk depart="144.00" departPos="0.00" arrival="261.00" arrivalPos="44.65" duration="117.00" routeLength="58.43" timeLoss="74.40" maxSpeed="1.37" waitingTime="69.70"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoInasal.0" depart="0.00" type="ped" speedFactor="0.93" duration="263.90" waitingTime="213.50" timeLoss="218.76" traveltime="263.90">
+        <walk depart="0.00" departPos="0.00" arrival="263.90" arrivalPos="44.65" duration="263.90" routeLength="58.43" timeLoss="218.76" maxSpeed="1.29" waitingTime="213.50"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoInasal.3" depart="216.00" type="ped" speedFactor="0.98" duration="48.40" waitingTime="0.50" timeLoss="5.45" traveltime="48.40">
+        <walk depart="216.00" departPos="0.00" arrival="264.40" arrivalPos="44.65" duration="48.40" routeLength="58.43" timeLoss="5.45" maxSpeed="1.36" waitingTime="0.50"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoSavemore.2" depart="144.00" type="ped" speedFactor="0.98" duration="121.40" waitingTime="69.70" timeLoss="75.23" traveltime="121.40">
+        <walk depart="144.00" departPos="0.00" arrival="265.40" arrivalPos="44.65" duration="121.40" routeLength="62.53" timeLoss="75.23" maxSpeed="1.35" waitingTime="69.70"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoInasal.1" depart="72.00" type="ped" speedFactor="0.96" duration="193.60" waitingTime="66.40" timeLoss="146.54" traveltime="193.60">
+        <walk depart="72.00" departPos="0.00" arrival="265.60" arrivalPos="44.65" duration="193.60" routeLength="62.53" timeLoss="146.54" maxSpeed="1.33" waitingTime="66.40"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoPalengke.1" depart="72.00" type="ped" speedFactor="0.94" duration="194.10" waitingTime="64.20" timeLoss="77.73" traveltime="194.10">
+        <walk depart="72.00" departPos="0.00" arrival="266.10" arrivalPos="34.28" duration="194.10" routeLength="151.65" timeLoss="77.73" maxSpeed="1.30" waitingTime="64.20"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoPalengke.2" depart="144.00" type="ped" speedFactor="1.01" duration="124.10" waitingTime="1.60" timeLoss="16.03" traveltime="124.10">
+        <walk depart="144.00" departPos="0.00" arrival="268.10" arrivalPos="34.28" duration="124.10" routeLength="151.65" timeLoss="16.03" maxSpeed="1.40" waitingTime="1.60"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_JeepPilatoSavemore.0" depart="0.00" type="ped" speedFactor="1.07" duration="268.60" waitingTime="212.40" timeLoss="221.11" traveltime="268.60">
+        <walk depart="0.00" departPos="0.00" arrival="268.60" arrivalPos="44.65" duration="268.60" routeLength="70.59" timeLoss="221.11" maxSpeed="1.49" waitingTime="212.40"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoJeepPila.0" depart="0.00" type="ped" speedFactor="0.97" duration="269.10" waitingTime="213.60" timeLoss="219.17" traveltime="269.10">
+        <walk depart="0.00" departPos="0.00" arrival="269.10" arrivalPos="25.71" duration="269.10" routeLength="67.08" timeLoss="219.17" maxSpeed="1.34" waitingTime="213.60"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_SavemoretoInasal.2" depart="144.00" type="ped" speedFactor="0.97" duration="125.30" waitingTime="0.00" timeLoss="78.80" traveltime="125.30">
+        <walk depart="144.00" departPos="0.00" arrival="269.30" arrivalPos="44.65" duration="125.30" routeLength="62.53" timeLoss="78.80" maxSpeed="1.34" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoSavemore.1" depart="72.00" type="ped" speedFactor="0.89" duration="197.40" waitingTime="140.90" timeLoss="146.77" traveltime="197.40">
+        <walk depart="72.00" departPos="0.00" arrival="269.40" arrivalPos="44.65" duration="197.40" routeLength="62.53" timeLoss="146.77" maxSpeed="1.24" waitingTime="140.90"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoJeepPila.2" depart="144.00" type="ped" speedFactor="1.02" duration="125.50" waitingTime="71.00" timeLoss="78.27" traveltime="125.50">
+        <walk depart="144.00" departPos="0.00" arrival="269.50" arrivalPos="25.71" duration="125.50" routeLength="67.08" timeLoss="78.27" maxSpeed="1.42" waitingTime="71.00"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoSavemore.3" depart="216.00" type="ped" speedFactor="0.99" duration="53.80" waitingTime="1.80" timeLoss="8.12" traveltime="53.80">
+        <walk depart="216.00" departPos="0.00" arrival="269.80" arrivalPos="44.65" duration="53.80" routeLength="62.53" timeLoss="8.12" maxSpeed="1.37" waitingTime="1.80"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_JeepPilatoSavemore.2" depart="144.00" type="ped" speedFactor="0.98" duration="126.70" waitingTime="68.90" timeLoss="74.88" traveltime="126.70">
+        <walk depart="144.00" departPos="0.00" arrival="270.70" arrivalPos="44.65" duration="126.70" routeLength="70.59" timeLoss="74.88" maxSpeed="1.36" waitingTime="68.90"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoInasal.1" depart="72.00" type="ped" speedFactor="0.88" duration="198.90" waitingTime="145.60" timeLoss="150.98" traveltime="198.90">
+        <walk depart="72.00" departPos="0.00" arrival="270.90" arrivalPos="44.65" duration="198.90" routeLength="58.43" timeLoss="150.98" maxSpeed="1.22" waitingTime="145.60"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoSavemore.1" depart="72.00" type="ped" speedFactor="1.00" duration="199.90" waitingTime="141.90" timeLoss="147.77" traveltime="199.90">
+        <walk depart="72.00" departPos="0.00" arrival="271.90" arrivalPos="44.65" duration="199.90" routeLength="72.73" timeLoss="147.77" maxSpeed="1.40" waitingTime="141.90"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoSavemore.2" depart="144.00" type="ped" speedFactor="1.07" duration="128.20" waitingTime="71.70" timeLoss="79.32" traveltime="128.20">
+        <walk depart="144.00" departPos="0.00" arrival="272.20" arrivalPos="44.65" duration="128.20" routeLength="72.73" timeLoss="79.32" maxSpeed="1.49" waitingTime="71.70"/>
+    </personinfo>
+    <tripinfo id="slow_am_ramp_StaRosatoBanlic.2" depart="84.00" departLane="-549232953#10_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="272.40" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.30" duration="188.40" routeLength="3132.81" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.59" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoBanlic.2 routing_slow_am_ramp_StaRosatoBanlic.2" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="slow_am_ramp_JeepPilatoSavemore.1" depart="72.00" type="ped" speedFactor="0.94" duration="202.10" waitingTime="142.00" timeLoss="147.87" traveltime="202.10">
+        <walk depart="72.00" departPos="0.00" arrival="274.10" arrivalPos="44.65" duration="202.10" routeLength="70.59" timeLoss="147.87" maxSpeed="1.30" waitingTime="142.00"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_JeepPilatoSavemore.3" depart="216.00" type="ped" speedFactor="1.04" duration="58.40" waitingTime="2.50" timeLoss="9.66" traveltime="58.40">
+        <walk depart="216.00" departPos="0.00" arrival="274.40" arrivalPos="44.65" duration="58.40" routeLength="70.59" timeLoss="9.66" maxSpeed="1.45" waitingTime="2.50"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_InasaltoJeepPila.1" depart="72.00" type="ped" speedFactor="0.89" duration="203.00" waitingTime="142.40" timeLoss="148.46" traveltime="203.00">
+        <walk depart="72.00" departPos="0.00" arrival="275.00" arrivalPos="25.71" duration="203.00" routeLength="67.08" timeLoss="148.46" maxSpeed="1.23" waitingTime="142.40"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoSavemore.0" depart="0.00" type="ped" speedFactor="0.96" duration="275.30" waitingTime="214.80" timeLoss="220.92" traveltime="275.30">
+        <walk depart="0.00" departPos="0.00" arrival="275.30" arrivalPos="44.65" duration="275.30" routeLength="72.73" timeLoss="220.92" maxSpeed="1.34" waitingTime="214.80"/>
+    </personinfo>
+    <tripinfo id="slow_am_ramp_StaRosatoBanlic.3" depart="91.80" departLane="-549232953#10_1" departPos="5.10" departPosLat="0.00" departSpeed="27.97" departDelay="0.00" arrival="279.20" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.35" duration="187.40" routeLength="3135.81" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.71" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoBanlic.3 routing_slow_am_ramp_StaRosatoBanlic.3" vType="car" speedFactor="1.01" vaporized=""/>
+    <personinfo id="slow_am_ramp_InasaltoJeepPila.3" depart="216.00" type="ped" speedFactor="0.84" duration="64.30" waitingTime="0.50" timeLoss="6.88" traveltime="64.30">
+        <walk depart="216.00" departPos="0.00" arrival="280.30" arrivalPos="25.71" duration="64.30" routeLength="67.08" timeLoss="6.88" maxSpeed="1.17" waitingTime="0.50"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_PalengketoSavemore.3" depart="216.00" type="ped" speedFactor="0.93" duration="64.70" waitingTime="1.90" timeLoss="8.21" traveltime="64.70">
+        <walk depart="216.00" departPos="0.00" arrival="280.70" arrivalPos="44.65" duration="64.70" routeLength="72.73" timeLoss="8.21" maxSpeed="1.29" waitingTime="1.90"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_JeepPilatoInasal.3" depart="216.00" type="ped" speedFactor="1.09" duration="65.40" waitingTime="0.50" timeLoss="8.57" traveltime="65.40">
+        <walk depart="216.00" departPos="0.00" arrival="281.40" arrivalPos="44.65" duration="65.40" routeLength="86.02" timeLoss="8.57" maxSpeed="1.51" waitingTime="0.50"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_JeepPilatoInasal.0" depart="0.00" type="ped" speedFactor="0.98" duration="282.70" waitingTime="212.30" timeLoss="219.32" traveltime="282.70">
+        <walk depart="0.00" departPos="0.00" arrival="282.70" arrivalPos="44.65" duration="282.70" routeLength="86.02" timeLoss="219.32" maxSpeed="1.36" waitingTime="212.30"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_JeepPilatoInasal.2" depart="144.00" type="ped" speedFactor="1.02" duration="139.10" waitingTime="70.80" timeLoss="78.28" traveltime="139.10">
+        <walk depart="144.00" departPos="0.00" arrival="283.10" arrivalPos="44.65" duration="139.10" routeLength="86.02" timeLoss="78.28" maxSpeed="1.41" waitingTime="70.80"/>
+    </personinfo>
+    <personinfo id="slow_am_ramp_JeepPilatoInasal.1" depart="72.00" type="ped" speedFactor="1.03" duration="212.80" waitingTime="145.80" timeLoss="152.81" traveltime="212.80">
+        <walk depart="72.00" departPos="0.00" arrival="284.80" arrivalPos="44.65" duration="212.80" routeLength="86.02" timeLoss="152.81" maxSpeed="1.43" waitingTime="145.80"/>
+    </personinfo>
+    <tripinfo id="slow_am_ramp_StaRosatoBanlic.4" depart="109.80" departLane="-549232953#10_2" departPos="5.10" departPosLat="0.00" departSpeed="27.88" departDelay="0.00" arrival="297.80" arrivalLane="-1346113028#0_1" arrivalPos="507.75" arrivalPosLat="0.00" arrivalSpeed="8.36" duration="188.00" routeLength="3135.81" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="2.64" rerouteNo="1" devices="tripinfo_slow_am_ramp_StaRosatoBanlic.4 routing_slow_am_ramp_StaRosatoBanlic.4" vType="car" speedFactor="1.00" vaporized=""/>
+</tripinfos>

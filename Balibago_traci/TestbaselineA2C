@@ -1,0 +1,402 @@
+import os
+import sys
+import traci
+import numpy as np
+import csv
+from keras.utils import to_categorical
+from keras.models import load_model
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# === OUTPUT DIRECTORY ===
+os.makedirs('./Balibago_traci/output_A2C', exist_ok=True)
+
+# === LOAD TRAINED MODELS ===
+print("\n" + "=" * 70)
+print("Loading Trained A2C Baseline Models for Testing")
+print("=" * 70)
+
+north_model_path = './Balibago_traci/models_A2C_baseline/North_A2CAgent_Baseline.keras'
+south_model_path = './Balibago_traci/models_A2C_baseline/South_A2CAgent_Baseline.keras'
+
+if not os.path.exists(north_model_path):
+    sys.exit(f"ERROR: North model not found at {north_model_path}")
+if not os.path.exists(south_model_path):
+    sys.exit(f"ERROR: South model not found at {south_model_path}")
+
+north_model = load_model(north_model_path)
+south_model = load_model(south_model_path)
+print(f"  ✓ Loaded North Agent from {north_model_path}")
+print(f"  ✓ Loaded South Agent from {south_model_path}")
+print("=" * 70)
+
+# === SUMO ENVIRONMENT ===
+if 'SUMO_HOME' in os.environ:
+    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    sys.path.append(tools)
+else:
+    sys.exit("Please declare environment variable 'SUMO_HOME'")
+
+# --- SIMULATION VARIABLES ---
+stepLength = 0.1
+actionSpace = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+
+detector_ids = [
+    "e2_0", "e2_1", "e2_2", "e2_3", "e2_4",
+    "e2_5", "e2_6", "e2_7", "e2_8", "e2_9",
+    "e2_10", "e2_11", "e2_12"
+]
+detector_count = len(detector_ids)
+
+# ============================================================
+# HELPER FUNCTIONS
+# ============================================================
+
+def _subscribe_all_detectors():
+    vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
+    for det_id in detector_ids:
+        traci.lanearea.subscribeContext(
+            det_id, traci.constants.CMD_GET_VEHICLE_VARIABLE, 3, vehicle_context_vars)
+        traci.lanearea.subscribe(det_id, vehicle_vars)
+
+def _weighted_waits(detector_id):
+    sumWait = 0
+    vehicle_data = traci.lanearea.getContextSubscriptionResults(detector_id)
+    if not vehicle_data:
+        return 0
+    weights = {"car": 1.0, "jeep": 1.5, "bus": 2.2,
+               "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
+    for data in vehicle_data.values():
+        v_type   = data.get(traci.constants.VAR_TYPE, "car")
+        waitTime = data.get(traci.constants.VAR_WAITING_TIME, 0)
+        sumWait += waitTime * weights.get(v_type, 1.0)
+    return sumWait
+
+def _northIntersection_queue():
+    """North: 8 detectors, NO pedestrian (baseline)"""
+    queues = [_weighted_waits(f"e2_{i}") for i in range(8)]
+    return queues
+
+def _southIntersection_queue():
+    """South: 5 detectors, NO pedestrian (baseline)"""
+    queues = [_weighted_waits(f"e2_{i}") for i in range(8, 13)]
+    return queues
+
+def predict_action(model, state):
+    """Get action from trained model (greedy - no exploration)"""
+    state_batch = np.expand_dims(state, axis=0)
+    action_probs = model.predict(state_batch, verbose=0)[0]
+    return np.argmax(action_probs)
+
+def save_metrics_csv(filename, metrics_list):
+    """Save test metrics to CSV"""
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Time_min', 'Avg_Jam_Length_m', 'Throughput_veh_per_min', 
+                        'North_Queue', 'South_Queue', 'Total_Queue',
+                        'North_Jam_Length_m', 'South_Jam_Length_m'])
+        writer.writerows(metrics_list)
+
+def run_test_scenario(scenario_name, route_file):
+    """Run a single test scenario and return results"""
+    
+    print("\n" + "=" * 70)
+    print(f"Testing Scenario: {scenario_name.upper()} (Baseline - No Pedestrians)")
+    print("=" * 70)
+    
+    # Determine output file names based on scenario
+    scenario_prefix = scenario_name.lower().replace(" ", "_").replace("/", "_")
+    
+    Sumo_config = [
+        'sumo',
+        '-c', 'Balibago_traci/baselinePed.sumocfg',
+        '--route-files', route_file,
+        '--step-length', '0.1',
+        '--delay', '0',
+        '--lateral-resolution', '0.1',
+        '--statistic-output', f'Balibago_traci/output_A2C/test_baseline_{scenario_prefix}_stats.xml',
+        '--tripinfo-output', f'Balibago_traci/output_A2C/test_baseline_{scenario_prefix}_trips.xml'
+    ]
+    
+    northCurrentPhase = 0
+    northCurrentPhaseDuration = 30
+    southCurrentPhase = 0
+    southCurrentPhaseDuration = 30
+    
+    step_counter = 0
+    metric_observation_count = 0
+    throughput_total = 0
+    jam_length_total = 0
+    total_queue_north = 0
+    total_queue_south = 0
+    north_jam_length_total = 0
+    south_jam_length_total = 0
+    
+    metrics_timeline = []
+    
+    traci.start(Sumo_config)
+    _subscribe_all_detectors()
+    
+    print(f"  Running test for {scenario_name}...")
+    
+    while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
+        step_counter += 1
+        northCurrentPhaseDuration -= stepLength
+        southCurrentPhaseDuration -= stepLength
+        
+        north_decision_needed = (northCurrentPhaseDuration <= 0) and (northCurrentPhase % 2 == 0)
+        south_decision_needed = (southCurrentPhaseDuration <= 0) and (southCurrentPhase % 2 == 0)
+        
+        next_action_N_idx = None
+        next_action_S_idx = None
+        
+        if north_decision_needed:
+            queue = np.array(_northIntersection_queue())
+            norm_q_north = queue / 2000.0  # North uses 2000
+            n_phase_oh = to_categorical(northCurrentPhase // 2, num_classes=4).flatten()
+            obs_north = np.concatenate([norm_q_north, n_phase_oh]).astype(np.float32)
+            # State size: 8 queue + 4 phase = 12
+            next_action_N_idx = predict_action(north_model, obs_north)
+        elif northCurrentPhaseDuration <= 0:
+            next_action_N_idx = 5
+        
+        if south_decision_needed:
+            queue = np.array(_southIntersection_queue())
+            norm_q_south = queue / 1000.0  # South uses 1000
+            s_phase_oh = to_categorical(southCurrentPhase // 2, num_classes=3).flatten()
+            obs_south = np.concatenate([norm_q_south, s_phase_oh]).astype(np.float32)
+            # State size: 5 queue + 3 phase = 8
+            next_action_S_idx = predict_action(south_model, obs_south)
+        elif southCurrentPhaseDuration <= 0:
+            next_action_S_idx = 5
+        
+        # Apply North phase transitions (8-phase cycle)
+        if northCurrentPhaseDuration <= 0:
+            northCurrentPhase = (northCurrentPhase + 1) % 8
+            traci.trafficlight.setPhase("4902876117", northCurrentPhase)
+            
+            if northCurrentPhase % 2 == 1:
+                northCurrentPhaseDuration = 5
+            else:
+                duration_adj = actionSpace[next_action_N_idx]
+                base = {0: 45, 2: 130, 4: 30, 6: 90}.get(northCurrentPhase, 30)
+                northCurrentPhaseDuration = max(5, min(180, base + duration_adj))
+            
+            traci.trafficlight.setPhaseDuration("4902876117", northCurrentPhaseDuration)
+        
+        # Apply South phase transitions (6-phase cycle for baseline)
+        if southCurrentPhaseDuration <= 0:
+            southCurrentPhase = (southCurrentPhase + 1) % 6
+            traci.trafficlight.setPhase("12188714", southCurrentPhase)
+            
+            if southCurrentPhase % 2 == 1:
+                southCurrentPhaseDuration = 5
+            else:
+                duration_adj = actionSpace[next_action_S_idx]
+                base = {0: 30, 2: 30, 4: 45}.get(southCurrentPhase, 30)
+                southCurrentPhaseDuration = max(5, min(180, base + duration_adj))
+            
+            traci.trafficlight.setPhaseDuration("12188714", southCurrentPhaseDuration)
+        
+        TRACK_INTERVAL_STEPS = int(60 / stepLength)
+        if step_counter % TRACK_INTERVAL_STEPS == 0:
+            jam_length = 0
+            throughput = 0
+            north_jam_length = 0
+            south_jam_length = 0
+            metric_observation_count += 1
+            
+            for i, det_id in enumerate(detector_ids):
+                detector_stats = traci.lanearea.getSubscriptionResults(det_id)
+                if not detector_stats:
+                    continue
+                
+                det_jam = detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+                det_throughput = detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+                
+                jam_length += det_jam
+                throughput += det_throughput
+                
+                if i < 8:
+                    north_jam_length += det_jam
+                else:
+                    south_jam_length += det_jam
+            
+            jam_length /= detector_count
+            jam_length_total += jam_length
+            throughput_total += throughput
+            
+            north_jam_length /= 8
+            south_jam_length /= 5
+            north_jam_length_total += north_jam_length
+            south_jam_length_total += south_jam_length
+            
+            north_queue = sum(_northIntersection_queue())
+            south_queue = sum(_southIntersection_queue())
+            total_queue_north += north_queue
+            total_queue_south += south_queue
+            
+            time_min = step_counter * stepLength / 60
+            metrics_timeline.append([
+                f"{time_min:.1f}",
+                f"{jam_length:.2f}",
+                f"{throughput:.2f}",
+                f"{north_queue:.2f}",
+                f"{south_queue:.2f}",
+                f"{north_queue + south_queue:.2f}",
+                f"{north_jam_length:.2f}",
+                f"{south_jam_length:.2f}"
+            ])
+        
+        traci.simulationStep()
+    
+    traci.close()
+    
+    # Calculate and save results
+    results = {}
+    if metric_observation_count > 0:
+        results['avg_jam'] = jam_length_total / metric_observation_count
+        results['avg_throughput'] = throughput_total / metric_observation_count
+        results['avg_queue_north'] = total_queue_north / metric_observation_count
+        results['avg_queue_south'] = total_queue_south / metric_observation_count
+        results['avg_north_jam'] = north_jam_length_total / metric_observation_count
+        results['avg_south_jam'] = south_jam_length_total / metric_observation_count
+        results['avg_total_queue'] = results['avg_queue_north'] + results['avg_queue_south']
+        
+        print(f"\n  Results for {scenario_name} (Baseline):")
+        print(f"    Average Jam Length (Overall)    : {results['avg_jam']:.2f} m")
+        print(f"    Average Jam Length (North)      : {results['avg_north_jam']:.2f} m")
+        print(f"    Average Jam Length (South)      : {results['avg_south_jam']:.2f} m")
+        print(f"    Average Throughput              : {results['avg_throughput']:.2f} veh/min")
+        print(f"    Average North Queue             : {results['avg_queue_north']:.2f}")
+        print(f"    Average South Queue             : {results['avg_queue_south']:.2f}")
+        print(f"    Average Total Queue             : {results['avg_total_queue']:.2f}")
+        
+        csv_filename = f'./Balibago_traci/output_A2C/test_baseline_{scenario_prefix}_metrics.csv'
+        save_metrics_csv(csv_filename, metrics_timeline)
+        print(f"    ✓ Saved metrics to {csv_filename}")
+        
+        summary_file = f'./Balibago_traci/output_A2C/test_baseline_{scenario_prefix}_summary.txt'
+        with open(summary_file, 'w') as f:
+            f.write(f"Test Results - Baseline {scenario_name}\n")
+            f.write("=" * 70 + "\n\n")
+            f.write(f"Average Jam Length (Overall)    : {results['avg_jam']:.2f} m\n")
+            f.write(f"Average Jam Length (North)      : {results['avg_north_jam']:.2f} m\n")
+            f.write(f"Average Jam Length (South)      : {results['avg_south_jam']:.2f} m\n")
+            f.write(f"Average Throughput              : {results['avg_throughput']:.2f} veh/min\n\n")
+            f.write(f"Average North Queue             : {results['avg_queue_north']:.2f}\n")
+            f.write(f"Average South Queue             : {results['avg_queue_south']:.2f}\n")
+            f.write(f"Average Total Queue             : {results['avg_total_queue']:.2f}\n")
+        print(f"    ✓ Saved summary to {summary_file}")
+    
+    return results
+
+# ============================================================
+# RUN ALL TEST SCENARIOS SEQUENTIALLY
+# ============================================================
+
+print("\n" + "=" * 70)
+print("BASELINE A2C MODEL - COMPREHENSIVE TESTING")
+print("Running all traffic scenarios sequentially...")
+print("=" * 70)
+
+# Define test scenarios
+test_scenarios = [
+    {
+        'name': 'Normal Traffic',
+        'route_file': 'Balibago_traci/demand/flows_normal_traffic.rou.xml'
+    },
+    {
+        'name': 'Slow Traffic',
+        'route_file': 'Balibago_traci/demand/flows_slow_traffic.rou.xml'
+    },
+    {
+        'name': 'Jam/Heavy Traffic',
+        'route_file': 'Balibago_traci/demand/flows_jam_traffic.rou.xml'
+    }
+]
+
+# Store all results
+all_results = {}
+
+# Run each scenario
+for i, scenario in enumerate(test_scenarios, 1):
+    print(f"\n[{i}/{len(test_scenarios)}] Starting {scenario['name']}...")
+    results = run_test_scenario(scenario['name'], scenario['route_file'])
+    all_results[scenario['name']] = results
+    print(f"  ✓ {scenario['name']} completed!")
+
+# ============================================================
+# GENERATE COMPREHENSIVE SUMMARY
+# ============================================================
+
+print("\n" + "=" * 70)
+print("COMPREHENSIVE TEST SUMMARY - BASELINE A2C MODEL")
+print("=" * 70)
+
+summary_file = './Balibago_traci/output_A2C/test_baseline_comprehensive_summary.txt'
+with open(summary_file, 'w') as f:
+    f.write("=" * 70 + "\n")
+    f.write("BASELINE A2C MODEL - COMPREHENSIVE TEST RESULTS\n")
+    f.write("=" * 70 + "\n\n")
+    
+    for scenario_name, results in all_results.items():
+        f.write(f"\n{scenario_name}:\n")
+        f.write("-" * 70 + "\n")
+        f.write(f"  Average Jam Length (Overall)    : {results['avg_jam']:.2f} m\n")
+        f.write(f"  Average Jam Length (North)      : {results['avg_north_jam']:.2f} m\n")
+        f.write(f"  Average Jam Length (South)      : {results['avg_south_jam']:.2f} m\n")
+        f.write(f"  Average Throughput              : {results['avg_throughput']:.2f} veh/min\n")
+        f.write(f"  Average North Queue             : {results['avg_queue_north']:.2f}\n")
+        f.write(f"  Average South Queue             : {results['avg_queue_south']:.2f}\n")
+        f.write(f"  Average Total Queue             : {results['avg_total_queue']:.2f}\n")
+    
+    f.write("\n" + "=" * 70 + "\n")
+    f.write("COMPARISON ACROSS SCENARIOS\n")
+    f.write("=" * 70 + "\n\n")
+    
+    # Create comparison table
+    f.write(f"{'Metric':<35} {'Normal':<15} {'Slow':<15} {'Jam/Heavy':<15}\n")
+    f.write("-" * 80 + "\n")
+    
+    metrics = [
+        ('Avg Jam Length (m)', 'avg_jam'),
+        ('Avg North Jam (m)', 'avg_north_jam'),
+        ('Avg South Jam (m)', 'avg_south_jam'),
+        ('Avg Throughput (veh/min)', 'avg_throughput'),
+        ('Avg Total Queue', 'avg_total_queue')
+    ]
+    
+    for metric_name, metric_key in metrics:
+        normal_val = all_results.get('Normal Traffic', {}).get(metric_key, 0)
+        slow_val = all_results.get('Slow Traffic', {}).get(metric_key, 0)
+        jam_val = all_results.get('Jam/Heavy Traffic', {}).get(metric_key, 0)
+        f.write(f"{metric_name:<35} {normal_val:<15.2f} {slow_val:<15.2f} {jam_val:<15.2f}\n")
+
+print(f"\n✓ Comprehensive summary saved to {summary_file}")
+
+# Print summary to console
+print("\n" + "=" * 70)
+print("RESULTS COMPARISON")
+print("=" * 70)
+print(f"{'Metric':<35} {'Normal':<15} {'Slow':<15} {'Jam/Heavy':<15}")
+print("-" * 80)
+
+for metric_name, metric_key in metrics:
+    normal_val = all_results.get('Normal Traffic', {}).get(metric_key, 0)
+    slow_val = all_results.get('Slow Traffic', {}).get(metric_key, 0)
+    jam_val = all_results.get('Jam/Heavy Traffic', {}).get(metric_key, 0)
+    print(f"{metric_name:<35} {normal_val:<15.2f} {slow_val:<15.2f} {jam_val:<15.2f}")
+
+print("\n" + "=" * 70)
+print("ALL TESTS COMPLETED SUCCESSFULLY!")
+print("=" * 70)
+print("\nOutput files generated:")
+print("  • Individual scenario metrics (CSV)")
+print("  • Individual scenario summaries (TXT)")
+print("  • Comprehensive summary (TXT)")
+print("  • SUMO statistics and trip info (XML)")
+print("\nLocation: ./Balibago_traci/output_A2C/")
+print("=" * 70)

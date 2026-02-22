@@ -1,0 +1,11 @@
+Test Results - Baseline Slow Traffic
+======================================================================
+
+Average Jam Length (Overall)    : 2.88 m
+Average Jam Length (North)      : 4.10 m
+Average Jam Length (South)      : 0.94 m
+Average Throughput              : 27.51 veh/min
+
+Average North Queue             : 476.24
+Average South Queue             : 24.26
+Average Total Queue             : 500.50
