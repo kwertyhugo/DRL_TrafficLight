@@ -1,0 +1,11 @@
+Test Results - normal_traffic
+======================================================================
+
+Average Jam Length (Overall)    : 2.52 m
+Average Jam Length (North)      : 3.23 m
+Average Jam Length (South)      : 1.37 m
+Average Throughput              : 24.31 veh/min
+
+Average North Queue             : 403.77
+Average South Queue             : 67.30
+Average Total Queue             : 471.08

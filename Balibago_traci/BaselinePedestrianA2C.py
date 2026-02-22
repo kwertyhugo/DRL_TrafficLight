@@ -1,5 +1,5 @@
 import os
-import sys 
+import sys
 import traci
 import numpy as np
 import csv
@@ -13,10 +13,10 @@ os.makedirs('./Balibago_traci/output_A2C', exist_ok=True)
 os.makedirs('./Balibago_traci/models_A2C_baseline', exist_ok=True)
 
 # --- CONFIGURATION ---
-GAMMA         = 0.99
+GAMMA = 0.99
 LEARNING_RATE = 0.0005
-ENTROPY_COEF  = 0.08
-VALUE_COEF    = 0.5
+ENTROPY_COEF = 0.08
+VALUE_COEF = 0.5
 MAX_GRAD_NORM = 1.0
 
 # === AGENT INITIALIZATION ===
@@ -57,7 +57,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo', 
+    'sumo',
     '-c', 'Balibago_traci/baselinePed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',
@@ -69,16 +69,14 @@ Sumo_config = [
 # --- SIMULATION VARIABLES ---
 trainMode = 1
 stepLength = 0.1
-
 northCurrentPhase = 0
 northCurrentPhaseDuration = 30
 southCurrentPhase = 0
 southCurrentPhaseDuration = 30
-
 actionSpace = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
 
 detector_ids = [
-    "e2_0", "e2_1", "e2_2", "e2_3", "e2_4", "e2_5", "e2_6", "e2_7", 
+    "e2_0", "e2_1", "e2_2", "e2_3", "e2_4", "e2_5", "e2_6", "e2_7",
     "e2_8", "e2_9", "e2_10", "e2_11", "e2_12"
 ]
 detector_count = len(detector_ids)
@@ -117,11 +115,71 @@ south_entropy_history = []
 south_reward_history = []
 south_episode_steps = []
 
+# *** LOAD EXISTING MODELS AND COUNTERS ***
+print(f"\n{'='*70}")
+print("Model Loading")
+print(f"{'='*70}")
+
+if trainMode == 1:
+    # Try to load existing models if they exist (single .keras file per agent)
+    north_model_path = os.path.join(NorthAgent.model_dir, f'{NorthAgent.name}.keras')
+    south_model_path = os.path.join(SouthAgent.model_dir, f'{SouthAgent.name}.keras')
+    
+    if os.path.exists(north_model_path):
+        print(f"Loading existing North agent model from {north_model_path}")
+        try:
+            NorthAgent.load()
+            print("  ✓ North agent model loaded successfully")
+        except Exception as e:
+            print(f"  ✗ Error loading North model: {e}")
+            print("  Starting with fresh North model")
+    else:
+        print(f"No existing North agent model found at {north_model_path}")
+        print("Starting fresh.")
+    
+    if os.path.exists(south_model_path):
+        print(f"Loading existing South agent model from {south_model_path}")
+        try:
+            SouthAgent.load()
+            print("  ✓ South agent model loaded successfully")
+        except Exception as e:
+            print(f"  ✗ Error loading South model: {e}")
+            print("  Starting with fresh South model")
+    else:
+        print(f"No existing South agent model found at {south_model_path}")
+        print("Starting fresh.")
+    
+    # Load episode counters if continuing training
+    counter_file = os.path.join(NorthAgent.model_dir, 'episode_counters.txt')
+    if os.path.exists(counter_file):
+        try:
+            with open(counter_file, 'r') as f:
+                counters = f.read().strip().split(',')
+                north_episode = int(counters[0])
+                south_episode = int(counters[1])
+            print(f"  ✓ Continuing from: North Episode {north_episode}, South Episode {south_episode}")
+        except Exception as e:
+            print(f"  ⚠ Could not load episode counters: {e}")
+            print("  Starting episode count from 0")
+    else:
+        print("  Starting episode count from 0")
+        
+elif trainMode == 0:
+    # In evaluation mode, models MUST exist
+    print("Evaluation mode - loading trained models...")
+    try:
+        NorthAgent.load()
+        SouthAgent.load()
+        print("  ✓ Models loaded successfully")
+    except Exception as e:
+        sys.exit(f"ERROR: Could not load models for evaluation: {e}")
+
+print(f"{'='*70}\n")
+
 # --- HELPER FUNCTIONS ---
 def _subscribe_all_detectors():
     vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
     vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
-    
     for det_id in detector_ids:
         traci.lanearea.subscribeContext(det_id, traci.constants.CMD_GET_VEHICLE_VARIABLE, 3, vehicle_context_vars)
         traci.lanearea.subscribe(det_id, vehicle_vars)
@@ -129,15 +187,18 @@ def _subscribe_all_detectors():
 def _weighted_waits(detector_id):
     sumWait = 0
     vehicle_data = traci.lanearea.getContextSubscriptionResults(detector_id)
-    if not vehicle_data: return 0
-
+    if not vehicle_data:
+        return 0
     for data in vehicle_data.values():
         v_type = data.get(traci.constants.VAR_TYPE, "car")
         waitTime = data.get(traci.constants.VAR_WAITING_TIME, 0)
-        
         weights = {
-            "car": 1.0, "jeep": 1.5, "bus": 2.2, "truck": 2.5,
-            "motorcycle": 0.3, "tricycle": 0.5
+            "car": 1.0,
+            "jeep": 1.5,
+            "bus": 2.2,
+            "truck": 2.5,
+            "motorcycle": 0.3,
+            "tricycle": 0.5
         }
         sumWait += waitTime * weights.get(v_type, 1.0)
     return sumWait
@@ -175,8 +236,12 @@ def _train_agent(agent, episode_num, agent_name):
               f"Critic Loss: {critic_loss:9.2f} | "
               f"Entropy: {entropy:5.3f} (coef: {agent.entropy_coef:.4f})")
     
-    return {'actor_loss': actor_loss, 'critic_loss': critic_loss,
-            'entropy': entropy, 'total_reward': total_reward}
+    return {
+        'actor_loss': actor_loss,
+        'critic_loss': critic_loss,
+        'entropy': entropy,
+        'total_reward': total_reward
+    }
 
 def save_history(filename, headers, episodes, rewards, actor_losses, critic_losses, entropies):
     """Save training history to CSV"""
@@ -199,7 +264,7 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
     step_counter += 1
     northCurrentPhaseDuration -= stepLength
     southCurrentPhaseDuration -= stepLength
-
+    
     # ----------------------------------------------------------
     # 1. OBSERVATION PHASE (IMMUTABLE)
     # ----------------------------------------------------------
@@ -217,7 +282,7 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
         n_phase_oh = to_categorical(northCurrentPhase // 2, num_classes=4).flatten()
         obs_north = np.concatenate([n_norm_queue, n_phase_oh]).astype(np.float32)
         # shape: 8 queue + 4 phase-OH = 12
-
+    
     # Capture South State if needed
     if south_decision_needed:
         queue = np.array(_southIntersection_queue())
@@ -225,27 +290,27 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
         s_phase_oh = to_categorical(southCurrentPhase // 2, num_classes=3).flatten()
         obs_south = np.concatenate([s_norm_queue, s_phase_oh]).astype(np.float32)
         # shape: 5 queue + 3 phase-OH = 8
-
+    
     # ----------------------------------------------------------
     # 2. STORE TRANSITION
-    #    The reward for the PREVIOUS action is the queue we see NOW.
-    #    store_transition() appends to agent.states/actions/rewards.
+    # The reward for the PREVIOUS action is the queue we see NOW.
+    # store_transition() appends to agent.states/actions/rewards.
     # ----------------------------------------------------------
     if trainMode == 1:
         if north_decision_needed and northPrevState is not None:
             reward_north = calculate_reward(n_norm_queue)
             NorthAgent.store_transition(northPrevState, northPrevAction, reward_north)
             north_buffer_count += 1
-
+        
         if south_decision_needed and southPrevState is not None:
             reward_south = calculate_reward(s_norm_queue)
             SouthAgent.store_transition(southPrevState, southPrevAction, reward_south)
             south_buffer_count += 1
-
+    
     # ----------------------------------------------------------
     # 3. TRAIN ONCE BUFFER HAS A FULL CYCLE OF TRANSITIONS
-    #    train_on_episode() clears the buffer after each call,
-    #    so we reset the counter too.
+    # train_on_episode() clears the buffer after each call,
+    # so we reset the counter too.
     # ----------------------------------------------------------
     if trainMode == 1:
         if north_decision_needed and north_buffer_count >= TRAIN_EVERY_NORTH:
@@ -257,7 +322,7 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
             north_reward_history.append(metrics['total_reward'])
             north_episode_steps.append(north_episode)
             north_buffer_count = 0  # buffer cleared by train_on_episode()
-
+        
         if south_decision_needed and south_buffer_count >= TRAIN_EVERY_SOUTH:
             south_episode += 1
             metrics = _train_agent(SouthAgent, south_episode, "South")
@@ -267,13 +332,13 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
             south_reward_history.append(metrics['total_reward'])
             south_episode_steps.append(south_episode)
             south_buffer_count = 0  # buffer cleared by train_on_episode()
-
+    
     # ----------------------------------------------------------
     # 4. SELECT NEXT ACTION
     # ----------------------------------------------------------
     next_action_N_idx = None
     next_action_S_idx = None
-
+    
     if north_decision_needed:
         next_action_N_idx = NorthAgent.act(obs_north, training=(trainMode == 1))
         northPrevState = obs_north
@@ -281,46 +346,43 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
     elif northCurrentPhaseDuration <= 0:
         # Yellow phase — carry over last green action
         next_action_N_idx = northPrevAction if northPrevAction is not None else 5
-
+    
     if south_decision_needed:
         next_action_S_idx = SouthAgent.act(obs_south, training=(trainMode == 1))
         southPrevState = obs_south
         southPrevAction = next_action_S_idx
     elif southCurrentPhaseDuration <= 0:
         next_action_S_idx = southPrevAction if southPrevAction is not None else 5
-
+    
     # ----------------------------------------------------------
     # 5. APPLY PHASE TRANSITIONS TO SIMULATION
     # ----------------------------------------------------------
-    
     # Apply North
     if northCurrentPhaseDuration <= 0:
         northCurrentPhase = (northCurrentPhase + 1) % 8
         traci.trafficlight.setPhase("4902876117", northCurrentPhase)
-
+        
         if northCurrentPhase % 2 == 1:  # yellow/transition
             northCurrentPhaseDuration = 5
         else:  # green
             duration_adj = actionSpace[next_action_N_idx]
             base = {0: 45, 2: 130, 4: 30, 6: 90}.get(northCurrentPhase, 30)
             northCurrentPhaseDuration = max(5, min(180, base + duration_adj))
-        
-        traci.trafficlight.setPhaseDuration("4902876117", northCurrentPhaseDuration)
-
+            traci.trafficlight.setPhaseDuration("4902876117", northCurrentPhaseDuration)
+    
     # Apply South (6-phase cycle: 0-5)
     if southCurrentPhaseDuration <= 0:
         southCurrentPhase = (southCurrentPhase + 1) % 6
         traci.trafficlight.setPhase("12188714", southCurrentPhase)
-
+        
         if southCurrentPhase % 2 == 1:  # yellow/transition
             southCurrentPhaseDuration = 5
         else:  # green
             duration_adj = actionSpace[next_action_S_idx]
             base = {0: 30, 2: 30, 4: 45}.get(southCurrentPhase, 30)
             southCurrentPhaseDuration = max(5, min(180, base + duration_adj))
-        
-        traci.trafficlight.setPhaseDuration("12188714", southCurrentPhaseDuration)
-
+            traci.trafficlight.setPhaseDuration("12188714", southCurrentPhaseDuration)
+    
     # ----------------------------------------------------------
     # 6. EVALUATION METRICS (trainMode == 0 only)
     # ----------------------------------------------------------
@@ -332,21 +394,20 @@ while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
         
         for det_id in detector_ids:
             detector_stats = traci.lanearea.getSubscriptionResults(det_id)
-            if not detector_stats: continue
-            
+            if not detector_stats:
+                continue
             jam_length += detector_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
             throughput += detector_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
-                
+        
         jam_length /= detector_count
         jam_length_total += jam_length
         throughput_total += throughput
-        
+    
     traci.simulationStep()
 
 # ============================================================
 # END OF SIMULATION
 # ============================================================
-
 if trainMode == 0 and metric_observation_count > 0:
     print(f"\n{'='*70}")
     print("Performance Metrics")
@@ -364,7 +425,7 @@ if trainMode == 1:
         north_entropy_history.append(metrics['entropy'])
         north_reward_history.append(metrics['total_reward'])
         north_episode_steps.append(north_episode)
-
+    
     if south_buffer_count > 0 and southPrevState is not None:
         south_episode += 1
         metrics = _train_agent(SouthAgent, south_episode, "South [end flush]")
@@ -373,26 +434,35 @@ if trainMode == 1:
         south_entropy_history.append(metrics['entropy'])
         south_reward_history.append(metrics['total_reward'])
         south_episode_steps.append(south_episode)
-
+    
     print("\nSaving trained models...")
     NorthAgent.save()
     SouthAgent.save()
-    print("  OK Models saved to ./Balibago_traci/models_A2C_baseline/")
-
+    print("  ✓ Models saved to ./Balibago_traci/models_A2C_baseline/")
+    
+    # Save episode counters
+    counter_file = os.path.join(NorthAgent.model_dir, 'episode_counters.txt')
+    try:
+        with open(counter_file, 'w') as f:
+            f.write(f"{north_episode},{south_episode}")
+        print(f"  ✓ Episode counters saved: North={north_episode}, South={south_episode}")
+    except Exception as e:
+        print(f"  ⚠ Could not save episode counters: {e}")
+    
     print("\nSaving training history...")
     headers = ['Episode', 'Total_Reward', 'Actor_Loss', 'Critic_Loss', 'Entropy']
     
-    save_history('./Balibago_traci/output_A2C/North_A2C_baseline_history.csv', headers,
-                 north_episode_steps, north_reward_history,
+    save_history('./Balibago_traci/output_A2C/North_A2C_baseline_history.csv',
+                 headers, north_episode_steps, north_reward_history,
                  north_actor_loss_history, north_critic_loss_history, north_entropy_history)
     
-    save_history('./Balibago_traci/output_A2C/South_A2C_baseline_history.csv', headers,
-                 south_episode_steps, south_reward_history,
+    save_history('./Balibago_traci/output_A2C/South_A2C_baseline_history.csv',
+                 headers, south_episode_steps, south_reward_history,
                  south_actor_loss_history, south_critic_loss_history, south_entropy_history)
     
-    print("  OK North_A2C_baseline_history.csv saved.")
-    print("  OK South_A2C_baseline_history.csv saved.")
-
+    print("  ✓ North_A2C_baseline_history.csv saved.")
+    print("  ✓ South_A2C_baseline_history.csv saved.")
+    
     print(f"\n{'='*70}")
     print("Training Summary")
     print(f"{'='*70}")
