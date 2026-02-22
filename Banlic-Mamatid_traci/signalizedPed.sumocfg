@@ -8,7 +8,7 @@
 
     <input>
         <net-file value="network/banlic-mamatid_signalized.net.xml"/>
-        <route-files value="demand/flows_training1.rou.xml"/>
+        <route-files value="demand/flows_training2.rou.xml"/>
         <additional-files value="additionals/banlic-mamatid.poly.xml, additionals/banlic-mamatid.add.xml"/>
     </input>
 
