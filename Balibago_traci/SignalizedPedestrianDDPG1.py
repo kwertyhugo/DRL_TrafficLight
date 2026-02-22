@@ -85,14 +85,14 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DDPG/train1_stats.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DDPG/train1_trips.xml'
+    '--statistic-output', r'Balibago_traci/output_DDPG/test_jam_stats.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DDPG/test_jam_trips.xml'
 ]
 
 # ==========================================
 # SIMULATION VARIABLES
 # ==========================================
-trainMode = 1
+trainMode = 0
 stepLength = 0.1
 
 northCurrentPhase = 0
@@ -218,7 +218,7 @@ _junctionSubscription("12188714")
 print(f"STARTING DDPG | Balibago | action_size={ACTION_SIZE} per agent | trainMode={trainMode}")
 
 try:
-    while traci.simulation.getMinExpectedNumber() > 0 and step_counter < MAX_STEPS:
+    while traci.simulation.getMinExpectedNumber() > 0:
         step_counter += 1
 
         northCurrentPhaseDuration -= stepLength
