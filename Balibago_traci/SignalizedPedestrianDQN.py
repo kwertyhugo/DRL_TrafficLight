@@ -75,12 +75,14 @@ step_counter = 0
 reward_history_N = []
 loss_history_N = []
 epsilon_history_N = []
-total_reward_N = 0
+step_history_N = []
+training_steps_N = []
 
 reward_history_S = []
 loss_history_S = []
 epsilon_history_S = []
-total_reward_S = 0
+step_history_S = []
+training_steps_S = []
 
 # --- HELPER FUNCTIONS ---
 def _junctionSubscription(junction_id):
@@ -147,7 +149,7 @@ def get_next_phase_duration(current_phase, action_index):
         # Note: Logic slightly differs per intersection in original code, handled in APPLY block below
         return 0 # Placeholder, logic moved to apply function for clarity
 
-def save_history(filename, headers, reward_hist, loss_hist, epsilon_hist, train_frequency):
+def save_history(filename, headers, step_hist, reward_hist, training_steps, loss_hist, epsilon_hist):
     file_exists = os.path.exists(filename) and os.path.getsize(filename) > 0
     os.makedirs(os.path.dirname(filename), exist_ok=True) 
     
@@ -156,15 +158,25 @@ def save_history(filename, headers, reward_hist, loss_hist, epsilon_hist, train_
         if not file_exists:
             writer.writerow(headers)
         for i in range(len(reward_hist)):
-            writer.writerow([i * train_frequency, reward_hist[i], loss_hist[i], epsilon_hist[i]])
+            step = step_hist[i]
+            reward = reward_hist[i]
+            loss = 0
+            epsilon = 1.0
+            for j in range(len(training_steps)):
+                if training_steps[j] <= step:
+                    loss = loss_hist[j]
+                    epsilon = epsilon_hist[j]
+            writer.writerow([step, reward, loss, epsilon])
 
 # --- MAIN EXECUTION ---
-traci.start(Sumo_config)
+traci.start(Sumo_config, port=8814)
 _subscribe_all_detectors()
 _junctionSubscription("4902876117")
 _junctionSubscription("12188714")
 
-while traci.simulation.getMinExpectedNumber() > 0:
+MAX_STEPS = 567000
+
+while traci.simulation.getMinExpectedNumber() > 0 and step_counter < MAX_STEPS:
     step_counter += 1
     northCurrentPhaseDuration -= stepLength
     southCurrentPhaseDuration -= stepLength
@@ -189,7 +201,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
         
         if trainMode == 1:
             reward_north = calculate_reward(n_norm_queue*10)
-            total_reward_N += reward_north
+            reward_history_N.append(reward_north)
+            step_history_N.append(step_counter)
 
     # Capture South State if needed
     if south_decision_needed:
@@ -200,7 +213,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
         if trainMode == 1:
             reward_south = calculate_reward(s_norm_queue*10)
-            total_reward_S += reward_south
+            reward_history_S.append(reward_south)
+            step_history_S.append(step_counter)
 
     # 2. MEMORY PHASE
     # ---------------
@@ -277,17 +291,15 @@ while traci.simulation.getMinExpectedNumber() > 0:
         if len(NorthAgent.memory) >= BATCH_SIZE:
             loss_n = NorthAgent.replay(BATCH_SIZE)
             loss_history_N.append(loss_n)
-            reward_history_N.append(total_reward_N)
             epsilon_history_N.append(NorthAgent.epsilon)
-            total_reward_N = 0
+            training_steps_N.append(step_counter)
             NorthAgent.epsilon = max(NorthAgent.epsilon_min, NorthAgent.epsilon * NorthAgent.epsilon_decay_rate)
-        
+
         if len(SouthAgent.memory) >= BATCH_SIZE:
             loss_s = SouthAgent.replay(BATCH_SIZE)
             loss_history_S.append(loss_s)
-            reward_history_S.append(total_reward_S)
             epsilon_history_S.append(SouthAgent.epsilon)
-            total_reward_S = 0
+            training_steps_S.append(step_counter)
             SouthAgent.epsilon = max(SouthAgent.epsilon_min, SouthAgent.epsilon * SouthAgent.epsilon_decay_rate)
     
     # --- METRICS ---
@@ -323,11 +335,11 @@ if trainMode == 1:
     print("Saving training history...")
     headers = ['Step', 'Reward', 'Loss', 'Epsilon']
     
-    save_history('./Balibago_traci/output_DQN/North_history.csv', headers, 
-                reward_history_N, loss_history_N, epsilon_history_N, TRAIN_FREQUENCY)
+    save_history('./Balibago_traci/output_DQN/North_historyTEST.csv', headers, 
+                step_history_N, reward_history_N, training_steps_N, loss_history_N, epsilon_history_N)
     
-    save_history('./Balibago_traci/output_DQN/South_history.csv', headers, 
-                reward_history_S, loss_history_S, epsilon_history_S, TRAIN_FREQUENCY)
+    save_history('./Balibago_traci/output_DQN/South_historyTEST.csv', headers, 
+                step_history_S, reward_history_S, training_steps_S, loss_history_S, epsilon_history_S)
     
     print("All histories saved successfully!")
 
