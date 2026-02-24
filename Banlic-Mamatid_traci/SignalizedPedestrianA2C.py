@@ -14,8 +14,8 @@ os.makedirs('./Banlic-Mamatid_traci/models_A2C', exist_ok=True)
 
 # --- CONFIGURATION ---
 GAMMA         = 0.99
-LEARNING_RATE = 0.0005
-ENTROPY_COEF  = 0.08
+LEARNING_RATE = 0.0005   # Reduced from 0.0005 — slows convergence, prevents overshooting
+ENTROPY_COEF  = 0.20     # Increased from 0.08 — keeps exploration alive longer, prevents collapse
 VALUE_COEF    = 0.5
 MAX_GRAD_NORM = 1.0
 
@@ -35,7 +35,7 @@ MainAgent = a2c(
 MainAgent.model_dir = './Banlic-Mamatid_traci/models_A2C/'
 
 # === OPTIONAL: CONTINUE TRAINING FROM SAVED MODELS ===
-CONTINUE_TRAINING = True
+CONTINUE_TRAINING = True  # Start fresh — previous model collapsed to near-zero adjustment policy
 
 if CONTINUE_TRAINING:
     try:
@@ -164,7 +164,7 @@ def _weighted_waits(detector_id):
     for data in vehicle_data.values():
         v_type = data.get(traci.constants.VAR_TYPE, "car")
         waitTime = data.get(traci.constants.VAR_WAITING_TIME, 0)
-        
+
         weights = {
             "car": 1.0, "jeep": 1.5, "bus": 2.2, "truck": 2.5,
             "motorcycle": 0.3, "tricycle": 0.5
@@ -177,31 +177,24 @@ def _intersection_queue():
 
 def calculate_reward(normalized_queue):
     """
-    Reward = negative sum of normalized queue weights, clipped to [-10, 0].
+    Reward = negative sum of normalized queue weights.
     Lower queues → higher (less negative) reward.
     """
-    return float(np.clip(-np.sum(normalized_queue), -10.0, 0.0))
+    return -np.sum(normalized_queue)
 
 def _train_agent(agent, episode_num, agent_name):
     """
     Train the agent on buffered episode and return metrics.
     """
     actor_loss, critic_loss, entropy, total_reward = agent.train_on_episode()
-    
-    # Entropy management — same as Balibago A2C
-    MIN_ENTROPY = 1.0
-    if entropy < MIN_ENTROPY:
-        agent.entropy_coef = min(0.2, agent.entropy_coef * 1.1)
-    else:
-        agent.entropy_coef = max(0.01, agent.entropy_coef * 0.995)
-    
+
     if trainMode == 1:
-        print(f"[{agent_name} | Ep {episode_num:4d}] "
-              f"Reward: {total_reward:7.3f} | "
-              f"Actor Loss: {actor_loss:7.4f} | "
-              f"Critic Loss: {critic_loss:9.2f} | "
-              f"Entropy: {entropy:5.3f} (coef: {agent.entropy_coef:.4f})")
-    
+        print(f"{agent_name} Ep {episode_num:4d} | "
+              f"R: {total_reward:7.2f} | "
+              f"A_Loss: {actor_loss:7.4f} | "
+              f"C_Loss: {critic_loss:7.4f} | "
+              f"Ent: {entropy:6.4f}")
+
     return {
         'actor_loss': actor_loss,
         'critic_loss': critic_loss,
@@ -209,21 +202,21 @@ def _train_agent(agent, episode_num, agent_name):
         'total_reward': total_reward
     }
 
-def save_history(filename, headers, episode_steps, reward_hist, 
+def save_history(filename, headers, episode_steps, reward_hist,
                  actor_loss_hist, critic_loss_hist, entropy_hist):
     file_exists = os.path.exists(filename) and os.path.getsize(filename) > 0
     os.makedirs(os.path.dirname(filename), exist_ok=True)
-    
+
     with open(filename, 'a', newline='') as f:
         writer = csv.writer(f)
         if not file_exists:
             writer.writerow(headers)
         for i in range(len(episode_steps)):
             writer.writerow([
-                episode_steps[i], 
-                reward_hist[i], 
-                actor_loss_hist[i], 
-                critic_loss_hist[i], 
+                episode_steps[i],
+                reward_hist[i],
+                actor_loss_hist[i],
+                critic_loss_hist[i],
                 entropy_hist[i]
             ])
 
@@ -239,7 +232,7 @@ _junctionSubscription("253768576")
 # SIMULATION LOOP
 # ============================================================
 
-while traci.simulation.getMinExpectedNumber() > 0:
+while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
     step_counter += 1
     currentPhaseDuration -= stepLength
 
@@ -253,7 +246,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
     # ----------------------------------------------------------
     if decision_needed:
         queue = np.array(_intersection_queue())
-        norm_queue = queue / 1000.0  # Normalize queue values
+        norm_queue = queue / 1000.0
         phase_oh = to_categorical(currentPhase // 2, num_classes=5).flatten()
         obs = np.concatenate([norm_queue, phase_oh]).astype(np.float32)
         # shape: 6 queue + 5 phase-OH = 11 ✓
@@ -261,7 +254,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
     # ----------------------------------------------------------
     # 2. STORE TRANSITION
     #    The reward for the PREVIOUS action is the queue we see NOW.
-    #    store_transition() appends to agent.states/actions/rewards.
     # ----------------------------------------------------------
     if trainMode == 1:
         if decision_needed and prevState is not None:
@@ -271,10 +263,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
     # ----------------------------------------------------------
     # 3. TRAIN ONCE BUFFER HAS A FULL CYCLE OF TRANSITIONS
-    #    train_on_episode() clears the buffer after each call,
-    #    so we reset the counter too.
-    #    Training happens BEFORE act() so the updated policy is
-    #    used for the very next action.
     # ----------------------------------------------------------
     if trainMode == 1:
         if decision_needed and buffer_count >= TRAIN_EVERY:
@@ -285,7 +273,14 @@ while traci.simulation.getMinExpectedNumber() > 0:
             entropy_history.append(metrics['entropy'])
             reward_history.append(metrics['total_reward'])
             episode_steps.append(main_episode)
-            buffer_count = 0  # buffer cleared by train_on_episode()
+            buffer_count = 0
+
+            # Adaptive entropy management — prevent premature collapse
+            MIN_ENTROPY = 1.0
+            if metrics['entropy'] < MIN_ENTROPY:
+                MainAgent.entropy_coef = min(0.3, MainAgent.entropy_coef * 1.1)
+            else:
+                MainAgent.entropy_coef = max(0.05, MainAgent.entropy_coef * 0.995)
 
     # ----------------------------------------------------------
     # 4. SELECT NEXT ACTION
@@ -303,11 +298,8 @@ while traci.simulation.getMinExpectedNumber() > 0:
     # ----------------------------------------------------------
     # 5. APPLY PHASE TRANSITIONS TO SIMULATION
     # ----------------------------------------------------------
-    
-    # Banlic-Mamatid has 10-phase cycle (0-9)
     if currentPhaseDuration <= 0:
         currentPhase = (currentPhase + 1) % 10
-        # Set phase for both junctions
         traci.trafficlight.setPhase("253768576", currentPhase)
         traci.trafficlight.setPhase("253499548", currentPhase)
 
@@ -315,7 +307,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
             currentPhaseDuration = 5
         else:  # green
             duration_adj = actionSpace[next_action_idx]
-            # Base durations for each green phase (0, 2, 4, 6, 8)
             base = {0: 30, 2: 30, 4: 45, 6: 60, 8: 25}.get(currentPhase, 30)
             currentPhaseDuration = max(5, min(180, base + duration_adj))
 
@@ -347,6 +338,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
 # ============================================================
 # END OF SIMULATION
 # ============================================================
+
+if step_counter >= 576000:
+    print(f"\nReached simulation step limit (576000). Stopping.")
 
 if trainMode == 0 and metric_observation_count > 0:
     print(f"\n{'='*70}")

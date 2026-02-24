@@ -1,0 +1,6 @@
+Test Results - Slow Traffic
+======================================================================
+
+Average Jam Length              : 32.92 m
+Average Throughput              : 76.78 veh/min
+Average Queue (Weighted Wait)   : 1327.14

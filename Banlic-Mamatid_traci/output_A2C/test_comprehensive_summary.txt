@@ -1,0 +1,33 @@
+======================================================================
+SIGNALIZED A2C MODEL — COMPREHENSIVE TEST RESULTS
+Banlic-Mamatid Network
+======================================================================
+
+
+Normal Traffic:
+----------------------------------------------------------------------
+  Average Jam Length              : 11.45 m
+  Average Throughput              : 44.51 veh/min
+  Average Queue (Weighted Wait)   : 438.91
+
+Slow Traffic:
+----------------------------------------------------------------------
+  Average Jam Length              : 32.92 m
+  Average Throughput              : 76.78 veh/min
+  Average Queue (Weighted Wait)   : 1327.14
+
+Jam/Heavy Traffic:
+----------------------------------------------------------------------
+  Average Jam Length              : 35.54 m
+  Average Throughput              : 73.20 veh/min
+  Average Queue (Weighted Wait)   : 1582.38
+
+======================================================================
+COMPARISON ACROSS SCENARIOS
+======================================================================
+
+Metric                              Normal          Slow            Jam/Heavy      
+--------------------------------------------------------------------------------
+Avg Jam Length (m)                  11.45           32.92           35.54          
+Avg Throughput (veh/min)            44.51           76.78           73.20          
+Avg Queue (Weighted)                438.91          1327.14         1582.38        
