@@ -85,8 +85,8 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DDPG/test_jam_stats.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DDPG/test_jam_trips.xml'
+    '--statistic-output', r'Balibago_traci/output_DDPG/test_slow_stats.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DDPG/test_slow_trips.xml'
 ]
 
 # ==========================================

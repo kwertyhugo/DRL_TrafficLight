@@ -71,14 +71,14 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Banlic-Mamatid_traci/output_DDPG/training.xml',
-    '--tripinfo-output', r'Banlic-Mamatid_traci/output_DDPG/training.xml'
+    '--statistic-output', r'Banlic-Mamatid_traci/output_DDPG/test_jam_stats.xml',
+    '--tripinfo-output', r'Banlic-Mamatid_traci/output_DDPG/test_jam_trips.xml'
 ]
 
 # ==========================================
 # SIMULATION VARIABLES
 # ==========================================
-trainMode = 1
+trainMode = 0
 stepLength = 0.1
 
 currentPhase = 0
