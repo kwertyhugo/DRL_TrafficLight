@@ -1,0 +1,6 @@
+Test Results - Normal Traffic
+======================================================================
+
+Average Jam Length              : 7.29 m
+Average Throughput              : 44.05 veh/min
+Average Queue (Weighted Wait)   : 221.20

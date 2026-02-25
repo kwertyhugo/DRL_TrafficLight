@@ -1,0 +1,195 @@
+import os
+import sys
+import traci
+import numpy as np
+import csv
+from keras.utils import to_categorical
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# === OUTPUT DIRECTORY ===
+os.makedirs('./Banlic-Mamatid_traci/output_DIAGNOSTIC', exist_ok=True)
+
+if 'SUMO_HOME' in os.environ:
+    tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
+    sys.path.append(tools)
+else:
+    sys.exit("Please declare environment variable 'SUMO_HOME'")
+
+print("\n" + "=" * 70)
+print("DIAGNOSTIC TEST (FIXED) - Banlic-Mamatid Network")
+print("=" * 70)
+print("PURPOSE: Verify TraCI signal commands actually affect the simulation.")
+print("METHOD:  Always pick action index 0 (= -25s on every green phase).")
+print("         Results should be WORSE than NoDRL if TraCI is working.")
+print("=" * 70)
+
+# --- SIMULATION VARIABLES ---
+stepLength   = 0.1
+actionSpace  = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+
+detector_ids   = ["e2_0", "e2_1", "e2_2", "e2_3", "e2_4", "e2_5"]
+detector_count = len(detector_ids)
+
+# ============================================================
+# PHASE FUNCTION — mirrors Olivarez _trafficLight_phase exactly
+# ============================================================
+
+currentPhase         = 0
+currentPhaseDuration = 30
+
+BASE_DURATIONS = {0: 30, 2: 30, 4: 45, 6: 60, 8: 25}
+
+def _trafficLight_phase(action_index):
+    global currentPhase, currentPhaseDuration
+
+    currentPhase += 1
+    currentPhase  = currentPhase % 10
+
+    traci.trafficlight.setPhase("253768576", currentPhase)
+    traci.trafficlight.setPhase("253499548", currentPhase)
+
+    if currentPhase % 2 == 1:          # yellow → fixed 5s
+        phase_duration = 5
+    else:                               # green → apply action
+        duration_adjustment = actionSpace[action_index]
+        base_duration       = BASE_DURATIONS.get(currentPhase, 30)
+        phase_duration      = max(5, min(180, base_duration + duration_adjustment))
+
+    currentPhaseDuration = phase_duration
+    traci.trafficlight.setPhaseDuration("253768576", currentPhaseDuration)
+    traci.trafficlight.setPhaseDuration("253499548", currentPhaseDuration)
+
+    print(f"  [PHASE CHANGE] → Phase={currentPhase}, "
+          f"Action={action_index}, "
+          f"Adj={actionSpace[action_index]:+d}s, "
+          f"Duration={currentPhaseDuration:.1f}s")
+
+# ============================================================
+# HELPERS
+# ============================================================
+
+def _subscribe_all_detectors():
+    vehicle_context_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
+    vehicle_vars         = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
+    for det_id in detector_ids:
+        traci.lanearea.subscribeContext(
+            det_id, traci.constants.CMD_GET_VEHICLE_VARIABLE, 3, vehicle_context_vars)
+        traci.lanearea.subscribe(det_id, vehicle_vars)
+
+def _weighted_waits(detector_id):
+    sumWait      = 0
+    vehicle_data = traci.lanearea.getContextSubscriptionResults(detector_id)
+    if not vehicle_data:
+        return 0
+    weights = {"car": 1.0, "jeep": 1.5, "bus": 2.2,
+               "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
+    for data in vehicle_data.values():
+        v_type   = data.get(traci.constants.VAR_TYPE, "car")
+        waitTime = data.get(traci.constants.VAR_WAITING_TIME, 0)
+        sumWait += waitTime * weights.get(v_type, 1.0)
+    return sumWait
+
+def _intersection_queue():
+    return [_weighted_waits(det_id) for det_id in detector_ids]
+
+# ============================================================
+# RUN
+# ============================================================
+
+Sumo_config = [
+    'sumo',
+    '-c', 'Banlic-Mamatid_traci/signalizedPed.sumocfg',
+    '--route-files', 'Banlic-Mamatid_traci/demand/flows_normal_traffic.rou.xml',
+    '--step-length', '0.1',
+    '--delay', '0',
+    '--lateral-resolution', '0.1',
+    '--statistic-output', 'Banlic-Mamatid_traci/output_DIAGNOSTIC/diag_fixed_stats.xml',
+    '--tripinfo-output',  'Banlic-Mamatid_traci/output_DIAGNOSTIC/diag_fixed_trips.xml'
+]
+
+step_counter             = 0
+metric_observation_count = 0
+throughput_total         = 0
+jam_length_total         = 0
+total_queue              = 0
+phase_changes            = 0
+prevAction               = 0  # always worst action
+
+traci.start(Sumo_config, port=8814)
+_subscribe_all_detectors()
+
+print("\nRunning... every green phase will be cut by -25s\n")
+
+while traci.simulation.getMinExpectedNumber() > 0 and step_counter < 576000:
+    step_counter         += 1
+    currentPhaseDuration -= stepLength
+
+    if currentPhaseDuration <= 0:
+        if currentPhase % 2 == 0:
+            # Green phase — observe and pick WORST action
+            queue      = np.array(_intersection_queue())
+            actionIndex = 0   # DIAGNOSTIC: always worst (-25s)
+            prevAction  = actionIndex
+            print(f"  [DECISION] Green phase={currentPhase}, forcing action=0 (-25s)")
+        else:
+            # Yellow phase — reuse previous action (same as Olivarez)
+            actionIndex = prevAction
+
+        _trafficLight_phase(actionIndex)
+        phase_changes += 1
+
+    # Metrics every 60s
+    if step_counter % int(60 / stepLength) == 0:
+        jam_length = 0
+        throughput = 0
+        metric_observation_count += 1
+
+        for det_id in detector_ids:
+            stats = traci.lanearea.getSubscriptionResults(det_id)
+            if not stats:
+                continue
+            jam_length += stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+            throughput += stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+
+        jam_length     /= detector_count
+        jam_length_total += jam_length
+        throughput_total += throughput
+        current_queue   = sum(_intersection_queue())
+        total_queue     += current_queue
+
+        time_min = step_counter * stepLength / 60
+        print(f"  [METRICS @ {time_min:.0f}min] "
+              f"Jam={jam_length:.2f}m  "
+              f"Throughput={throughput:.2f}  "
+              f"Queue={current_queue:.2f}")
+
+    traci.simulationStep()
+
+traci.close()
+
+# ============================================================
+# RESULTS
+# ============================================================
+
+print("\n" + "=" * 70)
+print("DIAGNOSTIC COMPLETE")
+print("=" * 70)
+
+if metric_observation_count > 0:
+    avg_jam        = jam_length_total / metric_observation_count
+    avg_throughput = throughput_total / metric_observation_count
+    avg_queue      = total_queue      / metric_observation_count
+
+    print(f"\nResults (WORST ACTION — always -25s on every green phase):")
+    print(f"  Average Jam Length            : {avg_jam:.2f} m")
+    print(f"  Average Throughput            : {avg_throughput:.2f} veh/min")
+    print(f"  Average Queue (Weighted Wait) : {avg_queue:.2f}")
+    print(f"  Total Phase Changes           : {phase_changes}")
+    print()
+    print("NoDRL baseline: waitingTime=53.36s, timeLoss=70.79s")
+    print()
+    print("Check diag_fixed_stats.xml and compare waitingTime + timeLoss:")
+    print("  WORSE than NoDRL  → TraCI is working ✓, model is the problem")
+    print("  SAME  as  NoDRL   → TraCI is still being ignored ✗")
+print("=" * 70)

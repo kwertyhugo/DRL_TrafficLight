@@ -98,12 +98,12 @@ else:
 
 Sumo_config = [
     'sumo',  # Use 'sumo-gui' to see the simulation
-    '-c', 'Balibago_traci/signalizedPed.sumocfg',
+    '-c', 'Balibago_traci/baselinePed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DDPG/jam_baseline_stats.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DDPG/jam_baseline_trips.xml'
+    '--statistic-output', r'Balibago_traci/output_DDPG/test_normal_baseline_stats.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DDPG/test_normal_baseline_trips.xml'
 ]
 
 # ==========================================
