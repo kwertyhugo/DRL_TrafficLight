@@ -39,12 +39,12 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DQN/BP_DQN_stats_TRAINING.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DQN/BP_DQN_trips_TRAINING.xml'
+    '--statistic-output', r'Balibago_traci/output_DQN/BP_DQN_stats_NORMALTEST2.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DQN/BP_DQN_trips_NORMALTEST2.xml'
 ]
 
 # --- SIMULATION VARIABLES ---
-trainMode = 1
+trainMode = 0
 stepLength = 0.1
 
 northCurrentPhase = 0
