@@ -6,21 +6,21 @@ Banlic-Mamatid Network
 
 Normal Traffic:
 ----------------------------------------------------------------------
-  Average Jam Length              : 11.45 m
-  Average Throughput              : 44.51 veh/min
-  Average Queue (Weighted Wait)   : 438.91
+  Average Jam Length              : 7.29 m
+  Average Throughput              : 44.05 veh/min
+  Average Queue (Weighted Wait)   : 221.20
 
 Slow Traffic:
 ----------------------------------------------------------------------
-  Average Jam Length              : 32.92 m
-  Average Throughput              : 76.78 veh/min
-  Average Queue (Weighted Wait)   : 1327.14
+  Average Jam Length              : 35.43 m
+  Average Throughput              : 79.80 veh/min
+  Average Queue (Weighted Wait)   : 1183.33
 
 Jam/Heavy Traffic:
 ----------------------------------------------------------------------
-  Average Jam Length              : 35.54 m
-  Average Throughput              : 73.20 veh/min
-  Average Queue (Weighted Wait)   : 1582.38
+  Average Jam Length              : 40.10 m
+  Average Throughput              : 88.75 veh/min
+  Average Queue (Weighted Wait)   : 1414.92
 
 ======================================================================
 COMPARISON ACROSS SCENARIOS
@@ -28,6 +28,6 @@ COMPARISON ACROSS SCENARIOS
 
 Metric                              Normal          Slow            Jam/Heavy      
 --------------------------------------------------------------------------------
-Avg Jam Length (m)                  11.45           32.92           35.54          
-Avg Throughput (veh/min)            44.51           76.78           73.20          
-Avg Queue (Weighted)                438.91          1327.14         1582.38        
+Avg Jam Length (m)                  7.29            35.43           40.10          
+Avg Throughput (veh/min)            44.05           79.80           88.75          
+Avg Queue (Weighted)                221.20          1183.33         1414.92        
