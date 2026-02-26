@@ -7,9 +7,8 @@ import sys
 INPUT_DIR = r'Balibago_traci\output_DQN'
 
 FILES_TO_PLOT = {
-    'Main Agent': 'main_agent_history.csv',
-    'SE Agent': 'se_agent_history.csv',
-    'SW Agent': 'sw_agent_history.csv',
+    'North Agent': 'North_historyTEST.csv',
+    'Balibago Agent': 'South_historyTEST.csv',
 }
 
 SMOOTHING_WINDOW = 20
@@ -94,10 +93,10 @@ def plot_agent_history(agent_name, csv_path):
     ax1.plot(x,     reward_smooth, 'b-', linewidth=2,
              label=f'Smoothed Reward (Window={SMOOTHING_WINDOW})')
     ax1.set_ylabel('Total Step Reward', fontsize=12)
-    ax1.set_xlabel(f'Row Index (starting from row {skip_rows:,})', fontsize=12)
+    ax1.set_xlabel('Row Index', fontsize=12)
     ax1.legend(fontsize=11)
     ax1.grid(True)
-    ax1.set_title(f'DQN {agent_name}: Reward over Time (first {skip_rows:,} rows skipped)', fontsize=14)
+    ax1.set_title(f'DQN {agent_name}: Reward over Time', fontsize=14)
     plt.tight_layout()
     save_path1 = os.path.join(INPUT_DIR, f'{agent_name}_reward.png')
     plt.savefig(save_path1, dpi=300, bbox_inches='tight')
@@ -110,7 +109,7 @@ def plot_agent_history(agent_name, csv_path):
     ax2.plot(x,     loss_smooth, 'r-', linewidth=2,
              label=f'Smoothed Loss (Window={SMOOTHING_WINDOW})')
     ax2.set_ylabel('TD Loss', fontsize=12)
-    ax2.set_xlabel(f'Row Index (starting from row {skip_rows:,})', fontsize=12)
+    ax2.set_xlabel('Row Index', fontsize=12)
     ax2.set_yscale('log')
     ax2.legend(fontsize=11)
     ax2.grid(True)
