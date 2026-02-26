@@ -33,7 +33,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo-gui', 
+    'sumo', 
     '-c', 'Banlic-Mamatid_traci/signalizedPed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',

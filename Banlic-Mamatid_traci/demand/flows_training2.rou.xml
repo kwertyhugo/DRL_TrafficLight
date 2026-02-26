@@ -66,30 +66,30 @@
     ══════════════════════════════════════════════════════════════ -->
 
     <!-- Pedestrians — 25 persons/hr -->
-    <personFlow id="normal_SavemoretoPalengke" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="-1346113028#6"/></personFlow>
-    <personFlow id="normal_SavemoretoJeepPila" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="-549232953#0"/></personFlow>
-    <personFlow id="normal_SavemoretoInasal"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="549232953#2"/></personFlow>
-    <personFlow id="normal_PalengketoSavemore" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="-549232953#2"/></personFlow>
-    <personFlow id="normal_PalengketoJeepPila" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="-549232953#0"/></personFlow>
-    <personFlow id="normal_PalengketoInasal"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="549232953#2"/></personFlow>
-    <personFlow id="normal_JeepPilatoSavemore" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="-549232953#2"/></personFlow>
-    <personFlow id="normal_JeepPilatoPalengke" type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="-1346113028#6"/></personFlow>
-    <personFlow id="normal_JeepPilatoInasal"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="549232953#2"/></personFlow>
-    <personFlow id="normal_InasaltoSavemore"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-549232953#2"/></personFlow>
-    <personFlow id="normal_InasaltoPalengke"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-1346113028#6"/></personFlow>
-    <personFlow id="normal_InasaltoJeepPila"   type="ped" begin="14400" end="39600" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-549232953#0"/></personFlow>
+    <personFlow id="normal_SavemoretoPalengke" type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="-1346113028#6"/></personFlow>
+    <personFlow id="normal_SavemoretoJeepPila" type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="-549232953#0"/></personFlow>
+    <personFlow id="normal_SavemoretoInasal"   type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-549232953#2"  to="549232953#2"/></personFlow>
+    <personFlow id="normal_PalengketoSavemore" type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="-549232953#2"/></personFlow>
+    <personFlow id="normal_PalengketoJeepPila" type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="-549232953#0"/></personFlow>
+    <personFlow id="normal_PalengketoInasal"   type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-1346113028#6" to="549232953#2"/></personFlow>
+    <personFlow id="normal_JeepPilatoSavemore" type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="-549232953#2"/></personFlow>
+    <personFlow id="normal_JeepPilatoPalengke" type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="-1346113028#6"/></personFlow>
+    <personFlow id="normal_JeepPilatoInasal"   type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="-549232953#0"  to="549232953#2"/></personFlow>
+    <personFlow id="normal_InasaltoSavemore"   type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-549232953#2"/></personFlow>
+    <personFlow id="normal_InasaltoPalengke"   type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-1346113028#6"/></personFlow>
+    <personFlow id="normal_InasaltoJeepPila"   type="ped" begin="0" end="25200" personsPerHour="25" departPos="0"><personTrip from="549232953#2"   to="-549232953#0"/></personFlow>
 
     <!-- Vehicles — normal probabilities -->
-    <flow id="normal_StaRosatoBanlic"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.02316" from="-549232953#10" to="-1346113028#0" departLane="best" departSpeed="max"/>
-    <flow id="normal_StaRosatoCalamba"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.03474" from="-549232953#10" to="-32425220#0"   departLane="best" departSpeed="max"/>
-    <flow id="normal_StaRosatoNeighbor"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00772" from="-549232953#10" to="32425190#1"    departLane="best" departSpeed="max"/>
-    <flow id="normal_BanlictoStaRosa"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.01969" from="1346113028#0"  to="549232953#10"  departLane="best" departSpeed="max"/>
-    <flow id="normal_BanlictoCalamba"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.01969" from="1346113028#0"  to="-32425220#0"   departLane="best" departSpeed="max"/>
-    <flow id="normal_BanlictoNeighbor"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.00438" from="1346113028#0"  to="32425190#1"    departLane="best" departSpeed="max"/>
-    <flow id="normal_CalambatoStaRosa"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.03474" from="32425220#0"    to="549232953#10"  departLane="best" departSpeed="max"/>
-    <flow id="normal_CalambatoBanlic"     type="AguinaldoHighway" begin="14400" end="39600" probability="0.02316" from="32425220#0"    to="-1346113028#0" departLane="best" departSpeed="max"/>
-    <flow id="normal_CalambatoNeighbor"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00772" from="32425220#0"    to="32425190#1"    departLane="best" departSpeed="max"/>
-    <flow id="normal_NeighbortoStaRosa"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00547" from="-32425190#1"   to="549232953#10"  departLane="best" departSpeed="max"/>
-    <flow id="normal_NeighbortoBanlic"    type="AguinaldoHighway" begin="14400" end="39600" probability="0.00365" from="-32425190#1"   to="-1346113028#0" departLane="best" departSpeed="max"/>
-    <flow id="normal_NeighbortoCalamba"   type="AguinaldoHighway" begin="14400" end="39600" probability="0.00547" from="-32425190#1"   to="-32425220#0"   departLane="best" departSpeed="max"/>
+    <flow id="normal_StaRosatoBanlic"     type="AguinaldoHighway" begin="0" end="25200" probability="0.02316" from="-549232953#10" to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="normal_StaRosatoCalamba"    type="AguinaldoHighway" begin="0" end="25200" probability="0.03474" from="-549232953#10" to="-32425220#0"   departLane="best" departSpeed="max"/>
+    <flow id="normal_StaRosatoNeighbor"   type="AguinaldoHighway" begin="0" end="25200" probability="0.00772" from="-549232953#10" to="32425190#1"    departLane="best" departSpeed="max"/>
+    <flow id="normal_BanlictoStaRosa"     type="AguinaldoHighway" begin="0" end="25200" probability="0.01969" from="1346113028#0"  to="549232953#10"  departLane="best" departSpeed="max"/>
+    <flow id="normal_BanlictoCalamba"     type="AguinaldoHighway" begin="0" end="25200" probability="0.01969" from="1346113028#0"  to="-32425220#0"   departLane="best" departSpeed="max"/>
+    <flow id="normal_BanlictoNeighbor"    type="AguinaldoHighway" begin="0" end="25200" probability="0.00438" from="1346113028#0"  to="32425190#1"    departLane="best" departSpeed="max"/>
+    <flow id="normal_CalambatoStaRosa"    type="AguinaldoHighway" begin="0" end="25200" probability="0.03474" from="32425220#0"    to="549232953#10"  departLane="best" departSpeed="max"/>
+    <flow id="normal_CalambatoBanlic"     type="AguinaldoHighway" begin="0" end="25200" probability="0.02316" from="32425220#0"    to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="normal_CalambatoNeighbor"   type="AguinaldoHighway" begin="0" end="25200" probability="0.00772" from="32425220#0"    to="32425190#1"    departLane="best" departSpeed="max"/>
+    <flow id="normal_NeighbortoStaRosa"   type="AguinaldoHighway" begin="0" end="25200" probability="0.00547" from="-32425190#1"   to="549232953#10"  departLane="best" departSpeed="max"/>
+    <flow id="normal_NeighbortoBanlic"    type="AguinaldoHighway" begin="0" end="25200" probability="0.00365" from="-32425190#1"   to="-1346113028#0" departLane="best" departSpeed="max"/>
+    <flow id="normal_NeighbortoCalamba"   type="AguinaldoHighway" begin="0" end="25200" probability="0.00547" from="-32425190#1"   to="-32425220#0"   departLane="best" departSpeed="max"/>
 </routes>
