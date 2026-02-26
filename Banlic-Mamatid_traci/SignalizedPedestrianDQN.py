@@ -17,7 +17,7 @@ EPSILON_DECAY = 0.995
 LEARNING_RATE = 0.00005
 
 MainAgent = dqn(state_size=11, action_size=11, memory_size=MEMORY_SIZE, gamma=GAMMA, 
-                 epsilon=1.0, epsilon_decay_rate=EPSILON_DECAY, epsilon_min=0.01, 
+                 epsilon=0, epsilon_decay_rate=EPSILON_DECAY, epsilon_min=0, 
                  learning_rate=LEARNING_RATE, target_update_freq=500, 
                  name='Main_DQNAgent_Signalized', area='Banlic-Mamatid')
 
@@ -43,7 +43,7 @@ Sumo_config = [
 ]
 
 # --- SIMULATION VARIABLES ---
-trainMode = 1
+trainMode = 0
 stepLength = 0.1
 
 currentPhase = 0
