@@ -10,8 +10,8 @@
     </input>
 
     <output>
-        <tripinfo-output value="Banlic-Mamatid_traci/output_DQN/BP_DQN_trips_trafficjam.xml"/>
-        <statistic-output value="Banlic-Mamatid_traci/output_DQN/BP_DQN_stats_trafficjam.xml"/>
+        <tripinfo-output value="Banlic-Mamatid_traci/output_A2C/SD_A2C_trips.xml"/>
+        <statistic-output value="Banlic-Mamatid_traci/output_A2C/SD_A2C_stats.xml"/>
     </output>
 
     <time>

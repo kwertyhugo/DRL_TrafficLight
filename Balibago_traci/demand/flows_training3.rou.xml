@@ -51,249 +51,183 @@
     <vTypeDistribution id="AguinaldoHighway" vTypes="car jeep bus truck motorcycle tricycle"/>
 
     <!-- ============================================================ -->
-    <!-- PERIOD 5: 16:00 - 17:00  MODERATE  (36000 - 39600 s)      -->
-    <!-- PM build-up. Workers starting to head home, malls filling.  -->
+    <!-- PERIOD 6: 17:00 - 20:00  HEAVY RUSH HOUR  (0-10800 s) -->
+    <!-- PM peak. Train prob range: 0.0270 - 0.0390                 -->
     <!-- ============================================================ -->
 
-    <!-- Pedestrians -->
-    <personFlow id="pf_JollibeetoPalengke_5" type="ped" begin="0" end="3600" personsPerHour="130" departPos="25">
+    <personFlow id="pf_JollibeetoPalengke_6" type="ped" begin="0" end="10800" personsPerHour="210" departPos="25">
         <personTrip from="32083309#6" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoSTI_5" type="ped" begin="0" end="3600" personsPerHour="100" departPos="25">
+    <personFlow id="pf_JollibeetoSTI_6" type="ped" begin="0" end="10800" personsPerHour="168" departPos="25">
         <personTrip from="32083309#6" to="1287979763"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoTarget_5" type="ped" begin="0" end="3600" personsPerHour="120" departPos="25">
+    <personFlow id="pf_JollibeetoTarget_6" type="ped" begin="0" end="10800" personsPerHour="192" departPos="25">
         <personTrip from="32083309#6" to="323641561#0"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoPureGold_5" type="ped" begin="0" end="3600" personsPerHour="110" departPos="25">
+    <personFlow id="pf_JollibeetoPureGold_6" type="ped" begin="0" end="10800" personsPerHour="182" departPos="25">
         <personTrip from="32083309#6" to="777622118"/>
     </personFlow>
-    <personFlow id="pf_PalengketoJollibee_5" type="ped" begin="0" end="3600" personsPerHour="125" departPos="25">
+    <personFlow id="pf_PalengketoJollibee_6" type="ped" begin="0" end="10800" personsPerHour="205" departPos="25">
         <personTrip from="32083256" to="32083309#6"/>
     </personFlow>
-    <personFlow id="pf_STItoSakayan_5" type="ped" begin="0" end="3600" personsPerHour="105" departPos="25">
+    <personFlow id="pf_STItoSakayan_6" type="ped" begin="0" end="10800" personsPerHour="172" departPos="25">
         <personTrip from="1287979763" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_TargettoSakayan_5" type="ped" begin="0" end="3600" personsPerHour="115" departPos="25">
+    <personFlow id="pf_TargettoSakayan_6" type="ped" begin="0" end="10800" personsPerHour="188" departPos="25">
         <personTrip from="323641561#0" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_PuregoldtoSakayan_5" type="ped" begin="0" end="3600" personsPerHour="105" departPos="25">
+    <personFlow id="pf_PuregoldtoSakayan_6" type="ped" begin="0" end="10800" personsPerHour="178" departPos="25">
         <personTrip from="777622118" to="32083256"/>
     </personFlow>
 
     <!-- Vehicles: From Biñan -->
-    <flow id="BiñantoBalibago_5" type="PublicTranspo" begin="0" end="3600" from="553887793#0" to="-32083237#0" via="39469992#3" probability="0.0190" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoNuvali_5" type="AguinaldoHighway" begin="0" end="3600" from="553887793#0" to="145507700#3" probability="0.0170" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoCalamba_5" type="AguinaldoHighway" begin="0" end="3600" from="553887793#0" to="-185930141#0" probability="0.0160" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoStaRosa_5" type="AguinaldoHighway" begin="0" end="3600" from="553887793#0" to="-92878383#0" probability="0.0180" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoBalibago_6" type="PublicTranspo" begin="0" end="10800" from="553887793#0" to="-32083237#0" via="39469992#3" probability="0.0278" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoNuvali_6" type="AguinaldoHighway" begin="0" end="10800" from="553887793#0" to="145507700#3" probability="0.0242" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoCalamba_6" type="AguinaldoHighway" begin="0" end="10800" from="553887793#0" to="-185930141#0" probability="0.0228" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoStaRosa_6" type="AguinaldoHighway" begin="0" end="10800" from="553887793#0" to="-92878383#0" probability="0.0258" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Balibago -->
-    <flow id="BalibagotoBiñan_5" type="PublicTranspo" begin="0" end="3600" from="145507698" to="-553887793#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0180" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoStaRosa_5" type="PublicTranspo" begin="0" end="3600" from="145507698" to="-92878383#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0170" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoCalamba_5" type="PublicTranspo" begin="0" end="3600" from="145507698" to="-185930141#0" via="777619922#1 89908334 32083216#2 -186159871#1" probability="0.0155" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoNuvali_5" type="PublicTranspo" begin="0" end="3600" from="777619905" to="145507700#3" via="145507698" probability="0.0145" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoBiñan_6" type="PublicTranspo" begin="0" end="10800" from="145507698" to="-553887793#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0372" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoStaRosa_6" type="PublicTranspo" begin="0" end="10800" from="145507698" to="-92878383#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0352" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoCalamba_6" type="PublicTranspo" begin="0" end="10800" from="145507698" to="-185930141#0" via="777619922#1 89908334 32083216#2 -186159871#1" probability="0.0332" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoNuvali_6" type="PublicTranspo" begin="0" end="10800" from="777619905" to="145507700#3" via="145507698" probability="0.0292" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From StaRosa -->
-    <flow id="StaRosatoCalamba_5" type="AguinaldoHighway" begin="0" end="3600" from="92878383#0" to="-185930141#0" probability="0.0200" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBalibago_5" type="PublicTranspo" begin="0" end="3600" from="92878383#0" to="-32083237#0" via="39469992#3" probability="0.0185" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBiñan_5" type="AguinaldoHighway" begin="0" end="3600" from="92878383#0" to="-553887793#0" probability="0.0175" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoNuvali_5" type="AguinaldoHighway" begin="0" end="3600" from="92878383#0" to="145507700#3" probability="0.0160" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoCalamba_6" type="AguinaldoHighway" begin="0" end="10800" from="92878383#0" to="-185930141#0" probability="0.0390" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoBalibago_6" type="PublicTranspo" begin="0" end="10800" from="92878383#0" to="-32083237#0" via="39469992#3" probability="0.0332" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoBiñan_6" type="AguinaldoHighway" begin="0" end="10800" from="92878383#0" to="-553887793#0" probability="0.0362" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoNuvali_6" type="AguinaldoHighway" begin="0" end="10800" from="92878383#0" to="145507700#3" probability="0.0302" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Nuvali -->
-    <flow id="NuvalitoBalibago_5" type="PublicTranspo" begin="0" end="3600" from="-145507700#3" to="32083201#1" via="145507703 32082965 32083262" probability="0.0150" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoBiñan_5" type="AguinaldoHighway" begin="0" end="3600" from="-145507700#3" to="-553887793#0" probability="0.0160" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoStaRosa_5" type="AguinaldoHighway" begin="0" end="3600" from="-145507700#3" to="-92878383#0" via="-1413610384" probability="0.0175" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoCalamba_5" type="AguinaldoHighway" begin="0" end="3600" from="-145507700#3" to="-185930141#0" probability="0.0185" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoBalibago_6" type="PublicTranspo" begin="0" end="10800" from="-145507700#3" to="32083201#1" via="145507703 32082965 32083262" probability="0.0282" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoBiñan_6" type="AguinaldoHighway" begin="0" end="10800" from="-145507700#3" to="-553887793#0" probability="0.0302" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoStaRosa_6" type="AguinaldoHighway" begin="0" end="10800" from="-145507700#3" to="-92878383#0" via="-1413610384" probability="0.0322" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoCalamba_6" type="AguinaldoHighway" begin="0" end="10800" from="-145507700#3" to="-185930141#0" probability="0.0342" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Calamba -->
-    <flow id="CalambatoBalibago_5" type="PublicTranspo" begin="0" end="3600" from="185930141#0" to="89908334" via="185601451#0" probability="0.0195" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoStaRosa_5" type="AguinaldoHighway" begin="0" end="3600" from="185930141#0" to="-92878383#0" probability="0.0205" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoNuvali_5" type="AguinaldoHighway" begin="0" end="3600" from="185930141#0" to="145507700#3" probability="0.0160" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoBiñan_5" type="AguinaldoHighway" begin="0" end="3600" from="185930141#0" to="-553887793#0" probability="0.0180" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoBalibago_6" type="PublicTranspo" begin="0" end="10800" from="185930141#0" to="89908334" via="185601451#0" probability="0.0272" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoStaRosa_6" type="AguinaldoHighway" begin="0" end="10800" from="185930141#0" to="-92878383#0" probability="0.0282" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoNuvali_6" type="AguinaldoHighway" begin="0" end="10800" from="185930141#0" to="145507700#3" probability="0.0232" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoBiñan_6" type="AguinaldoHighway" begin="0" end="10800" from="185930141#0" to="-553887793#0" probability="0.0262" departLane="best" departSpeed="max"/>
 
     <!-- ============================================================ -->
-    <!-- PERIOD 6: 17:00 - 20:00  HEAVY RUSH HOUR  (39600-50400 s) -->
-    <!-- PM peak. Heaviest outbound flow (Calamba/Biñan direction).  -->
-    <!-- Public transport fully loaded. Private vehicles gridlock.    -->
+    <!-- PERIOD 7: 20:00 - 21:00  MODERATE  (10800 - 14400 s)      -->
+    <!-- Post-PM rush wind-down. Train prob range: 0.0135 - 0.0212  -->
     <!-- ============================================================ -->
 
-    <!-- Pedestrians: peak homebound + evening market crowd -->
-    <personFlow id="pf_JollibeetoPalengke_6" type="ped" begin="3600" end="14400" personsPerHour="220" departPos="25">
+    <personFlow id="pf_JollibeetoPalengke_7" type="ped" begin="10800" end="14400" personsPerHour="108" departPos="25">
         <personTrip from="32083309#6" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoSTI_6" type="ped" begin="3600" end="14400" personsPerHour="175" departPos="25">
+    <personFlow id="pf_JollibeetoSTI_7" type="ped" begin="10800" end="14400" personsPerHour="75" departPos="25">
         <personTrip from="32083309#6" to="1287979763"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoTarget_6" type="ped" begin="3600" end="14400" personsPerHour="200" departPos="25">
+    <personFlow id="pf_JollibeetoTarget_7" type="ped" begin="10800" end="14400" personsPerHour="95" departPos="25">
         <personTrip from="32083309#6" to="323641561#0"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoPureGold_6" type="ped" begin="3600" end="14400" personsPerHour="190" departPos="25">
+    <personFlow id="pf_JollibeetoPureGold_7" type="ped" begin="10800" end="14400" personsPerHour="85" departPos="25">
         <personTrip from="32083309#6" to="777622118"/>
     </personFlow>
-    <personFlow id="pf_PalengketoJollibee_6" type="ped" begin="3600" end="14400" personsPerHour="215" departPos="25">
+    <personFlow id="pf_PalengketoJollibee_7" type="ped" begin="10800" end="14400" personsPerHour="105" departPos="25">
         <personTrip from="32083256" to="32083309#6"/>
     </personFlow>
-    <personFlow id="pf_STItoSakayan_6" type="ped" begin="3600" end="14400" personsPerHour="180" departPos="25">
+    <personFlow id="pf_STItoSakayan_7" type="ped" begin="10800" end="14400" personsPerHour="70" departPos="25">
         <personTrip from="1287979763" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_TargettoSakayan_6" type="ped" begin="3600" end="14400" personsPerHour="195" departPos="25">
+    <personFlow id="pf_TargettoSakayan_7" type="ped" begin="10800" end="14400" personsPerHour="90" departPos="25">
         <personTrip from="323641561#0" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_PuregoldtoSakayan_6" type="ped" begin="3600" end="14400" personsPerHour="185" departPos="25">
-        <personTrip from="777622118" to="32083256"/>
-    </personFlow>
-
-    <!-- Vehicles: From Biñan — reverse commute, lighter inbound -->
-    <flow id="BiñantoBalibago_6" type="PublicTranspo" begin="3600" end="14400" from="553887793#0" to="-32083237#0" via="39469992#3" probability="0.0260" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoNuvali_6" type="AguinaldoHighway" begin="3600" end="14400" from="553887793#0" to="145507700#3" probability="0.0220" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoCalamba_6" type="AguinaldoHighway" begin="3600" end="14400" from="553887793#0" to="-185930141#0" probability="0.0210" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoStaRosa_6" type="AguinaldoHighway" begin="3600" end="14400" from="553887793#0" to="-92878383#0" probability="0.0240" departLane="best" departSpeed="max"/>
-
-    <!-- Vehicles: From Balibago — heavy outbound homebound rush -->
-    <flow id="BalibagotoBiñan_6" type="PublicTranspo" begin="3600" end="14400" from="145507698" to="-553887793#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0360" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoStaRosa_6" type="PublicTranspo" begin="3600" end="14400" from="145507698" to="-92878383#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0340" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoCalamba_6" type="PublicTranspo" begin="3600" end="14400" from="145507698" to="-185930141#0" via="777619922#1 89908334 32083216#2 -186159871#1" probability="0.0320" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoNuvali_6" type="PublicTranspo" begin="3600" end="14400" from="777619905" to="145507700#3" via="145507698" probability="0.0280" departLane="best" departSpeed="max"/>
-
-    <!-- Vehicles: From StaRosa — heavy outbound toward Biñan/Calamba -->
-    <flow id="StaRosatoCalamba_6" type="AguinaldoHighway" begin="3600" end="14400" from="92878383#0" to="-185930141#0" probability="0.0380" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBalibago_6" type="PublicTranspo" begin="3600" end="14400" from="92878383#0" to="-32083237#0" via="39469992#3" probability="0.0320" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBiñan_6" type="AguinaldoHighway" begin="3600" end="14400" from="92878383#0" to="-553887793#0" probability="0.0350" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoNuvali_6" type="AguinaldoHighway" begin="3600" end="14400" from="92878383#0" to="145507700#3" probability="0.0290" departLane="best" departSpeed="max"/>
-
-    <!-- Vehicles: From Nuvali -->
-    <flow id="NuvalitoBalibago_6" type="PublicTranspo" begin="3600" end="14400" from="-145507700#3" to="32083201#1" via="145507703 32082965 32083262" probability="0.0270" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoBiñan_6" type="AguinaldoHighway" begin="3600" end="14400" from="-145507700#3" to="-553887793#0" probability="0.0290" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoStaRosa_6" type="AguinaldoHighway" begin="3600" end="14400" from="-145507700#3" to="-92878383#0" via="-1413610384" probability="0.0310" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoCalamba_6" type="AguinaldoHighway" begin="3600" end="14400" from="-145507700#3" to="-185930141#0" probability="0.0330" departLane="best" departSpeed="max"/>
-
-    <!-- Vehicles: From Calamba — reverse inbound, lighter -->
-    <flow id="CalambatoBalibago_6" type="PublicTranspo" begin="3600" end="14400" from="185930141#0" to="89908334" via="185601451#0" probability="0.0260" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoStaRosa_6" type="AguinaldoHighway" begin="3600" end="14400" from="185930141#0" to="-92878383#0" probability="0.0270" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoNuvali_6" type="AguinaldoHighway" begin="3600" end="14400" from="185930141#0" to="145507700#3" probability="0.0220" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoBiñan_6" type="AguinaldoHighway" begin="3600" end="14400" from="185930141#0" to="-553887793#0" probability="0.0250" departLane="best" departSpeed="max"/>
-
-    <!-- ============================================================ -->
-    <!-- PERIOD 7: 20:00 - 21:00  MODERATE  (50400 - 54000 s)      -->
-    <!-- Post-PM rush wind-down. Malls closing, night crowd thinning. -->
-    <!-- ============================================================ -->
-
-    <!-- Pedestrians -->
-    <personFlow id="pf_JollibeetoPalengke_7" type="ped" begin="14400" end="18000" personsPerHour="115" departPos="25">
-        <personTrip from="32083309#6" to="32083256"/>
-    </personFlow>
-    <personFlow id="pf_JollibeetoSTI_7" type="ped" begin="14400" end="18000" personsPerHour="80" departPos="25">
-        <personTrip from="32083309#6" to="1287979763"/>
-    </personFlow>
-    <personFlow id="pf_JollibeetoTarget_7" type="ped" begin="14400" end="18000" personsPerHour="100" departPos="25">
-        <personTrip from="32083309#6" to="323641561#0"/>
-    </personFlow>
-    <personFlow id="pf_JollibeetoPureGold_7" type="ped" begin="14400" end="18000" personsPerHour="90" departPos="25">
-        <personTrip from="32083309#6" to="777622118"/>
-    </personFlow>
-    <personFlow id="pf_PalengketoJollibee_7" type="ped" begin="14400" end="18000" personsPerHour="110" departPos="25">
-        <personTrip from="32083256" to="32083309#6"/>
-    </personFlow>
-    <personFlow id="pf_STItoSakayan_7" type="ped" begin="14400" end="18000" personsPerHour="75" departPos="25">
-        <personTrip from="1287979763" to="32083256"/>
-    </personFlow>
-    <personFlow id="pf_TargettoSakayan_7" type="ped" begin="14400" end="18000" personsPerHour="95" departPos="25">
-        <personTrip from="323641561#0" to="32083256"/>
-    </personFlow>
-    <personFlow id="pf_PuregoldtoSakayan_7" type="ped" begin="14400" end="18000" personsPerHour="85" departPos="25">
+    <personFlow id="pf_PuregoldtoSakayan_7" type="ped" begin="10800" end="14400" personsPerHour="80" departPos="25">
         <personTrip from="777622118" to="32083256"/>
     </personFlow>
 
     <!-- Vehicles: From Biñan -->
-    <flow id="BiñantoBalibago_7" type="PublicTranspo" begin="14400" end="18000" from="553887793#0" to="-32083237#0" via="39469992#3" probability="0.0170" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoNuvali_7" type="AguinaldoHighway" begin="14400" end="18000" from="553887793#0" to="145507700#3" probability="0.0150" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoCalamba_7" type="AguinaldoHighway" begin="14400" end="18000" from="553887793#0" to="-185930141#0" probability="0.0140" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoStaRosa_7" type="AguinaldoHighway" begin="14400" end="18000" from="553887793#0" to="-92878383#0" probability="0.0160" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoBalibago_7" type="PublicTranspo" begin="10800" end="14400" from="553887793#0" to="-32083237#0" via="39469992#3" probability="0.0178" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoNuvali_7" type="AguinaldoHighway" begin="10800" end="14400" from="553887793#0" to="145507700#3" probability="0.0158" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoCalamba_7" type="AguinaldoHighway" begin="10800" end="14400" from="553887793#0" to="-185930141#0" probability="0.0148" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoStaRosa_7" type="AguinaldoHighway" begin="10800" end="14400" from="553887793#0" to="-92878383#0" probability="0.0168" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Balibago -->
-    <flow id="BalibagotoBiñan_7" type="PublicTranspo" begin="14400" end="18000" from="145507698" to="-553887793#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0195" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoStaRosa_7" type="PublicTranspo" begin="14400" end="18000" from="145507698" to="-92878383#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0185" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoCalamba_7" type="PublicTranspo" begin="14400" end="18000" from="145507698" to="-185930141#0" via="777619922#1 89908334 32083216#2 -186159871#1" probability="0.0175" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoNuvali_7" type="PublicTranspo" begin="14400" end="18000" from="777619905" to="145507700#3" via="145507698" probability="0.0155" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoBiñan_7" type="PublicTranspo" begin="10800" end="14400" from="145507698" to="-553887793#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0202" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoStaRosa_7" type="PublicTranspo" begin="10800" end="14400" from="145507698" to="-92878383#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0192" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoCalamba_7" type="PublicTranspo" begin="10800" end="14400" from="145507698" to="-185930141#0" via="777619922#1 89908334 32083216#2 -186159871#1" probability="0.0182" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoNuvali_7" type="PublicTranspo" begin="10800" end="14400" from="777619905" to="145507700#3" via="145507698" probability="0.0162" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From StaRosa -->
-    <flow id="StaRosatoCalamba_7" type="AguinaldoHighway" begin="14400" end="18000" from="92878383#0" to="-185930141#0" probability="0.0205" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBalibago_7" type="PublicTranspo" begin="14400" end="18000" from="92878383#0" to="-32083237#0" via="39469992#3" probability="0.0180" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBiñan_7" type="AguinaldoHighway" begin="14400" end="18000" from="92878383#0" to="-553887793#0" probability="0.0190" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoNuvali_7" type="AguinaldoHighway" begin="14400" end="18000" from="92878383#0" to="145507700#3" probability="0.0160" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoCalamba_7" type="AguinaldoHighway" begin="10800" end="14400" from="92878383#0" to="-185930141#0" probability="0.0212" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoBalibago_7" type="PublicTranspo" begin="10800" end="14400" from="92878383#0" to="-32083237#0" via="39469992#3" probability="0.0188" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoBiñan_7" type="AguinaldoHighway" begin="10800" end="14400" from="92878383#0" to="-553887793#0" probability="0.0198" departLane="best" dartSpeed="max"/>
+    <flow id="StaRosatoNuvali_7" type="AguinaldoHighway" begin="10800" end="14400" from="92878383#0" to="145507700#3" probability="0.0168" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Nuvali -->
-    <flow id="NuvalitoBalibago_7" type="PublicTranspo" begin="14400" end="18000" from="-145507700#3" to="32083201#1" via="145507703 32082965 32083262" probability="0.0150" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoBiñan_7" type="AguinaldoHighway" begin="14400" end="18000" from="-145507700#3" to="-553887793#0" probability="0.0160" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoStaRosa_7" type="AguinaldoHighway" begin="14400" end="18000" from="-145507700#3" to="-92878383#0" via="-1413610384" probability="0.0175" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoCalamba_7" type="AguinaldoHighway" begin="14400" end="18000" from="-145507700#3" to="-185930141#0" probability="0.0185" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoBalibago_7" type="PublicTranspo" begin="10800" end="14400" from="-145507700#3" to="32083201#1" via="145507703 32082965 32083262" probability="0.0158" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoBiñan_7" type="AguinaldoHighway" begin="10800" end="14400" from="-145507700#3" to="-553887793#0" probability="0.0168" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoStaRosa_7" type="AguinaldoHighway" begin="10800" end="14400" from="-145507700#3" to="-92878383#0" via="-1413610384" probability="0.0182" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoCalamba_7" type="AguinaldoHighway" begin="10800" end="14400" from="-145507700#3" to="-185930141#0" probability="0.0192" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Calamba -->
-    <flow id="CalambatoBalibago_7" type="PublicTranspo" begin="14400" end="18000" from="185930141#0" to="89908334" via="185601451#0" probability="0.0170" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoStaRosa_7" type="AguinaldoHighway" begin="14400" end="18000" from="185930141#0" to="-92878383#0" probability="0.0180" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoNuvali_7" type="AguinaldoHighway" begin="14400" end="18000" from="185930141#0" to="145507700#3" probability="0.0145" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoBiñan_7" type="AguinaldoHighway" begin="14400" end="18000" from="185930141#0" to="-553887793#0" probability="0.0160" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoBalibago_7" type="PublicTranspo" begin="10800" end="14400" from="185930141#0" to="89908334" via="185601451#0" probability="0.0178" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoStaRosa_7" type="AguinaldoHighway" begin="10800" end="14400" from="185930141#0" to="-92878383#0" probability="0.0188" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoNuvali_7" type="AguinaldoHighway" begin="10800" end="14400" from="185930141#0" to="145507700#3" probability="0.0152" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoBiñan_7" type="AguinaldoHighway" begin="10800" end="14400" from="185930141#0" to="-553887793#0" probability="0.0168" departLane="best" departSpeed="max"/>
 
     <!-- ============================================================ -->
-    <!-- PERIOD 8: 21:00 - 22:00  LIGHT  (54000 - 57600 s)         -->
-    <!-- Night wind-down. Sparse traffic, mostly private vehicles.    -->
-    <!-- Last few jeepneys/tricycles running.                         -->
+    <!-- PERIOD 8: 21:00 - 22:00  LIGHT  (14400 - 18000 s)         -->
+    <!-- Night wind-down. Train prob range: 0.0042 - 0.0058         -->
     <!-- ============================================================ -->
 
-    <!-- Pedestrians: minimal night foot traffic -->
-    <personFlow id="pf_JollibeetoPalengke_8" type="ped" begin="18000" end="21600" personsPerHour="35" departPos="25">
+    <personFlow id="pf_JollibeetoPalengke_8" type="ped" begin="14400" end="18000" personsPerHour="32" departPos="25">
         <personTrip from="32083309#6" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoSTI_8" type="ped" begin="18000" end="21600" personsPerHour="20" departPos="25">
+    <personFlow id="pf_JollibeetoSTI_8" type="ped" begin="14400" end="18000" personsPerHour="18" departPos="25">
         <personTrip from="32083309#6" to="1287979763"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoTarget_8" type="ped" begin="18000" end="21600" personsPerHour="30" departPos="25">
+    <personFlow id="pf_JollibeetoTarget_8" type="ped" begin="14400" end="18000" personsPerHour="28" departPos="25">
         <personTrip from="32083309#6" to="323641561#0"/>
     </personFlow>
-    <personFlow id="pf_JollibeetoPureGold_8" type="ped" begin="18000" end="21600" personsPerHour="25" departPos="25">
+    <personFlow id="pf_JollibeetoPureGold_8" type="ped" begin="14400" end="18000" personsPerHour="22" departPos="25">
         <personTrip from="32083309#6" to="777622118"/>
     </personFlow>
-    <personFlow id="pf_PalengketoJollibee_8" type="ped" begin="18000" end="21600" personsPerHour="30" departPos="25">
+    <personFlow id="pf_PalengketoJollibee_8" type="ped" begin="14400" end="18000" personsPerHour="28" departPos="25">
         <personTrip from="32083256" to="32083309#6"/>
     </personFlow>
-    <personFlow id="pf_STItoSakayan_8" type="ped" begin="18000" end="21600" personsPerHour="20" departPos="25">
+    <personFlow id="pf_STItoSakayan_8" type="ped" begin="14400" end="18000" personsPerHour="18" departPos="25">
         <personTrip from="1287979763" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_TargettoSakayan_8" type="ped" begin="18000" end="21600" personsPerHour="25" departPos="25">
+    <personFlow id="pf_TargettoSakayan_8" type="ped" begin="14400" end="18000" personsPerHour="22" departPos="25">
         <personTrip from="323641561#0" to="32083256"/>
     </personFlow>
-    <personFlow id="pf_PuregoldtoSakayan_8" type="ped" begin="18000" end="21600" personsPerHour="20" departPos="25">
+    <personFlow id="pf_PuregoldtoSakayan_8" type="ped" begin="14400" end="18000" personsPerHour="18" departPos="25">
         <personTrip from="777622118" to="32083256"/>
     </personFlow>
 
     <!-- Vehicles: From Biñan -->
-    <flow id="BiñantoBalibago_8" type="PublicTranspo" begin="18000" end="21600" from="553887793#0" to="-32083237#0" via="39469992#3" probability="0.0065" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoNuvali_8" type="AguinaldoHighway" begin="18000" end="21600" from="553887793#0" to="145507700#3" probability="0.0060" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoCalamba_8" type="AguinaldoHighway" begin="18000" end="21600" from="553887793#0" to="-185930141#0" probability="0.0055" departLane="best" departSpeed="max"/>
-    <flow id="BiñantoStaRosa_8" type="AguinaldoHighway" begin="18000" end="21600" from="553887793#0" to="-92878383#0" probability="0.0060" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoBalibago_8" type="PublicTranspo" begin="14400" end="18000" from="553887793#0" to="-32083237#0" via="39469992#3" probability="0.0052" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoNuvali_8" type="AguinaldoHighway" begin="14400" end="18000" from="553887793#0" to="145507700#3" probability="0.0048" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoCalamba_8" type="AguinaldoHighway" begin="14400" end="18000" from="553887793#0" to="-185930141#0" probability="0.0042" departLane="best" departSpeed="max"/>
+    <flow id="BiñantoStaRosa_8" type="AguinaldoHighway" begin="14400" end="18000" from="553887793#0" to="-92878383#0" probability="0.0048" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Balibago -->
-    <flow id="BalibagotoBiñan_8" type="PublicTranspo" begin="18000" end="21600" from="145507698" to="-553887793#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0075" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoStaRosa_8" type="PublicTranspo" begin="18000" end="21600" from="145507698" to="-92878383#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0070" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoCalamba_8" type="PublicTranspo" begin="18000" end="21600" from="145507698" to="-185930141#0" via="777619922#1 89908334 32083216#2 -186159871#1" probability="0.0065" departLane="best" departSpeed="max"/>
-    <flow id="BalibagotoNuvali_8" type="PublicTranspo" begin="18000" end="21600" from="777619905" to="145507700#3" via="145507698" probability="0.0055" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoBiñan_8" type="PublicTranspo" begin="14400" end="18000" from="145507698" to="-553887793#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0058" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoStaRosa_8" type="PublicTranspo" begin="14400" end="18000" from="145507698" to="-92878383#0" via="777619922#1 89908334 32083216#2 1081562671" probability="0.0055" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoCalamba_8" type="PublicTranspo" begin="14400" end="18000" from="145507698" to="-185930141#0" via="777619922#1 89908334 32083216#2 -186159871#1" probability="0.0050" departLane="best" departSpeed="max"/>
+    <flow id="BalibagotoNuvali_8" type="PublicTranspo" begin="14400" end="18000" from="777619905" to="145507700#3" via="145507698" probability="0.0045" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From StaRosa -->
-    <flow id="StaRosatoCalamba_8" type="AguinaldoHighway" begin="18000" end="21600" from="92878383#0" to="-185930141#0" probability="0.0080" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBalibago_8" type="PublicTranspo" begin="18000" end="21600" from="92878383#0" to="-32083237#0" via="39469992#3" probability="0.0065" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoBiñan_8" type="AguinaldoHighway" begin="18000" end="21600" from="92878383#0" to="-553887793#0" probability="0.0070" departLane="best" departSpeed="max"/>
-    <flow id="StaRosatoNuvali_8" type="AguinaldoHighway" begin="18000" end="21600" from="92878383#0" to="145507700#3" probability="0.0060" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoCalamba_8" type="AguinaldoHighway" begin="14400" end="18000" from="92878383#0" to="-185930141#0" probability="0.0058" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoBalibago_8" type="PublicTranspo" begin="14400" end="18000" from="92878383#0" to="-32083237#0" via="39469992#3" probability="0.0052" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoBiñan_8" type="AguinaldoHighway" begin="14400" end="18000" from="92878383#0" to="-553887793#0" probability="0.0055" departLane="best" departSpeed="max"/>
+    <flow id="StaRosatoNuvali_8" type="AguinaldoHighway" begin="14400" end="18000" from="92878383#0" to="145507700#3" probability="0.0048" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Nuvali -->
-    <flow id="NuvalitoBalibago_8" type="PublicTranspo" begin="18000" end="21600" from="-145507700#3" to="32083201#1" via="145507703 32082965 32083262" probability="0.0055" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoBiñan_8" type="AguinaldoHighway" begin="18000" end="21600" from="-145507700#3" to="-553887793#0" probability="0.0060" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoStaRosa_8" type="AguinaldoHighway" begin="18000" end="21600" from="-145507700#3" to="-92878383#0" via="-1413610384" probability="0.0065" departLane="best" departSpeed="max"/>
-    <flow id="NuvalitoCalamba_8" type="AguinaldoHighway" begin="18000" end="21600" from="-145507700#3" to="-185930141#0" probability="0.0070" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoBalibago_8" type="PublicTranspo" begin="14400" end="18000" from="-145507700#3" to="32083201#1" via="145507703 32082965 32083262" probability="0.0045" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoBiñan_8" type="AguinaldoHighway" begin="14400" end="18000" from="-145507700#3" to="-553887793#0" probability="0.0048" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoStaRosa_8" type="AguinaldoHighway" begin="14400" end="18000" from="-145507700#3" to="-92878383#0" via="-1413610384" probability="0.0052" departLane="best" departSpeed="max"/>
+    <flow id="NuvalitoCalamba_8" type="AguinaldoHighway" begin="14400" end="18000" from="-145507700#3" to="-185930141#0" probability="0.0055" departLane="best" departSpeed="max"/>
 
     <!-- Vehicles: From Calamba -->
-    <flow id="CalambatoBalibago_8" type="PublicTranspo" begin="18000" end="21600" from="185930141#0" to="89908334" via="185601451#0" probability="0.0065" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoStaRosa_8" type="AguinaldoHighway" begin="18000" end="21600" from="185930141#0" to="-92878383#0" probability="0.0070" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoNuvali_8" type="AguinaldoHighway" begin="18000" end="21600" from="185930141#0" to="145507700#3" probability="0.0055" departLane="best" departSpeed="max"/>
-    <flow id="CalambatoBiñan_8" type="AguinaldoHighway" begin="18000" end="21600" from="185930141#0" to="-553887793#0" probability="0.0060" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoBalibago_8" type="PublicTranspo" begin="14400" end="18000" from="185930141#0" to="89908334" via="185601451#0" probability="0.0052" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoStaRosa_8" type="AguinaldoHighway" begin="14400" end="18000" from="185930141#0" to="-92878383#0" probability="0.0055" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoNuvali_8" type="AguinaldoHighway" begin="14400" end="18000" from="185930141#0" to="145507700#3" probability="0.0045" departLane="best" departSpeed="max"/>
+    <flow id="CalambatoBiñan_8" type="AguinaldoHighway" begin="14400" end="18000" from="185930141#0" to="-553887793#0" probability="0.0048" departLane="best" departSpeed="max"/>
 
 </routes>

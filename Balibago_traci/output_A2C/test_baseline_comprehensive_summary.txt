@@ -1,0 +1,46 @@
+======================================================================
+BASELINE A2C MODEL - COMPREHENSIVE TEST RESULTS
+======================================================================
+
+
+Normal Traffic:
+----------------------------------------------------------------------
+  Average Jam Length (Overall)    : 1.97 m
+  Average Jam Length (North)      : 2.78 m
+  Average Jam Length (South)      : 0.68 m
+  Average Throughput              : 20.73 veh/min
+  Average North Queue             : 367.62
+  Average South Queue             : 17.91
+  Average Total Queue             : 385.52
+
+Slow Traffic:
+----------------------------------------------------------------------
+  Average Jam Length (Overall)    : 2.88 m
+  Average Jam Length (North)      : 4.10 m
+  Average Jam Length (South)      : 0.94 m
+  Average Throughput              : 27.51 veh/min
+  Average North Queue             : 476.24
+  Average South Queue             : 24.26
+  Average Total Queue             : 500.50
+
+Jam/Heavy Traffic:
+----------------------------------------------------------------------
+  Average Jam Length (Overall)    : 4.02 m
+  Average Jam Length (North)      : 5.73 m
+  Average Jam Length (South)      : 1.28 m
+  Average Throughput              : 36.89 veh/min
+  Average North Queue             : 705.77
+  Average South Queue             : 31.63
+  Average Total Queue             : 737.40
+
+======================================================================
+COMPARISON ACROSS SCENARIOS
+======================================================================
+
+Metric                              Normal          Slow            Jam/Heavy      
+--------------------------------------------------------------------------------
+Avg Jam Length (m)                  1.97            2.88            4.02           
+Avg North Jam (m)                   2.78            4.10            5.73           
+Avg South Jam (m)                   0.68            0.94            1.28           
+Avg Throughput (veh/min)            20.73           27.51           36.89          
+Avg Total Queue                     385.52          500.50          737.40         

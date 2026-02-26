@@ -1,0 +1,151 @@
+import os
+import sys
+from keras.models import load_model
+import numpy as np
+
+print("\n" + "=" * 70)
+print("DIAGNOSTIC CHECK - Banlic-Mamatid A2C Model")
+print("=" * 70)
+
+# Check if model file exists
+model_path = './Banlic-Mamatid_traci/models_A2C/Main_A2CAgent_Signalized.keras'
+
+if not os.path.exists(model_path):
+    print(f"\n❌ MODEL NOT FOUND at {model_path}")
+    print("\nYou need to train the model first using SignalizedPedestrianA2C.py")
+    print("Make sure trainMode = 1 in the training script.")
+    sys.exit(1)
+
+print(f"✓ Model file exists at {model_path}")
+
+# Check file size
+file_size = os.path.getsize(model_path)
+print(f"  File size: {file_size:,} bytes ({file_size / 1024:.2f} KB)")
+
+if file_size < 10000:  # Less than 10KB is suspicious
+    print("  ⚠️  WARNING: File size is very small - model may not be trained!")
+
+# Try loading the model
+try:
+    model = load_model(model_path)
+    print("✓ Model loaded successfully")
+    
+    # Check model architecture
+    print("\nModel Architecture:")
+    model.summary()
+    
+    # Test the model with a sample input
+    print("\n" + "=" * 70)
+    print("Testing Model Inference")
+    print("=" * 70)
+    
+    # Create a sample state (6 queue + 5 phase one-hot = 11)
+    sample_state = np.zeros(11, dtype=np.float32)
+    sample_state[0:6] = [0.1, 0.2, 0.15, 0.3, 0.05, 0.2]  # Sample queue values
+    sample_state[6] = 1.0  # Phase 0 one-hot
+    
+    print(f"Sample input state: {sample_state}")
+    
+    # Get prediction
+    state_batch = np.expand_dims(sample_state, axis=0)
+    action_probs = model.predict(state_batch, verbose=0)[0]
+    
+    print(f"\nAction probabilities: {action_probs}")
+    print(f"Selected action (argmax): {np.argmax(action_probs)}")
+    print(f"Max probability: {np.max(action_probs):.4f}")
+    
+    # Check if model is making varied predictions
+    if np.max(action_probs) > 0.99:
+        print("\n⚠️  WARNING: Model is outputting very high confidence (>99%)")
+        print("   This might indicate an untrained or poorly trained model.")
+    
+    # Check if all probabilities are nearly equal (untrained model behavior)
+    prob_std = np.std(action_probs)
+    print(f"Probability standard deviation: {prob_std:.4f}")
+    
+    if prob_std < 0.01:
+        print("\n⚠️  WARNING: Action probabilities are nearly uniform")
+        print("   This indicates the model has NOT been trained.")
+        print("   An untrained model will behave like random/fixed actions.")
+    else:
+        print("\n✓ Model shows learned behavior (non-uniform probabilities)")
+    
+    # Test with different states to see if model responds
+    print("\n" + "=" * 70)
+    print("Testing Model Response to Different States")
+    print("=" * 70)
+    
+    test_states = [
+        ("Low congestion", np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 1, 0, 0, 0, 0], dtype=np.float32)),
+        ("High congestion", np.array([0.9, 0.8, 0.9, 0.85, 0.9, 0.88, 1, 0, 0, 0, 0], dtype=np.float32)),
+        ("Mixed congestion", np.array([0.3, 0.7, 0.2, 0.8, 0.4, 0.6, 0, 1, 0, 0, 0], dtype=np.float32)),
+    ]
+    
+    actions = []
+    for desc, state in test_states:
+        state_batch = np.expand_dims(state, axis=0)
+        probs = model.predict(state_batch, verbose=0)[0]
+        action = np.argmax(probs)
+        actions.append(action)
+        print(f"{desc:20s} -> Action: {action:2d} (adjustment: {(-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)[action]:3d}s)")
+    
+    # Check if model gives same action for all states (bad sign)
+    if len(set(actions)) == 1:
+        print("\n❌ CRITICAL: Model gives SAME action for all test states!")
+        print("   This confirms the model is NOT trained properly.")
+        print("   The model will behave exactly like fixed timing (NoDRL).")
+    else:
+        print(f"\n✓ Model gives {len(set(actions))} different actions across test states")
+        print("   This suggests some learning has occurred.")
+    
+except Exception as e:
+    print(f"\n❌ ERROR loading or testing model: {e}")
+    sys.exit(1)
+
+# Check training history
+print("\n" + "=" * 70)
+print("Checking Training History")
+print("=" * 70)
+
+history_path = './Banlic-Mamatid_traci/output_A2C/Main_A2C_history.csv'
+if os.path.exists(history_path):
+    print(f"✓ Training history found at {history_path}")
+    
+    with open(history_path, 'r') as f:
+        lines = f.readlines()
+    
+    if len(lines) > 1:
+        print(f"  Number of training episodes: {len(lines) - 1}")
+        
+        # Show last few episodes
+        print("\n  Last 5 training episodes:")
+        for line in lines[-5:]:
+            print(f"    {line.strip()}")
+    else:
+        print("  ⚠️  WARNING: History file exists but has no training data!")
+        print("     Model has NOT been trained yet.")
+else:
+    print(f"❌ Training history NOT found at {history_path}")
+    print("   Model has likely NOT been trained yet.")
+
+print("\n" + "=" * 70)
+print("RECOMMENDATION")
+print("=" * 70)
+
+if file_size < 10000 or prob_std < 0.01:
+    print("\n❌ Your model appears to be UNTRAINED or POORLY TRAINED")
+    print("\nTo fix this:")
+    print("  1. Run the training script: SignalizedPedestrianA2C.py")
+    print("  2. Make sure trainMode = 1 in the script")
+    print("  3. Let it train for sufficient episodes (check reward convergence)")
+    print("  4. The model will be saved automatically to:")
+    print(f"     {model_path}")
+    print("  5. Then run the test script again")
+else:
+    print("\n✓ Model appears to have been trained")
+    print("  However, if test results match NoDRL exactly, consider:")
+    print("  - Training longer (more episodes)")
+    print("  - Checking if training rewards improved over time")
+    print("  - Verifying the action space is being explored")
+
+print("=" * 70)

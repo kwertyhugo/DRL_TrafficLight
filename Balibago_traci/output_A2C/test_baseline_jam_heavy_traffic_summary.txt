@@ -1,0 +1,11 @@
+Test Results - Baseline Jam/Heavy Traffic
+======================================================================
+
+Average Jam Length (Overall)    : 4.02 m
+Average Jam Length (North)      : 5.73 m
+Average Jam Length (South)      : 1.28 m
+Average Throughput              : 36.89 veh/min
+
+Average North Queue             : 705.77
+Average South Queue             : 31.63
+Average Total Queue             : 737.40

@@ -1,0 +1,6 @@
+Test Results - jam_traffic
+======================================================================
+
+Average Jam Length              : 44.34 m
+Average Throughput              : 103.81 veh/min
+Average Queue (Weighted Wait)   : 2731.74

@@ -24,8 +24,8 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats_TESTUPDATEDJAM.xml',
-    '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips_testJAM.xml'
+    '--statistic-output', r'Olivarez_traci\output_DQN\SD_DQN_stats_slow_FINAL.xml',
+    '--tripinfo-output', r'Olivarez_traci\output_DQN\SD_DQN_trips_slow_FINAL.xml'
 ]
 
 # Simulation Variables
