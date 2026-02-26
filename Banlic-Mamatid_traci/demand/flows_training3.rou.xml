@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    Unified Demand File — Aguinaldo Highway
+    PM Peak Demand File — Aguinaldo Highway
     ========================================
-    Simulation clock : 6:00 → 22:00
-    Simulation time  : t=0  → t=57600 (seconds offset from 06:00)
+    Simulation clock : 17:00 → 22:00
+    Simulation time  : t=0  → t=18000 (seconds offset from 17:00)
 
     Schedule:
-      06:00–07:00  |  t=     0 –  3,600  |  SLOW         morning ramp-up
-      07:00–09:00  |  t= 3,600 – 10,800  |  TRAFFIC JAM  AM peak
-      09:00–10:00  |  t=10,800 – 14,400  |  SLOW         AM wind-down
-      10:00–17:00  |  t=14,400 – 39,600  |  NORMAL       midday off-peak
-      17:00–18:00  |  t=39,600 – 43,200  |  SLOW         evening ramp-up
-      18:00–20:00  |  t=43,200 – 50,400  |  TRAFFIC JAM  PM peak
-      20:00–21:00  |  t=50,400 – 54,000  |  SLOW         PM wind-down
-      21:00–22:00  |  t=54,000 – 57,600  |  NORMAL       late evening
-
-    NOTE: All begin times set to 0.
+      17:00–18:00  |  t=     0 –  3,600  |  SLOW         evening ramp-up
+      18:00–20:00  |  t= 3,600 – 10,800  |  TRAFFIC JAM  PM peak
+      20:00–21:00  |  t=10,800 – 14,400  |  SLOW         PM wind-down
+      21:00–22:00  |  t=14,400 – 18,000  |  NORMAL       late evening
 -->
 
 <routes>
@@ -63,9 +57,8 @@
             personCapacity="4"/>
     </vTypeDistribution>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         17:00–18:00  |  t=0–43200  |  SLOW  (evening ramp-up)
-         NOTE: begin changed from 39600 to 0
+<!-- ══════════════════════════════════════════════════════════════
+         17:00–18:00  |  t=39600–43200  |  SLOW  (evening ramp-up)
     ══════════════════════════════════════════════════════════════ -->
 
     <!-- Pedestrians — 50 persons/hr -->
@@ -98,8 +91,7 @@
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         18:00–20:00  |  t=0–50400  |  TRAFFIC JAM  (PM peak)
-         NOTE: begin changed from 43200 to 0
+         18:00–20:00  |  t=43200–50400  |  TRAFFIC JAM  (PM peak)
     ══════════════════════════════════════════════════════════════ -->
 
     <!-- Pedestrians — 75 persons/hr -->
@@ -132,8 +124,7 @@
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         20:00–21:00  |  t=0–54000  |  SLOW  (PM wind-down)
-         NOTE: begin changed from 50400 to 0
+         20:00–21:00  |  t=50400–54000  |  SLOW  (PM wind-down)
     ══════════════════════════════════════════════════════════════ -->
 
     <!-- Pedestrians — 50 persons/hr -->
@@ -166,8 +157,7 @@
 
 
     <!-- ══════════════════════════════════════════════════════════════
-         21:00–22:00  |  t=0–57600  |  NORMAL  (late evening)
-         NOTE: begin changed from 54000 to 0
+         21:00–22:00  |  t=54000–57600  |  NORMAL  (late evening)
     ══════════════════════════════════════════════════════════════ -->
 
     <!-- Pedestrians — 25 persons/hr -->
@@ -197,5 +187,6 @@
     <flow id="normal_eve_NeighbortoStaRosa"   type="AguinaldoHighway" begin="14400" end="18000" probability="0.00547" from="-32425190#1"   to="549232953#10"  departLane="best" departSpeed="max"/>
     <flow id="normal_eve_NeighbortoBanlic"    type="AguinaldoHighway" begin="14400" end="18000" probability="0.00365" from="-32425190#1"   to="-1346113028#0" departLane="best" departSpeed="max"/>
     <flow id="normal_eve_NeighbortoCalamba"   type="AguinaldoHighway" begin="14400" end="18000" probability="0.00547" from="-32425190#1"   to="-32425220#0"   departLane="best" departSpeed="max"/>
+
 
 </routes>
