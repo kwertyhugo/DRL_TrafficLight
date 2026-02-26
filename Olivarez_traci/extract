@@ -1,0 +1,293 @@
+"""
+test_nodrl_all_scenarios.py
+============================
+Runs all 6 NoDRL scenarios consecutively (SP + BP × 3 traffic conditions),
+collects per-trip waiting times for vehicles and pedestrians from the
+tripinfo XML outputs, then writes a summary CSV with mean ± SD for each case.
+
+Scenarios:
+  SP = Signalized Pedestrian (SignalizedPed.sumocfg)
+  BP = Baseline Pedestrian   (baselinePed.sumocfg)
+  Traffic conditions: normal, slow, traffic_jam
+"""
+
+import os
+import sys
+import xml.etree.ElementTree as ET
+import csv
+import numpy as np
+
+# ── SUMO setup ──────────────────────────────────────────────────────────────
+if 'SUMO_HOME' in os.environ:
+    sys.path.append(os.path.join(os.environ['SUMO_HOME'], 'tools'))
+else:
+    sys.exit("Please declare environment variable 'SUMO_HOME'")
+
+import traci
+
+# ── Output directory ─────────────────────────────────────────────────────────
+OUTPUT_DIR = r'Olivarez_traci\output_NoDRL'
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# ── Scenario definitions ─────────────────────────────────────────────────────
+SCENARIOS = [
+    {
+        "label":       "SP_Normal",
+        "config":      r'Olivarez_traci\SignalizedPed.sumocfg',
+        "route":       r'Olivarez_traci\demand\flows_normal_traffic.rou.xml',
+        "stats_out":   os.path.join(OUTPUT_DIR, 'SP_NoDRL_Normal_stats.xml'),
+        "trips_out":   os.path.join(OUTPUT_DIR, 'SP_NoDRL_Normal_trips.xml'),
+    },
+    {
+        "label":       "SP_Slow",
+        "config":      r'Olivarez_traci\SignalizedPed.sumocfg',
+        "route":       r'Olivarez_traci\demand\flows_slow_traffic.rou.xml',
+        "stats_out":   os.path.join(OUTPUT_DIR, 'SP_NoDRL_Slow_stats.xml'),
+        "trips_out":   os.path.join(OUTPUT_DIR, 'SP_NoDRL_Slow_trips.xml'),
+    },
+    {
+        "label":       "SP_TrafficJam",
+        "config":      r'Olivarez_traci\SignalizedPed.sumocfg',
+        "route":       r'Olivarez_traci\demand\flows_traffic_jam.rou.xml',
+        "stats_out":   os.path.join(OUTPUT_DIR, 'SP_NoDRL_TrafficJam_stats.xml'),
+        "trips_out":   os.path.join(OUTPUT_DIR, 'SP_NoDRL_TrafficJam_trips.xml'),
+    },
+    {
+        "label":       "BP_Normal",
+        "config":      r'Olivarez_traci\baselinePed.sumocfg',
+        "route":       r'Olivarez_traci\demand\flows_normal_traffic.rou.xml',
+        "stats_out":   os.path.join(OUTPUT_DIR, 'BP_NoDRL_Normal_stats.xml'),
+        "trips_out":   os.path.join(OUTPUT_DIR, 'BP_NoDRL_Normal_trips.xml'),
+    },
+    {
+        "label":       "BP_Slow",
+        "config":      r'Olivarez_traci\baselinePed.sumocfg',
+        "route":       r'Olivarez_traci\demand\flows_slow_traffic.rou.xml',
+        "stats_out":   os.path.join(OUTPUT_DIR, 'BP_NoDRL_Slow_stats.xml'),
+        "trips_out":   os.path.join(OUTPUT_DIR, 'BP_NoDRL_Slow_trips.xml'),
+    },
+    {
+        "label":       "BP_TrafficJam",
+        "config":      r'Olivarez_traci\baselinePed.sumocfg',
+        "route":       r'Olivarez_traci\demand\flows_traffic_jam.rou.xml',
+        "stats_out":   os.path.join(OUTPUT_DIR, 'BP_NoDRL_TrafficJam_stats.xml'),
+        "trips_out":   os.path.join(OUTPUT_DIR, 'BP_NoDRL_TrafficJam_trips.xml'),
+    },
+]
+
+# ── Simulation constants ──────────────────────────────────────────────────────
+STEP_LENGTH   = 0.1
+MAX_SIM_STEPS = 50000
+DETECTOR_IDS  = ["e2_4", "e2_5", "e2_6", "e2_7", "e2_8", "e2_9", "e2_10"]
+DETECTOR_COUNT = len(DETECTOR_IDS)
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# Helper: subscribe detectors
+# ════════════════════════════════════════════════════════════════════════════
+def _subscribe_detectors():
+    vehicle_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
+    for det_id in DETECTOR_IDS:
+        traci.lanearea.subscribe(det_id, vehicle_vars)
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# Helper: run one simulation scenario, return (jam_avg, throughput_avg)
+# ════════════════════════════════════════════════════════════════════════════
+def run_scenario(scenario: dict) -> tuple:
+    label = scenario["label"]
+
+    sumo_cmd = [
+        'sumo',
+        '-c',              scenario["config"],
+        '--route-files',   scenario["route"],
+        '--step-length',   str(STEP_LENGTH),
+        '--delay',         '0',
+        '--lateral-resolution', '0.1',
+        '--statistic-output', scenario["stats_out"],
+        '--tripinfo-output',  scenario["trips_out"],
+    ]
+
+    traci.start(sumo_cmd)
+    _subscribe_detectors()
+
+    jam_total         = 0.0
+    throughput_total  = 0.0
+    obs_count         = 0
+    sim_step          = 0
+
+    interval_steps = int(60 / STEP_LENGTH)   # metric snapshot every 60 s
+
+    while traci.simulation.getMinExpectedNumber() > 0 and sim_step < MAX_SIM_STEPS:
+
+        if sim_step % interval_steps == 0:
+            jam_sum        = 0.0
+            throughput_sum = 0.0
+            obs_count     += 1
+
+            for det_id in DETECTOR_IDS:
+                stats = traci.lanearea.getSubscriptionResults(det_id)
+                if stats:
+                    jam_sum        += stats.get(traci.constants.JAM_LENGTH_METERS,  0)
+                    throughput_sum += stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+
+            jam_total        += jam_sum / DETECTOR_COUNT
+            throughput_total += throughput_sum
+
+        traci.simulationStep()
+        sim_step += 1
+
+    if sim_step >= MAX_SIM_STEPS:
+        print(f"  [!] {label}: hit step limit ({MAX_SIM_STEPS})")
+
+    traci.close()
+
+    jam_avg        = jam_total / obs_count        if obs_count > 0 else 0.0
+    throughput_avg = throughput_total / obs_count if obs_count > 0 else 0.0
+
+    return jam_avg, throughput_avg
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# Helper: parse tripinfo XML → vehicle and pedestrian waiting times
+# ════════════════════════════════════════════════════════════════════════════
+def parse_tripinfo(xml_path: str) -> tuple[list[float], list[float]]:
+    """
+    Returns (vehicle_waits, pedestrian_waits) as lists of floats.
+    Vehicle trips  → <tripinfo> elements with attribute 'waitingTime'
+    Pedestrian trips → <personinfo><walk> with attribute 'waitingTime'
+                       or <personinfo> with 'waitingTime' directly
+    """
+    vehicle_waits    = []
+    pedestrian_waits = []
+
+    if not os.path.exists(xml_path):
+        print(f"  [!] Tripinfo file not found: {xml_path}")
+        return vehicle_waits, pedestrian_waits
+
+    try:
+        tree = ET.parse(xml_path)
+        root = tree.getroot()
+    except ET.ParseError as e:
+        print(f"  [!] Could not parse {xml_path}: {e}")
+        return vehicle_waits, pedestrian_waits
+
+    for elem in root:
+        if elem.tag == 'tripinfo':
+            wt = elem.get('waitingTime')
+            if wt is not None:
+                vehicle_waits.append(float(wt))
+
+        elif elem.tag == 'personinfo':
+            # Try direct waitingTime attribute first
+            wt = elem.get('waitingTime')
+            if wt is not None:
+                pedestrian_waits.append(float(wt))
+            else:
+                # Sum waiting times across walk/stop stages
+                total_ped_wait = 0.0
+                for stage in elem:
+                    stage_wt = stage.get('waitingTime')
+                    if stage_wt is not None:
+                        total_ped_wait += float(stage_wt)
+                if total_ped_wait > 0:
+                    pedestrian_waits.append(total_ped_wait)
+
+    return vehicle_waits, pedestrian_waits
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# Helper: safe stats
+# ════════════════════════════════════════════════════════════════════════════
+def stats(values: list[float]) -> tuple[float, float, int]:
+    """Returns (mean, std, count). Returns (0, 0, 0) for empty lists."""
+    if not values:
+        return 0.0, 0.0, 0
+    arr = np.array(values, dtype=float)
+    return float(np.mean(arr)), float(np.std(arr, ddof=1) if len(arr) > 1 else 0.0), len(arr)
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# MAIN
+# ════════════════════════════════════════════════════════════════════════════
+def main():
+    print("\n" + "=" * 70)
+    print("  NoDRL FULL TEST SUITE  —  SP & BP × Normal / Slow / TrafficJam")
+    print("=" * 70)
+
+    summary_rows = []   # collected for CSV
+
+    for i, scenario in enumerate(SCENARIOS, 1):
+        label = scenario["label"]
+        print(f"\n[{i}/{len(SCENARIOS)}] Running: {label}")
+        print("-" * 50)
+
+        # ── Run simulation ─────────────────────────────────────────────────
+        jam_avg, throughput_avg = run_scenario(scenario)
+        print(f"  Avg Jam Length  : {jam_avg:.2f} m")
+        print(f"  Avg Throughput  : {throughput_avg:.2f} vehicles/interval")
+
+        # ── Parse tripinfo for waiting-time distributions ──────────────────
+        veh_waits, ped_waits = parse_tripinfo(scenario["trips_out"])
+
+        v_mean, v_sd, v_n = stats(veh_waits)
+        p_mean, p_sd, p_n = stats(ped_waits)
+
+        print(f"  Vehicle trips   : n={v_n}  mean={v_mean:.2f}s  SD={v_sd:.2f}s")
+        print(f"  Pedestrian trips: n={p_n}  mean={p_mean:.2f}s  SD={p_sd:.2f}s")
+
+        summary_rows.append({
+            "Scenario":                  label,
+            "Avg_JamLength_m":           round(jam_avg, 4),
+            "Avg_Throughput_veh":        round(throughput_avg, 4),
+            "Vehicle_WaitTime_Mean_s":   round(v_mean, 4),
+            "Vehicle_WaitTime_SD_s":     round(v_sd, 4),
+            "Vehicle_Trip_Count":        v_n,
+            "Pedestrian_WaitTime_Mean_s":round(p_mean, 4),
+            "Pedestrian_WaitTime_SD_s":  round(p_sd, 4),
+            "Pedestrian_Trip_Count":     p_n,
+        })
+
+    # ── Write summary CSV ──────────────────────────────────────────────────
+    summary_path = os.path.join(OUTPUT_DIR, 'NoDRL_Summary_Stats.csv')
+    fieldnames = [
+        "Scenario",
+        "Avg_JamLength_m",
+        "Avg_Throughput_veh",
+        "Vehicle_WaitTime_Mean_s",
+        "Vehicle_WaitTime_SD_s",
+        "Vehicle_Trip_Count",
+        "Pedestrian_WaitTime_Mean_s",
+        "Pedestrian_WaitTime_SD_s",
+        "Pedestrian_Trip_Count",
+    ]
+
+    with open(summary_path, 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(summary_rows)
+
+    # ── Console summary table ──────────────────────────────────────────────
+    print("\n" + "=" * 70)
+    print("  SUMMARY")
+    print("=" * 70)
+    hdr = f"{'Scenario':<20} {'VehMean':>9} {'VehSD':>8} {'PedMean':>9} {'PedSD':>8} {'JamAvg':>8}"
+    print(hdr)
+    print("-" * len(hdr))
+    for row in summary_rows:
+        print(
+            f"{row['Scenario']:<20} "
+            f"{row['Vehicle_WaitTime_Mean_s']:>9.2f} "
+            f"{row['Vehicle_WaitTime_SD_s']:>8.2f} "
+            f"{row['Pedestrian_WaitTime_Mean_s']:>9.2f} "
+            f"{row['Pedestrian_WaitTime_SD_s']:>8.2f} "
+            f"{row['Avg_JamLength_m']:>8.2f}"
+        )
+
+    print("\n" + "=" * 70)
+    print(f"  Summary CSV saved to: {summary_path}")
+    print("=" * 70 + "\n")
+
+
+if __name__ == "__main__":
+    main()

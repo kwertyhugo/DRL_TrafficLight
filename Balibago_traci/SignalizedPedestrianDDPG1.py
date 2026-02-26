@@ -80,13 +80,13 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', 'Balibago_traci/signalizedPed.sumocfg',
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Balibago_traci/output_DDPG/test_slow_stats.xml',
-    '--tripinfo-output', r'Balibago_traci/output_DDPG/test_slow_trips.xml'
+    '--statistic-output', r'Balibago_traci/output_DDPG/1_stats.xml',
+    '--tripinfo-output', r'Balibago_traci/output_DDPG/1_trips.xml'
 ]
 
 # ==========================================
