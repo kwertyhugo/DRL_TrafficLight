@@ -1,0 +1,247 @@
+import xml.etree.ElementTree as ET
+import numpy as np
+import pandas as pd
+import os
+
+def extract_timeloss_stats(tripinfo_file):
+    """Extract mean and std dev of timeLoss for vehicles and pedestrians separately"""
+    try:
+        tree = ET.parse(tripinfo_file)
+        root = tree.getroot()
+        
+        # Separate vehicles and pedestrians
+        vehicle_time_losses = []
+        pedestrian_time_losses = []
+        
+        # Extract from tripinfo (vehicles)
+        for trip in root.findall('tripinfo'):
+            time_loss = float(trip.get('timeLoss'))
+            vehicle_time_losses.append(time_loss)
+        
+        # Extract from personinfo (pedestrians)
+        for person in root.findall('personinfo'):
+            # Pedestrians have walks, not trips
+            for walk in person.findall('walk'):
+                time_loss = float(walk.get('timeLoss'))
+                pedestrian_time_losses.append(time_loss)
+        
+        # Calculate vehicle statistics
+        vehicle_stats = {
+            'vehicle_mean': np.mean(vehicle_time_losses) if vehicle_time_losses else None,
+            'vehicle_std': np.std(vehicle_time_losses) if vehicle_time_losses else None,
+            'vehicle_variance': np.var(vehicle_time_losses) if vehicle_time_losses else None,
+            'vehicle_count': len(vehicle_time_losses)
+        }
+        
+        # Calculate pedestrian statistics
+        pedestrian_stats = {
+            'pedestrian_mean': np.mean(pedestrian_time_losses) if pedestrian_time_losses else None,
+            'pedestrian_std': np.std(pedestrian_time_losses) if pedestrian_time_losses else None,
+            'pedestrian_variance': np.var(pedestrian_time_losses) if pedestrian_time_losses else None,
+            'pedestrian_count': len(pedestrian_time_losses)
+        }
+        
+        # Combine both
+        return {**vehicle_stats, **pedestrian_stats}
+        
+    except Exception as e:
+        print(f"Error processing {tripinfo_file}: {e}")
+        return {
+            'vehicle_mean': None, 'vehicle_std': None, 'vehicle_variance': None, 'vehicle_count': 0,
+            'pedestrian_mean': None, 'pedestrian_std': None, 'pedestrian_variance': None, 'pedestrian_count': 0
+        }
+
+# Define scenarios
+scenarios = ['Normal', 'Slow', 'Jam']
+
+# Process all files
+all_results = {}
+
+# A2C Baseline
+print("=" * 60)
+print("Processing A2C - Baseline Pedestrian Crossing...")
+print("=" * 60)
+for scenario in scenarios:
+    filepath = f'Olivarez_traci\\output_A2C_Baseline\\SP_A2C_Baseline_{scenario}_trips.xml'
+    
+    if os.path.exists(filepath):
+        key = f'A2C_Baseline_{scenario}'
+        print(f"Processing {key}...")
+        stats = extract_timeloss_stats(filepath)
+        all_results[key] = stats
+        
+        print(f"  Vehicles:")
+        print(f"    Count: {stats['vehicle_count']}")
+        if stats['vehicle_mean'] is not None:
+            print(f"    Mean: {stats['vehicle_mean']:.2f} seconds")
+            print(f"    Std Dev: {stats['vehicle_std']:.2f} seconds")
+        
+        print(f"  Pedestrians:")
+        print(f"    Count: {stats['pedestrian_count']}")
+        if stats['pedestrian_mean'] is not None:
+            print(f"    Mean: {stats['pedestrian_mean']:.2f} seconds")
+            print(f"    Std Dev: {stats['pedestrian_std']:.2f} seconds")
+        print()
+    else:
+        print(f"File not found: {filepath}\n")
+
+# A2C Signalized
+print("=" * 60)
+print("Processing A2C - Signalized Pedestrian Crossing...")
+print("=" * 60)
+for scenario in scenarios:
+    filepath = f'Olivarez_traci\\output_A2C\\SP_A2C_Unified_{scenario}_trips.xml'
+    
+    if os.path.exists(filepath):
+        key = f'A2C_Signalized_{scenario}'
+        print(f"Processing {key}...")
+        stats = extract_timeloss_stats(filepath)
+        all_results[key] = stats
+        
+        print(f"  Vehicles:")
+        print(f"    Count: {stats['vehicle_count']}")
+        if stats['vehicle_mean'] is not None:
+            print(f"    Mean: {stats['vehicle_mean']:.2f} seconds")
+            print(f"    Std Dev: {stats['vehicle_std']:.2f} seconds")
+        
+        print(f"  Pedestrians:")
+        print(f"    Count: {stats['pedestrian_count']}")
+        if stats['pedestrian_mean'] is not None:
+            print(f"    Mean: {stats['pedestrian_mean']:.2f} seconds")
+            print(f"    Std Dev: {stats['pedestrian_std']:.2f} seconds")
+        print()
+    else:
+        print(f"File not found: {filepath}\n")
+
+# Create DataFrame
+df = pd.DataFrame(all_results).T
+df_reset = df.reset_index()
+df_reset[['Algorithm', 'Crossing_Type', 'Scenario']] = df_reset['index'].str.split('_', n=2, expand=True)
+
+# Reorder columns
+df_reset = df_reset[['Algorithm', 'Crossing_Type', 'Scenario', 
+                      'vehicle_mean', 'vehicle_std', 'vehicle_count',
+                      'pedestrian_mean', 'pedestrian_std', 'pedestrian_count']]
+
+print("\n" + "=" * 60)
+print("COMPLETE RESULTS")
+print("=" * 60)
+print(df_reset.to_string(index=False))
+
+# Save to CSV
+df_reset.to_csv('olivarez_a2c_results_detailed.csv', index=False)
+print("\n✓ Results saved to 'olivarez_a2c_results_detailed.csv'")
+
+# Create separate vehicle and pedestrian tables
+print("\n" + "=" * 60)
+print("VEHICLE TIME LOSS COMPARISON")
+print("=" * 60)
+
+vehicle_comparison = []
+for scenario in scenarios:
+    baseline_data = df_reset[(df_reset['Crossing_Type'] == 'Baseline') & 
+                              (df_reset['Scenario'] == scenario)]
+    signalized_data = df_reset[(df_reset['Crossing_Type'] == 'Signalized') & 
+                                (df_reset['Scenario'] == scenario)]
+    
+    row = {
+        'Scenario': scenario,
+        'Baseline_Mean': baseline_data['vehicle_mean'].values[0] if len(baseline_data) > 0 else None,
+        'Baseline_Std': baseline_data['vehicle_std'].values[0] if len(baseline_data) > 0 else None,
+        'Signalized_Mean': signalized_data['vehicle_mean'].values[0] if len(signalized_data) > 0 else None,
+        'Signalized_Std': signalized_data['vehicle_std'].values[0] if len(signalized_data) > 0 else None,
+    }
+    
+    if row['Baseline_Mean'] is not None and row['Signalized_Mean'] is not None:
+        row['Improvement_%'] = ((row['Baseline_Mean'] - row['Signalized_Mean']) / 
+                                 row['Baseline_Mean'] * 100)
+    else:
+        row['Improvement_%'] = None
+    
+    vehicle_comparison.append(row)
+
+vehicle_df = pd.DataFrame(vehicle_comparison)
+print(vehicle_df.to_string(index=False))
+vehicle_df.to_csv('olivarez_a2c_vehicle_comparison.csv', index=False)
+
+print("\n" + "=" * 60)
+print("PEDESTRIAN TIME LOSS COMPARISON")
+print("=" * 60)
+
+pedestrian_comparison = []
+for scenario in scenarios:
+    baseline_data = df_reset[(df_reset['Crossing_Type'] == 'Baseline') & 
+                              (df_reset['Scenario'] == scenario)]
+    signalized_data = df_reset[(df_reset['Crossing_Type'] == 'Signalized') & 
+                                (df_reset['Scenario'] == scenario)]
+    
+    row = {
+        'Scenario': scenario,
+        'Baseline_Mean': baseline_data['pedestrian_mean'].values[0] if len(baseline_data) > 0 else None,
+        'Baseline_Std': baseline_data['pedestrian_std'].values[0] if len(baseline_data) > 0 else None,
+        'Signalized_Mean': signalized_data['pedestrian_mean'].values[0] if len(signalized_data) > 0 else None,
+        'Signalized_Std': signalized_data['pedestrian_std'].values[0] if len(signalized_data) > 0 else None,
+    }
+    
+    if row['Baseline_Mean'] is not None and row['Signalized_Mean'] is not None:
+        row['Improvement_%'] = ((row['Baseline_Mean'] - row['Signalized_Mean']) / 
+                                 row['Baseline_Mean'] * 100)
+    else:
+        row['Improvement_%'] = None
+    
+    pedestrian_comparison.append(row)
+
+pedestrian_df = pd.DataFrame(pedestrian_comparison)
+print(pedestrian_df.to_string(index=False))
+pedestrian_df.to_csv('olivarez_a2c_pedestrian_comparison.csv', index=False)
+
+# Create LaTeX tables
+print("\n" + "=" * 60)
+print("LATEX TABLE - VEHICLES")
+print("=" * 60)
+print("\n\\begin{table}[h]")
+print("\\centering")
+print("\\caption{A2C Vehicle Time Loss: Baseline vs Signalized - Olivarez Junction}")
+print("\\label{tab:olivarez_a2c_vehicle}")
+print("\\begin{tabular}{lcccc}")
+print("\\hline")
+print("Scenario & \\multicolumn{2}{c}{Baseline} & \\multicolumn{2}{c}{Signalized} \\\\")
+print("         & Mean (s) & SD (s) & Mean (s) & SD (s) \\\\")
+print("\\hline")
+
+for _, row in vehicle_df.iterrows():
+    if row['Baseline_Mean'] is not None and row['Signalized_Mean'] is not None:
+        print(f"{row['Scenario']:<12} & "
+              f"{row['Baseline_Mean']:>6.2f} & "
+              f"{row['Baseline_Std']:>6.2f} & "
+              f"{row['Signalized_Mean']:>6.2f} & "
+              f"{row['Signalized_Std']:>6.2f} \\\\")
+
+print("\\hline")
+print("\\end{tabular}")
+print("\\end{table}")
+
+print("\n" + "=" * 60)
+print("LATEX TABLE - PEDESTRIANS")
+print("=" * 60)
+print("\n\\begin{table}[h]")
+print("\\centering")
+print("\\caption{A2C Pedestrian Time Loss: Baseline vs Signalized - Olivarez Junction}")
+print("\\label{tab:olivarez_a2c_pedestrian}")
+print("\\begin{tabular}{lcccc}")
+print("\\hline")
+print("Scenario & \\multicolumn{2}{c}{Baseline} & \\multicolumn{2}{c}{Signalized} \\\\")
+print("         & Mean (s) & SD (s) & Mean (s) & SD (s) \\\\")
+print("\\hline")
+
+for _, row in pedestrian_df.iterrows():
+    if row['Baseline_Mean'] is not None and row['Signalized_Mean'] is not None:
+        print(f"{row['Scenario']:<12} & "
+              f"{row['Baseline_Mean']:>6.2f} & "
+              f"{row['Baseline_Std']:>6.2f} & "
+              f"{row['Signalized_Mean']:>6.2f} & "
+              f"{row['Signalized_Std']:>6.2f} \\\\")
+
+print("\\hline")
+print("\\end{tabular}")
+print("\\end{table}")
