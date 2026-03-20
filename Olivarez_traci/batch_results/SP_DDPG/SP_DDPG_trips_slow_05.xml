@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-03-20 21:38:29 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Olivarez_traci\network/map1.net.xml"/>
+        <route-files value="Olivarez_traci\demand_test\flows_slow_traffic_05.rou.xml"/>
+        <additional-files value="Olivarez_traci\additionals/map.poly.xml,Olivarez_traci\ additionals/detectors.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Olivarez_traci\batch_results\SP_DDPG\SP_DDPG_trips_slow_05.xml"/>
+        <statistic-output value="Olivarez_traci\batch_results\SP_DDPG\SP_DDPG_stats_slow_05.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="57123"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+    <personinfo id="pf_2.0" depart="0.00" type="ped" speedFactor="1.06" duration="23.20" waitingTime="0.00" timeLoss="2.42" traveltime="23.20">
+        <walk depart="0.00" departPos="15.09" arrival="23.20" arrivalPos="3.44" duration="23.20" routeLength="30.72" timeLoss="2.42" maxSpeed="1.48" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="D3_1.0" depart="15.30" departLane="140483224#1_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="63.20" arrivalLane="-440471861#0_2" arrivalPos="31.52" arrivalPosLat="0.00" arrivalSpeed="27.73" duration="47.90" routeLength="1064.97" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="7.99" rerouteNo="1" devices="tripinfo_D3_1.0 routing_D3_1.0" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <tripinfo id="A2_1.0" depart="8.90" departLane="-793339796#2_1" departPos="5.10" departPosLat="0.00" departSpeed="29.05" departDelay="0.00" arrival="74.40" arrivalLane="-440471861#0_1" arrivalPos="31.52" arrivalPosLat="0.00" arrivalSpeed="29.02" duration="65.50" routeLength="1081.27" waitingTime="11.60" waitingCount="2" stopTime="0.00" timeLoss="28.21" rerouteNo="1" devices="tripinfo_A2_1.0 routing_A2_1.0" vType="car" speedFactor="1.05" vaporized=""/>
+    <tripinfo id="A2_1.1" depart="16.40" departLane="-793339796#2_1" departPos="7.20" departPosLat="0.00" departSpeed="26.39" departDelay="0.00" arrival="82.20" arrivalLane="-440471861#0_2" arrivalPos="31.52" arrivalPosLat="0.00" arrivalSpeed="26.37" duration="65.80" routeLength="1079.17" waitingTime="6.60" waitingCount="1" stopTime="0.00" timeLoss="24.87" rerouteNo="1" devices="tripinfo_A2_1.1 routing_A2_1.1" vType="truck" speedFactor="0.95" vaporized=""/>

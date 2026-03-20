@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-03-20 21:38:26 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Olivarez_traci\network/baseline.net.xml"/>
+        <route-files value="Olivarez_traci\demand_test\flows_slow_traffic_01.rou.xml"/>
+        <additional-files value="Olivarez_traci\additionals/map.poly.xml,Olivarez_traci\ additionals/detectors.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Olivarez_traci\batch_results\BP_DDPG\BP_DDPG_trips_slow_01.xml"/>
+        <statistic-output value="Olivarez_traci\batch_results\BP_DDPG\BP_DDPG_stats_slow_01.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.05"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="57119"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
+    <personinfo id="pf_2.0" depart="0.00" type="ped" speedFactor="0.99" duration="24.85" waitingTime="0.00" timeLoss="2.57" traveltime="24.85">
+        <walk depart="0.00" departPos="15.09" arrival="24.85" arrivalPos="3.44" duration="24.85" routeLength="30.72" timeLoss="2.57" maxSpeed="1.38" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="pf_2.1" depart="22.40" type="ped" speedFactor="1.13" duration="21.70" waitingTime="0.00" timeLoss="2.07" traveltime="21.70">
+        <walk depart="22.40" departPos="15.09" arrival="44.10" arrivalPos="3.44" duration="21.70" routeLength="30.72" timeLoss="2.07" maxSpeed="1.57" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="D3_1.0" depart="7.65" departLane="140483224#1_2" departPos="5.10" departPosLat="0.00" departSpeed="28.78" departDelay="0.00" arrival="60.85" arrivalLane="-440471861#0_2" arrivalPos="31.52" arrivalPosLat="0.00" arrivalSpeed="28.75" duration="53.20" routeLength="1067.97" waitingTime="5.85" waitingCount="1" stopTime="0.00" timeLoss="14.64" rerouteNo="1" devices="tripinfo_D3_1.0 routing_D3_1.0" vType="car" speedFactor="1.04" vaporized=""/>
+    <tripinfo id="D1_1.0" depart="0.60" departLane="140483224#1_1" departPos="5.10" departPosLat="0.00" departSpeed="25.38" departDelay="0.00" arrival="80.25" arrivalLane="-793339796#2_2" arrivalPos="82.50" arrivalPosLat="0.00" arrivalSpeed="25.35" duration="79.65" routeLength="1648.38" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="12.08" rerouteNo="1" devices="tripinfo_D1_1.0 routing_D1_1.0" vType="car" speedFactor="0.91" vaporized=""/>
+    <tripinfo id="A2_1.1" depart="8.20" departLane="-793339796#2_1" departPos="5.10" departPosLat="0.00" departSpeed="30.59" departDelay="0.00" arrival="80.80" arrivalLane="-440471861#0_2" arrivalPos="31.52" arrivalPosLat="0.00" arrivalSpeed="30.58" duration="72.60" routeLength="1081.27" waitingTime="24.35" waitingCount="1" stopTime="0.00" timeLoss="37.22" rerouteNo="1" devices="tripinfo_A2_1.1 routing_A2_1.1" vType="car" speedFactor="1.10" vaporized=""/>
+    <personinfo id="pf_2.2" depart="44.75" type="ped" speedFactor="1.05" duration="42.55" waitingTime="19.20" timeLoss="21.52" traveltime="42.55">
+        <walk depart="44.75" departPos="15.09" arrival="87.30" arrivalPos="3.44" duration="42.55" routeLength="30.72" timeLoss="21.52" maxSpeed="1.46" waitingTime="19.20"/>
+    </personinfo>
+    <tripinfo id="A2_1.0" depart="4.45" departLane="-793339796#2_1" departPos="12.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="90.05" arrivalLane="-440471861#0_1" arrivalPos="31.52" arrivalPosLat="0.00" arrivalSpeed="27.76" duration="85.60" routeLength="1074.27" waitingTime="28.20" waitingCount="1" stopTime="0.00" timeLoss="46.89" rerouteNo="1" devices="tripinfo_A2_1.0 routing_A2_1.0" vType="bus" speedFactor="1.00" vaporized=""/>
+    <personinfo id="pf_2.3" depart="67.10" type="ped" speedFactor="0.91" duration="28.25" waitingTime="1.40" timeLoss="4.06" traveltime="28.25">
+        <walk depart="67.10" departPos="15.09" arrival="95.35" arrivalPos="3.44" duration="28.25" routeLength="30.72" timeLoss="4.06" maxSpeed="1.27" waitingTime="1.40"/>
+    </personinfo>
+    <personinfo id="pf_4.0" depart="0.00" type="ped" speedFactor="1.24" duration="95.60" waitingTime="0.00" timeLoss="9.54" traveltime="95.60">
+        <walk depart="0.00" departPos="25.00" arrival="46.50" arrivalPos="29.11" duration="46.50" routeLength="72.15" timeLoss="4.64" maxSpeed="1.72" waitingTime="0.00"/>
+        <walk depart="46.50" departPos="29.11" arrival="95.60" arrivalPos="29.05" duration="49.10" routeLength="76.20" timeLoss="4.90" maxSpeed="1.72" waitingTime="0.00"/>
+    </personinfo>
