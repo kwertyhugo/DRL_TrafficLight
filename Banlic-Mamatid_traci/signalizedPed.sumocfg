@@ -2,13 +2,11 @@
 
 <!-- generated on 2025-09-20 14:35:06 by Eclipse SUMO sumo Version 1.24.0-->
 
-
-
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
         <net-file value="network/banlic-mamatid_signalized.net.xml"/>
-        <route-files value="demand/flows_training.rou.xml"/>
+        <route-files value="demand/flows_traffic_jam.rou.xml"/>
         <additional-files value="additionals/banlic-mamatid.poly.xml, additionals/banlic-mamatid.add.xml"/>
     </input>
 

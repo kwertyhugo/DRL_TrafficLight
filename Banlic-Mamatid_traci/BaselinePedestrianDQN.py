@@ -38,8 +38,8 @@ Sumo_config = [
     '--step-length', '0.1',
     '--delay', '0',
     '--lateral-resolution', '0.1',
-    '--statistic-output', r'Banlic-Mamatid_traci/output_DQN/BP_DQN_stats_trafficjam.xml',
-    '--tripinfo-output', r'Banlic-Mamatid_traci/output_DQN/BP_DQN_trips_trafficjam.xml'
+    '--statistic-output', r'Banlic-Mamatid_traci/output_DQN/BP_DQN_stats_normaltraffic.xml',
+    '--tripinfo-output', r'Banlic-Mamatid_traci/output_DQN/BP_DQN_trips_normaltraffic.xml'
 ]
 
 # --- SIMULATION VARIABLES ---

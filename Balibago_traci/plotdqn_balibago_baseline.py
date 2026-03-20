@@ -4,12 +4,11 @@ import os
 import sys
 
 # --- Configuration ---
-INPUT_DIR = r'Balibago_traci\Plots'
+INPUT_DIR = r'Balibago_traci\output_DQN'
 
 FILES_TO_PLOT = {
-    'Baseline Agent': 'baseline_agent_history.csv',
-    'BP North Agent': 'BP_North_history.csv',
-    'BP Agent': 'BP_South_history.csv',
+    'Baseline North': 'BP_North_history.csv',
+    'Balibago Baseline Agent': 'BP_South_history.csv',
 }
 
 SMOOTHING_WINDOW = 15

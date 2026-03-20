@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    Unified Demand File — Aguinaldo Highway
+    AM Peak Demand File — Aguinaldo Highway
     ========================================
-    Simulation clock : 6:00 → 22:00
-    Simulation time  : t=0  → t=57600 (seconds offset from 06:00)
+    Simulation clock : 06:00 → 10:00
+    Simulation time  : t=0  → t=14400 (seconds offset from 06:00)
 
     Schedule:
       06:00–07:00  |  t=     0 –  3,600  |  SLOW         morning ramp-up
       07:00–09:00  |  t= 3,600 – 10,800  |  TRAFFIC JAM  AM peak
       09:00–10:00  |  t=10,800 – 14,400  |  SLOW         AM wind-down
-      10:00–17:00  |  t=14,400 – 39,600  |  NORMAL       midday off-peak
-      17:00–18:00  |  t=39,600 – 43,200  |  SLOW         evening ramp-up
-      18:00–20:00  |  t=43,200 – 50,400  |  TRAFFIC JAM  PM peak
-      20:00–21:00  |  t=50,400 – 54,000  |  SLOW         PM wind-down
-      21:00–22:00  |  t=54,000 – 57,600  |  NORMAL       late evening
 -->
 
 <routes>
@@ -61,8 +56,7 @@
             personCapacity="4"/>
     </vTypeDistribution>
 
-
-    <!-- ══════════════════════════════════════════════════════════════
+<!-- ══════════════════════════════════════════════════════════════
          06:00–07:00  |  t=0–3600  |  SLOW  (morning ramp-up)
     ══════════════════════════════════════════════════════════════ -->
 
