@@ -50,7 +50,7 @@ DEMAND_DIR     = 'Balibago_traci/demand_test'
 OUTPUT_DIR     = 'Balibago_traci/batch_results/BP_DQN'
 XLSX_OUT       = 'Balibago_traci/batch_results/BP_DQN_Results.xlsx'
 STEP_LENGTH    = 0.1
-MAX_STEPS      = 567000
+MAX_STEPS      = 42000
 METRIC_STEPS   = int(60 / STEP_LENGTH)
 
 DETECTOR_IDS   = [f"e2_{i}" for i in range(13)]

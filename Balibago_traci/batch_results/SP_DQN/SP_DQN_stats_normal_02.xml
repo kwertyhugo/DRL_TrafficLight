@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-03-20 21:38:30 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-03-20 22:16:22 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="57125"/>
+        <remote-port value="49679"/>
     </traci_server>
 
     <gui_only>
@@ -43,7 +43,7 @@
 -->
 
 <statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
-    <performance clockBegin="25257.81" clockEnd="25297.92" clockDuration="40.11" traciDuration="16.49" realTimeFactor="103.12" vehicleUpdatesPerSecond="13350.04" personUpdatesPerSecond="33802.02" begin="0.00" end="4136.30" duration="4136.30"/>
+    <performance clockBegin="27529.13" clockEnd="27567.98" clockDuration="38.84" traciDuration="16.22" realTimeFactor="106.48" vehicleUpdatesPerSecond="13785.14" personUpdatesPerSecond="34903.69" begin="0.00" end="4136.30" duration="4136.30"/>
     <vehicles loaded="254" inserted="254" running="0" waiting="0"/>
     <teleports total="0" jam="0" yield="0" wrongLane="0"/>
     <safety collisions="0" emergencyStops="0" emergencyBraking="0"/>

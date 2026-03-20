@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-03-20 21:39:11 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-03-20 22:17:01 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="60466"/>
+        <remote-port value="49707"/>
     </traci_server>
 
     <gui_only>
@@ -1220,3 +1220,104 @@
     <personinfo id="JollibeetoPureGold.27" depart="3037.50" type="ped" speedFactor="0.94" duration="629.50" waitingTime="95.60" timeLoss="149.37" traveltime="629.50">
         <walk depart="3037.50" departPos="10.42" arrival="3667.00" arrivalPos="5.00" duration="629.50" routeLength="627.84" timeLoss="149.37" maxSpeed="1.31" waitingTime="95.60"/>
     </personinfo>
+    <personinfo id="PalengketoTarget.27" depart="3240.00" type="ped" speedFactor="1.10" duration="428.60" waitingTime="0.50" timeLoss="43.59" traveltime="428.60">
+        <walk depart="3240.00" departPos="25.00" arrival="3668.60" arrivalPos="16.04" duration="428.60" routeLength="589.17" timeLoss="43.59" maxSpeed="1.53" waitingTime="0.50"/>
+    </personinfo>
+    <personinfo id="JollibeetoTarget.28" depart="3251.70" type="ped" speedFactor="1.02" duration="435.50" waitingTime="1.10" timeLoss="44.47" traveltime="435.50">
+        <walk depart="3251.70" departPos="10.42" arrival="3687.20" arrivalPos="16.04" duration="435.50" routeLength="555.05" timeLoss="44.47" maxSpeed="1.42" waitingTime="1.10"/>
+    </personinfo>
+    <personinfo id="PalengketoSTI.30" depart="3375.00" type="ped" speedFactor="0.94" duration="317.80" waitingTime="0.00" timeLoss="35.59" traveltime="317.80">
+        <walk depart="3375.00" departPos="25.00" arrival="3692.80" arrivalPos="19.02" duration="317.80" routeLength="369.14" timeLoss="35.59" maxSpeed="1.31" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="JollibeetoPalengke.31" depart="3600.00" type="ped" speedFactor="1.15" duration="109.00" waitingTime="0.00" timeLoss="10.91" traveltime="109.00">
+        <walk depart="3600.00" departPos="10.42" arrival="3709.00" arrivalPos="27.04" duration="109.00" routeLength="157.27" timeLoss="10.91" maxSpeed="1.60" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="JollibeetoSTI.28" depart="3475.90" type="ped" speedFactor="1.08" duration="247.30" waitingTime="0.00" timeLoss="24.47" traveltime="247.30">
+        <walk depart="3475.90" departPos="10.42" arrival="3723.20" arrivalPos="19.02" duration="247.30" routeLength="335.01" timeLoss="24.47" maxSpeed="1.50" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="TargettoSakayan.27" depart="3240.00" type="ped" speedFactor="0.99" duration="483.30" waitingTime="0.00" timeLoss="48.51" traveltime="483.30">
+        <walk depart="3240.00" departPos="25.00" arrival="3723.30" arrivalPos="27.04" duration="483.30" routeLength="596.09" timeLoss="48.51" maxSpeed="1.37" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="PalengketoJollibee.28" depart="3600.00" type="ped" speedFactor="0.93" duration="142.10" waitingTime="0.00" timeLoss="14.32" traveltime="142.10">
+        <walk depart="3600.00" departPos="25.00" arrival="3742.10" arrivalPos="5.21" duration="142.10" routeLength="164.52" timeLoss="14.32" maxSpeed="1.29" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="CalambatoBalibago.18" depart="3595.90" departLane="185930141#0_2" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="3765.70" arrivalLane="89908334_1" arrivalPos="36.84" arrivalPosLat="0.00" arrivalSpeed="8.90" duration="169.80" routeLength="908.17" waitingTime="99.40" waitingCount="1" stopTime="0.00" timeLoss="128.56" rerouteNo="1" devices="tripinfo_CalambatoBalibago.18 routing_CalambatoBalibago.18" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="PuregoldtoSakayan.24" depart="3085.80" type="ped" speedFactor="1.18" duration="690.50" waitingTime="247.50" timeLoss="292.33" traveltime="690.50">
+        <walk depart="3085.80" departPos="9.99" arrival="3776.30" arrivalPos="27.04" duration="690.50" routeLength="654.93" timeLoss="292.33" maxSpeed="1.64" waitingTime="247.50"/>
+    </personinfo>
+    <personinfo id="STItoSakayan.30" depart="3483.90" type="ped" speedFactor="0.99" duration="301.60" waitingTime="0.00" timeLoss="30.30" traveltime="301.60">
+        <walk depart="3483.90" departPos="25.00" arrival="3785.50" arrivalPos="27.04" duration="301.60" routeLength="373.08" timeLoss="30.30" maxSpeed="1.38" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="BiñantoCalamba.16" depart="3569.40" departLane="553887793#0_1" departPos="8.10" departPosLat="0.00" departSpeed="27.78" departDelay="0.00" arrival="3790.50" arrivalLane="-185930141#0_1" arrivalPos="428.88" arrivalPosLat="0.00" arrivalSpeed="27.73" duration="221.10" routeLength="1504.67" waitingTime="126.00" waitingCount="2" stopTime="0.00" timeLoss="166.92" rerouteNo="1" devices="tripinfo_BiñantoCalamba.16 routing_BiñantoCalamba.16" vType="jeep" speedFactor="1.00" vaporized=""/>
+    <personinfo id="PuregoldtoSakayan.26" depart="3342.90" type="ped" speedFactor="1.16" duration="452.10" waitingTime="0.00" timeLoss="45.84" traveltime="452.10">
+        <walk depart="3342.90" departPos="9.99" arrival="3795.00" arrivalPos="27.04" duration="452.10" routeLength="654.93" timeLoss="45.84" maxSpeed="1.61" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="JollibeetoPureGold.28" depart="3150.00" type="ped" speedFactor="1.10" duration="648.70" waitingTime="193.50" timeLoss="238.94" traveltime="648.70">
+        <walk depart="3150.00" departPos="10.42" arrival="3798.70" arrivalPos="5.00" duration="648.70" routeLength="627.84" timeLoss="238.94" maxSpeed="1.53" waitingTime="193.50"/>
+    </personinfo>
+    <tripinfo id="BiñantoStaRosa.14" depart="3458.60" departLane="553887793#0_1" departPos="2.30" departPosLat="0.00" departSpeed="34.78" departDelay="0.00" arrival="3802.60" arrivalLane="-92878383#0_1" arrivalPos="603.68" arrivalPosLat="-0.00" arrivalSpeed="10.29" duration="344.00" routeLength="1788.75" waitingTime="213.40" waitingCount="1" stopTime="0.00" timeLoss="220.72" rerouteNo="1" devices="tripinfo_BiñantoStaRosa.14 routing_BiñantoStaRosa.14" vType="motorcycle" speedFactor="1.25" vaporized=""/>
+    <personinfo id="JollibeetoTarget.29" depart="3367.80" type="ped" speedFactor="1.02" duration="438.10" waitingTime="1.10" timeLoss="45.03" traveltime="438.10">
+        <walk depart="3367.80" departPos="10.42" arrival="3805.90" arrivalPos="16.04" duration="438.10" routeLength="555.05" timeLoss="45.03" maxSpeed="1.41" waitingTime="1.10"/>
+    </personinfo>
+    <personinfo id="JollibeetoPureGold.29" depart="3262.50" type="ped" speedFactor="1.03" duration="547.70" waitingTime="60.50" timeLoss="109.42" traveltime="547.70">
+        <walk depart="3262.50" departPos="10.42" arrival="3810.20" arrivalPos="5.00" duration="547.70" routeLength="627.84" timeLoss="109.42" maxSpeed="1.43" waitingTime="60.50"/>
+    </personinfo>
+    <personinfo id="PalengketoSTI.31" depart="3487.50" type="ped" speedFactor="0.92" duration="323.10" waitingTime="0.00" timeLoss="32.95" traveltime="323.10">
+        <walk depart="3487.50" departPos="25.00" arrival="3810.60" arrivalPos="19.02" duration="323.10" routeLength="369.14" timeLoss="32.95" maxSpeed="1.27" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="PalengketoPuregold.28" depart="3251.70" type="ped" speedFactor="1.02" duration="560.20" waitingTime="43.00" timeLoss="94.76" traveltime="560.20">
+        <walk depart="3251.70" departPos="25.00" arrival="3811.90" arrivalPos="5.00" duration="560.20" routeLength="661.97" timeLoss="94.76" maxSpeed="1.42" waitingTime="43.00"/>
+    </personinfo>
+    <tripinfo id="StaRosatoBiñan.18" depart="3595.80" departLane="92878383#0_1" departPos="5.10" departPosLat="0.00" departSpeed="8.20" departDelay="0.00" arrival="3818.90" arrivalLane="-553887793#0_1" arrivalPos="201.31" arrivalPosLat="-0.00" arrivalSpeed="27.32" duration="223.10" routeLength="1607.72" waitingTime="69.10" waitingCount="1" stopTime="0.00" timeLoss="80.29" rerouteNo="1" devices="tripinfo_StaRosatoBiñan.18 routing_StaRosatoBiñan.18" vType="car" speedFactor="0.98" vaporized=""/>
+    <personinfo id="PalengketoPuregold.27" depart="3135.50" type="ped" speedFactor="0.99" duration="683.80" waitingTime="148.80" timeLoss="202.22" traveltime="683.80">
+        <walk depart="3135.50" departPos="25.00" arrival="3819.30" arrivalPos="5.00" duration="683.80" routeLength="661.97" timeLoss="202.22" maxSpeed="1.37" waitingTime="148.80"/>
+    </personinfo>
+    <personinfo id="TargettoSakayan.28" depart="3360.00" type="ped" speedFactor="0.99" duration="481.20" waitingTime="0.00" timeLoss="48.25" traveltime="481.20">
+        <walk depart="3360.00" departPos="25.00" arrival="3841.20" arrivalPos="27.04" duration="481.20" routeLength="596.09" timeLoss="48.25" maxSpeed="1.38" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="StaRosatoNuvali.15" depart="3584.80" departLane="92878383#0_1" departPos="5.10" departPosLat="0.00" departSpeed="8.09" departDelay="0.00" arrival="3854.60" arrivalLane="145507700#3_1" arrivalPos="783.31" arrivalPosLat="0.00" arrivalSpeed="26.87" duration="269.80" routeLength="2445.86" waitingTime="80.30" waitingCount="1" stopTime="0.00" timeLoss="94.49" rerouteNo="1" devices="tripinfo_StaRosatoNuvali.15 routing_StaRosatoNuvali.15" vType="car" speedFactor="0.97" vaporized=""/>
+    <personinfo id="PuregoldtoSakayan.25" depart="3214.30" type="ped" speedFactor="0.89" duration="670.00" waitingTime="80.70" timeLoss="140.17" traveltime="670.00">
+        <walk depart="3214.30" departPos="9.99" arrival="3884.30" arrivalPos="27.04" duration="670.00" routeLength="654.93" timeLoss="140.17" maxSpeed="1.24" waitingTime="80.70"/>
+    </personinfo>
+    <personinfo id="STItoSakayan.31" depart="3600.00" type="ped" speedFactor="0.97" duration="307.70" waitingTime="0.00" timeLoss="30.49" traveltime="307.70">
+        <walk depart="3600.00" departPos="25.00" arrival="3907.70" arrivalPos="27.04" duration="307.70" routeLength="373.08" timeLoss="30.49" maxSpeed="1.35" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="PalengketoTarget.29" depart="3480.00" type="ped" speedFactor="1.09" duration="433.00" waitingTime="0.00" timeLoss="43.07" traveltime="433.00">
+        <walk depart="3480.00" departPos="25.00" arrival="3913.00" arrivalPos="16.04" duration="433.00" routeLength="589.17" timeLoss="43.07" maxSpeed="1.51" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="PalengketoTarget.28" depart="3360.00" type="ped" speedFactor="0.83" duration="565.50" waitingTime="0.00" timeLoss="55.88" traveltime="565.50">
+        <walk depart="3360.00" departPos="25.00" arrival="3925.50" arrivalPos="16.04" duration="565.50" routeLength="589.17" timeLoss="55.88" maxSpeed="1.16" waitingTime="0.00"/>
+    </personinfo>
+    <personinfo id="TargettoSakayan.29" depart="3480.00" type="ped" speedFactor="1.05" duration="455.40" waitingTime="0.00" timeLoss="45.72" traveltime="455.40">
+        <walk depart="3480.00" departPos="25.00" arrival="3935.40" arrivalPos="27.04" duration="455.40" routeLength="596.09" timeLoss="45.72" maxSpeed="1.46" waitingTime="0.00"/>
+    </personinfo>
+    <tripinfo id="StaRosatoCalamba.17" depart="3421.00" departLane="92878383#0_1" departPos="5.10" departPosLat="0.00" departSpeed="7.73" departDelay="0.00" arrival="3943.80" arrivalLane="-185930141#0_1" arrivalPos="428.88" arrivalPosLat="-0.00" arrivalSpeed="25.76" duration="522.80" routeLength="1855.46" waitingTime="337.40" waitingCount="3" stopTime="0.00" timeLoss="361.59" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.17 routing_StaRosatoCalamba.17" vType="car" speedFactor="0.93" vaporized=""/>
+    <tripinfo id="StaRosatoCalamba.18" depart="3467.60" departLane="92878383#0_1" departPos="7.20" departPosLat="0.00" departSpeed="7.74" departDelay="0.00" arrival="3950.30" arrivalLane="-185930141#0_1" arrivalPos="428.88" arrivalPosLat="-0.00" arrivalSpeed="25.79" duration="482.70" routeLength="1853.36" waitingTime="284.80" waitingCount="2" stopTime="0.00" timeLoss="321.80" rerouteNo="1" devices="tripinfo_StaRosatoCalamba.18 routing_StaRosatoCalamba.18" vType="truck" speedFactor="0.93" vaporized=""/>
+    <personinfo id="JollibeetoPureGold.30" depart="3375.00" type="ped" speedFactor="1.02" duration="597.00" waitingTime="106.40" timeLoss="155.29" traveltime="597.00">
+        <walk depart="3375.00" departPos="10.42" arrival="3972.00" arrivalPos="5.00" duration="597.00" routeLength="627.84" timeLoss="155.29" maxSpeed="1.42" waitingTime="106.40"/>
+    </personinfo>
+    <personinfo id="PalengketoPuregold.29" depart="3367.80" type="ped" speedFactor="1.01" duration="607.40" waitingTime="82.10" timeLoss="135.83" traveltime="607.40">
+        <walk depart="3367.80" departPos="25.00" arrival="3975.20" arrivalPos="5.00" duration="607.40" routeLength="661.97" timeLoss="135.83" maxSpeed="1.40" waitingTime="82.10"/>
+    </personinfo>
+    <personinfo id="JollibeetoTarget.30" depart="3483.90" type="ped" speedFactor="0.89" duration="498.80" waitingTime="0.60" timeLoss="50.68" traveltime="498.80">
+        <walk depart="3483.90" departPos="10.42" arrival="3982.70" arrivalPos="16.04" duration="498.80" routeLength="555.05" timeLoss="50.68" maxSpeed="1.24" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="PuregoldtoSakayan.27" depart="3471.50" type="ped" speedFactor="1.02" duration="633.80" waitingTime="121.20" timeLoss="172.40" traveltime="633.80">
+        <walk depart="3471.50" departPos="9.99" arrival="4105.30" arrivalPos="27.04" duration="633.80" routeLength="654.93" timeLoss="172.40" maxSpeed="1.42" waitingTime="121.20"/>
+    </personinfo>
+    <personinfo id="JollibeetoPureGold.31" depart="3487.50" type="ped" speedFactor="1.06" duration="639.30" waitingTime="165.30" timeLoss="213.21" traveltime="639.30">
+        <walk depart="3487.50" departPos="10.42" arrival="4126.80" arrivalPos="5.00" duration="639.30" routeLength="627.84" timeLoss="213.21" maxSpeed="1.47" waitingTime="165.30"/>
+    </personinfo>
+    <personinfo id="PalengketoPuregold.31" depart="3600.00" type="ped" speedFactor="1.04" duration="530.30" waitingTime="16.70" timeLoss="72.24" traveltime="530.30">
+        <walk depart="3600.00" departPos="25.00" arrival="4130.30" arrivalPos="5.00" duration="530.30" routeLength="661.97" timeLoss="72.24" maxSpeed="1.45" waitingTime="16.70"/>
+    </personinfo>
+    <personinfo id="JollibeetoTarget.31" depart="3600.00" type="ped" speedFactor="0.83" duration="533.50" waitingTime="0.60" timeLoss="54.09" traveltime="533.50">
+        <walk depart="3600.00" departPos="10.42" arrival="4133.50" arrivalPos="16.04" duration="533.50" routeLength="555.05" timeLoss="54.09" maxSpeed="1.16" waitingTime="0.60"/>
+    </personinfo>
+    <personinfo id="PalengketoPuregold.30" depart="3483.90" type="ped" speedFactor="0.97" duration="658.50" waitingTime="113.50" timeLoss="168.46" traveltime="658.50">
+        <walk depart="3483.90" departPos="25.00" arrival="4142.40" arrivalPos="5.00" duration="658.50" routeLength="661.97" timeLoss="168.46" maxSpeed="1.35" waitingTime="113.50"/>
+    </personinfo>
+    <personinfo id="PuregoldtoSakayan.28" depart="3600.00" type="ped" speedFactor="0.96" duration="573.30" waitingTime="30.60" timeLoss="84.39" traveltime="573.30">
+        <walk depart="3600.00" departPos="9.99" arrival="4173.30" arrivalPos="27.04" duration="573.30" routeLength="654.93" timeLoss="84.39" maxSpeed="1.34" waitingTime="30.60"/>
+    </personinfo>
+</tripinfos>

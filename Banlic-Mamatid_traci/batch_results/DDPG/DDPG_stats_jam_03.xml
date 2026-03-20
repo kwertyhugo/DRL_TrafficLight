@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-03-21 01:08:50 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Banlic-Mamatid_traci/network/banlic-mamatid_signalized.net.xml"/>
+        <route-files value="Banlic-Mamatid_traci/demand_test\flows_jam_traffic_03.rou.xml"/>
+        <additional-files value="Banlic-Mamatid_traci/additionals/banlic-mamatid.poly.xml,Banlic-Mamatid_traci/ additionals/banlic-mamatid.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Banlic-Mamatid_traci/batch_results/DDPG\DDPG_trips_jam_03.xml"/>
+        <statistic-output value="Banlic-Mamatid_traci/batch_results/DDPG\DDPG_stats_jam_03.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="55980"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="37877.45" clockEnd="38952.75" clockDuration="1075.30" traciDuration="76.87" realTimeFactor="5.55" vehicleUpdatesPerSecond="14113.43" personUpdatesPerSecond="1660.53" begin="0.00" end="5963.80" duration="5963.80"/>
+    <vehicles loaded="2118" inserted="2118" running="0" waiting="0"/>
+    <teleports total="13" jam="10" yield="3" wrongLane="0"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="20"/>
+    <persons loaded="885" running="0" jammed="89"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+    <vehicleTripStatistics count="2118" routeLength="2584.04" speed="7.25" duration="716.53" waitingTime="465.45" timeLoss="582.94" departDelay="120.61" departDelayWaiting="-1.00" totalTravelTime="1517616.80" totalDepartDelay="255449.40"/>
+    <pedestrianStatistics number="885" routeLength="78.48" duration="201.76" timeLoss="145.16"/>
+    <rideStatistics number="0"/>
+    <transportStatistics number="0"/>
+</statistics>
