@@ -14,18 +14,6 @@ os.makedirs('./Balibago_traci/output_NoDRL_baseline', exist_ok=True)
 # === SCENARIOS ===
 scenarios = [
     {
-        'name'      : 'normal',
-        'route_file': 'Balibago_traci/demand/flows_normal_traffic.rou.xml',
-        'stats'     : 'Balibago_traci/output_NoDRL_baseline/SD_NoDRL_baseline_normal_stats.xml',
-        'trips'     : 'Balibago_traci/output_NoDRL_baseline/SD_NoDRL_baseline_normal_trips.xml',
-    },
-    {
-        'name'      : 'slow',
-        'route_file': 'Balibago_traci/demand/flows_slow_traffic.rou.xml',
-        'stats'     : 'Balibago_traci/output_NoDRL_baseline/SD_NoDRL_baseline_slow_stats.xml',
-        'trips'     : 'Balibago_traci/output_NoDRL_baseline/SD_NoDRL_baseline_slow_trips.xml',
-    },
-    {
         'name'      : 'jam',
         'route_file': 'Balibago_traci/demand/flows_jam_traffic.rou.xml',
         'stats'     : 'Balibago_traci/output_NoDRL_baseline/SD_NoDRL_baseline_jam_stats.xml',
@@ -241,15 +229,15 @@ def run_scenario(scenario):
     return results
 
 
-# === RUN ALL SCENARIOS ===
+# === RUN JAM SCENARIO ONLY ===
 all_results = []
 for scenario in scenarios:
     result = run_scenario(scenario)
     all_results.append(result)
 
-# === FINAL SUMMARY ACROSS ALL SCENARIOS ===
+# === FINAL SUMMARY ===
 print("\n" + "=" * 70)
-print("ALL SCENARIOS COMPLETE - SUMMARY")
+print("SIMULATION COMPLETE - JAM TRAFFIC SUMMARY")
 print("=" * 70)
 print(f"{'Scenario':<10} {'Jam (m)':<12} {'Throughput':<14} {'N Jam (m)':<12} {'S Jam (m)':<12}")
 print(f"{'─'*60}")

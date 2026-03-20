@@ -124,7 +124,7 @@ print("Testing Scenario: JAM TRAFFIC")
 print("=" * 70)
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', 'Balibago_traci/signalizedPed.sumocfg',
     '--route-files', 'Balibago_traci/demand/flows_jam_traffic.rou.xml',
     '--step-length', '0.1',

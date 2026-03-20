@@ -37,7 +37,7 @@ MainAgent.model_dir = './Banlic-Mamatid_traci/models_A2C/'
 # === OPTIONAL: CONTINUE TRAINING FROM SAVED MODELS ===
 CONTINUE_TRAINING = True  # Start fresh — previous model collapsed to near-zero adjustment policy
 
-if CONTINUE_TRAINING:
+if CONTINUE_py:
     try:
         print("\n" + "=" * 70)
         print("Attempting to load existing models for continued training...")

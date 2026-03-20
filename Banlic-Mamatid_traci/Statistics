@@ -1,0 +1,484 @@
+"""
+COMPREHENSIVE STATISTICAL ANALYSIS OF DRL TRAFFIC RESULTS
+Analyzing Vehicle Time Loss & Pedestrian Time Loss
+Across three road locations: Olivarez, Balibago, Banlic-Mamatid
+"""
+
+import pandas as pd
+import numpy as np
+from scipy import stats
+from scipy.stats import shapiro, kruskal, f_oneway
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+import warnings
+warnings.filterwarnings('ignore')
+
+print("="*80)
+print("STATISTICAL ANALYSIS: VEHICLE & PEDESTRIAN TIME LOSS")
+print("="*80)
+print()
+
+# ============================================================================
+# LOAD AND STRUCTURE DATA
+# ============================================================================
+
+# Create comprehensive dataset
+all_data = []
+
+# ========== OLIVAREZ - BASELINE ==========
+all_data.extend([
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Type': 'Baseline', 
+     'Vehicle_Time_Loss': 68.74, 'Pedestrian_Time_Loss': 84.49},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 56.75, 'Pedestrian_Time_Loss': 18.20},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 38.09, 'Pedestrian_Time_Loss': 14.86},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 95.66, 'Pedestrian_Time_Loss': 93.59},
+    
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 65.15, 'Pedestrian_Time_Loss': 74.03},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 76.08, 'Pedestrian_Time_Loss': 21.25},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 64.31, 'Pedestrian_Time_Loss': 18.98},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 65.35, 'Pedestrian_Time_Loss': 91.69},
+    
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 107.2, 'Pedestrian_Time_Loss': 20.14},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 168.17, 'Pedestrian_Time_Loss': 22.83},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 195.44, 'Pedestrian_Time_Loss': 19.81},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 133.26, 'Pedestrian_Time_Loss': 80.69},
+])
+
+# ========== OLIVAREZ - SIGNALIZED ==========
+all_data.extend([
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 68.74, 'Pedestrian_Time_Loss': 86.69},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 28.89, 'Pedestrian_Time_Loss': 32.34},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 29.08, 'Pedestrian_Time_Loss': 31.80},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 38.85, 'Pedestrian_Time_Loss': 50.76},
+    
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 120.40, 'Pedestrian_Time_Loss': 90.39},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 44.90, 'Pedestrian_Time_Loss': 34.14},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 54.36, 'Pedestrian_Time_Loss': 33.90},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 54.81, 'Pedestrian_Time_Loss': 49.80},
+    
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 68.74, 'Pedestrian_Time_Loss': 82.66},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 203.12, 'Pedestrian_Time_Loss': 31.82},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 224.76, 'Pedestrian_Time_Loss': 35.13},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 237.69, 'Pedestrian_Time_Loss': 37.68},
+])
+
+# ========== BALIBAGO - BASELINE ==========
+all_data.extend([
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 96.44, 'Pedestrian_Time_Loss': 156.66},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 261.94, 'Pedestrian_Time_Loss': 159.97},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 95.14, 'Pedestrian_Time_Loss': 161.83},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 79.98, 'Pedestrian_Time_Loss': 140.74},
+    
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 101.46, 'Pedestrian_Time_Loss': 362.69},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 369.97, 'Pedestrian_Time_Loss': 1600.11},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 101.05, 'Pedestrian_Time_Loss': 395.29},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 85.77, 'Pedestrian_Time_Loss': 27.52},
+    
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 103.92, 'Pedestrian_Time_Loss': 3909.62},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 992.55, 'Pedestrian_Time_Loss': 4041.65},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 115.16, 'Pedestrian_Time_Loss': 457.41},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Type': 'Baseline',
+     'Vehicle_Time_Loss': 104.20, 'Pedestrian_Time_Loss': 2345.07},
+])
+
+# ========== BALIBAGO - SIGNALIZED ==========
+all_data.extend([
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 105.0, 'Pedestrian_Time_Loss': 69.21},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 103.1, 'Pedestrian_Time_Loss': 71.07},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 103.48, 'Pedestrian_Time_Loss': 67.97},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 86.59, 'Pedestrian_Time_Loss': 86.59},
+    
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 105.5, 'Pedestrian_Time_Loss': 1098.2},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 116.58, 'Pedestrian_Time_Loss': 482.49},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 114.23, 'Pedestrian_Time_Loss': 90.42},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 87.45, 'Pedestrian_Time_Loss': 2114.59},
+    
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 122.91, 'Pedestrian_Time_Loss': 2570.66},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 158.11, 'Pedestrian_Time_Loss': 397.98},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 172.12, 'Pedestrian_Time_Loss': 273.36},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 126.64, 'Pedestrian_Time_Loss': 2096.66},
+])
+
+# ========== BANLIC - SIGNALIZED ONLY ==========
+all_data.extend([
+    {'Location': 'Banlic', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 70.79, 'Pedestrian_Time_Loss': 128.16},
+    {'Location': 'Banlic', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 96.54, 'Pedestrian_Time_Loss': 160.17},
+    {'Location': 'Banlic', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 48.26, 'Pedestrian_Time_Loss': 98.92},
+    {'Location': 'Banlic', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 64.24, 'Pedestrian_Time_Loss': 169.70},
+    
+    {'Location': 'Banlic', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 111.58, 'Pedestrian_Time_Loss': 140.67},
+    {'Location': 'Banlic', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 88.25, 'Pedestrian_Time_Loss': 118.25},
+    {'Location': 'Banlic', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 262.16, 'Pedestrian_Time_Loss': 99.68},
+    {'Location': 'Banlic', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 338.04, 'Pedestrian_Time_Loss': 157.62},
+    
+    {'Location': 'Banlic', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 643.49, 'Pedestrian_Time_Loss': 142.94},
+    {'Location': 'Banlic', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 440.6, 'Pedestrian_Time_Loss': 160.98},
+    {'Location': 'Banlic', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 685.76, 'Pedestrian_Time_Loss': 101.18},
+    {'Location': 'Banlic', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Type': 'Signalized',
+     'Vehicle_Time_Loss': 609.01, 'Pedestrian_Time_Loss': 170.25},
+])
+
+df = pd.DataFrame(all_data)
+
+print("Dataset loaded successfully!")
+print(f"Total observations: {len(df)}")
+print(f"Locations: {df['Location'].unique()}")
+print(f"Algorithms: {df['Algorithm'].unique()}")
+print()
+
+# ============================================================================
+# DESCRIPTIVE STATISTICS
+# ============================================================================
+
+print("="*80)
+print("PART 1: DESCRIPTIVE STATISTICS")
+print("="*80)
+print()
+
+print("VEHICLE TIME LOSS by Location:")
+print(df.groupby('Location')['Vehicle_Time_Loss'].agg(['count', 'mean', 'std', 'min', 'max']))
+print()
+
+print("VEHICLE TIME LOSS by Algorithm:")
+print(df.groupby('Algorithm')['Vehicle_Time_Loss'].agg(['count', 'mean', 'std', 'min', 'max']))
+print()
+
+print("PEDESTRIAN TIME LOSS by Location:")
+print(df.groupby('Location')['Pedestrian_Time_Loss'].agg(['count', 'mean', 'std', 'min', 'max']))
+print()
+
+print("PEDESTRIAN TIME LOSS by Algorithm:")
+print(df.groupby('Algorithm')['Pedestrian_Time_Loss'].agg(['count', 'mean', 'std', 'min', 'max']))
+print()
+
+# ============================================================================
+# NORMALITY TESTS
+# ============================================================================
+
+print("="*80)
+print("PART 2: NORMALITY TESTS (Shapiro-Wilk)")
+print("="*80)
+print()
+
+print("Testing VEHICLE TIME LOSS normality:")
+for location in df['Location'].unique():
+    data_subset = df[df['Location'] == location]['Vehicle_Time_Loss']
+    stat, p = shapiro(data_subset)
+    result = "NORMAL" if p > 0.05 else "NOT NORMAL"
+    print(f"  {location:15s}: W={stat:.4f}, p={p:.4f} → {result}")
+print()
+
+print("Testing PEDESTRIAN TIME LOSS normality:")
+for location in df['Location'].unique():
+    data_subset = df[df['Location'] == location]['Pedestrian_Time_Loss']
+    stat, p = shapiro(data_subset)
+    result = "NORMAL" if p > 0.05 else "NOT NORMAL"
+    print(f"  {location:15s}: W={stat:.4f}, p={p:.4f} → {result}")
+print()
+
+print("⚠️ If data is NOT normal → Use Kruskal-Wallis (non-parametric)")
+print()
+
+# ============================================================================
+# ANALYSIS: VEHICLE TIME LOSS
+# ============================================================================
+
+print("="*80)
+print("PART 3: VEHICLE TIME LOSS ANALYSIS")
+print("="*80)
+print()
+
+# Two-way ANOVA for Vehicle Time Loss
+print("Two-Way ANOVA: Location × Algorithm (Vehicle Time Loss)")
+print("-" * 80)
+formula = 'Vehicle_Time_Loss ~ C(Location) + C(Algorithm) + C(Location):C(Algorithm)'
+model_vehicle = ols(formula, data=df).fit()
+anova_vehicle = sm.stats.anova_lm(model_vehicle, typ=2)
+print(anova_vehicle)
+print()
+
+# Interpret
+location_p = anova_vehicle.loc['C(Location)', 'PR(>F)']
+algorithm_p = anova_vehicle.loc['C(Algorithm)', 'PR(>F)']
+interaction_p = anova_vehicle.loc['C(Location):C(Algorithm)', 'PR(>F)']
+
+print("Interpretation:")
+if location_p < 0.05:
+    print(f"  ✓ LOCATION effect is SIGNIFICANT (p = {location_p:.4f})")
+else:
+    print(f"  ✗ LOCATION effect is NOT significant (p = {location_p:.4f})")
+    
+if algorithm_p < 0.05:
+    print(f"  ✓ ALGORITHM effect is SIGNIFICANT (p = {algorithm_p:.4f})")
+else:
+    print(f"  ✗ ALGORITHM effect is NOT significant (p = {algorithm_p:.4f})")
+    
+if interaction_p < 0.05:
+    print(f"  ✓ INTERACTION is SIGNIFICANT (p = {interaction_p:.4f})")
+else:
+    print(f"  ✗ INTERACTION is NOT significant (p = {interaction_p:.4f})")
+print()
+
+# Kruskal-Wallis (non-parametric)
+print("Kruskal-Wallis Test (Vehicle Time Loss):")
+print("-" * 80)
+olivarez_v = df[df['Location'] == 'Olivarez']['Vehicle_Time_Loss']
+balibago_v = df[df['Location'] == 'Balibago']['Vehicle_Time_Loss']
+banlic_v = df[df['Location'] == 'Banlic']['Vehicle_Time_Loss']
+
+H, p = kruskal(olivarez_v, balibago_v, banlic_v)
+print(f"  Across Locations: H = {H:.4f}, p = {p:.4f}")
+if p < 0.05:
+    print("  → Locations differ significantly")
+else:
+    print("  → No significant difference across locations")
+print()
+
+nodrl_v = df[df['Algorithm'] == 'No DRL']['Vehicle_Time_Loss']
+dqn_v = df[df['Algorithm'] == 'DQN']['Vehicle_Time_Loss']
+a2c_v = df[df['Algorithm'] == 'A2C']['Vehicle_Time_Loss']
+ddpg_v = df[df['Algorithm'] == 'DDPG']['Vehicle_Time_Loss']
+
+H, p = kruskal(nodrl_v, dqn_v, a2c_v, ddpg_v)
+print(f"  Across Algorithms: H = {H:.4f}, p = {p:.4f}")
+if p < 0.05:
+    print("  → Algorithms differ significantly")
+else:
+    print("  → No significant difference across algorithms")
+print()
+
+# Post-hoc for Vehicle
+print("Post-hoc Tukey HSD (Vehicle Time Loss - Location):")
+tukey_v_loc = pairwise_tukeyhsd(df['Vehicle_Time_Loss'], df['Location'], alpha=0.05)
+print(tukey_v_loc)
+print()
+
+# ============================================================================
+# ANALYSIS: PEDESTRIAN TIME LOSS  
+# ============================================================================
+
+print("="*80)
+print("PART 4: PEDESTRIAN TIME LOSS ANALYSIS")
+print("="*80)
+print()
+
+# Two-way ANOVA for Pedestrian Time Loss
+print("Two-Way ANOVA: Location × Algorithm (Pedestrian Time Loss)")
+print("-" * 80)
+formula = 'Pedestrian_Time_Loss ~ C(Location) + C(Algorithm) + C(Location):C(Algorithm)'
+model_ped = ols(formula, data=df).fit()
+anova_ped = sm.stats.anova_lm(model_ped, typ=2)
+print(anova_ped)
+print()
+
+# Interpret
+location_p = anova_ped.loc['C(Location)', 'PR(>F)']
+algorithm_p = anova_ped.loc['C(Algorithm)', 'PR(>F)']
+interaction_p = anova_ped.loc['C(Location):C(Algorithm)', 'PR(>F)']
+
+print("Interpretation:")
+if location_p < 0.05:
+    print(f"  ✓ LOCATION effect is SIGNIFICANT (p = {location_p:.4f})")
+else:
+    print(f"  ✗ LOCATION effect is NOT significant (p = {location_p:.4f})")
+    
+if algorithm_p < 0.05:
+    print(f"  ✓ ALGORITHM effect is SIGNIFICANT (p = {algorithm_p:.4f})")
+else:
+    print(f"  ✗ ALGORITHM effect is NOT significant (p = {algorithm_p:.4f})")
+    
+if interaction_p < 0.05:
+    print(f"  ✓ INTERACTION is SIGNIFICANT (p = {interaction_p:.4f})")
+else:
+    print(f"  ✗ INTERACTION is NOT significant (p = {interaction_p:.4f})")
+print()
+
+# Kruskal-Wallis (non-parametric)
+print("Kruskal-Wallis Test (Pedestrian Time Loss):")
+print("-" * 80)
+olivarez_p = df[df['Location'] == 'Olivarez']['Pedestrian_Time_Loss']
+balibago_p = df[df['Location'] == 'Balibago']['Pedestrian_Time_Loss']
+banlic_p = df[df['Location'] == 'Banlic']['Pedestrian_Time_Loss']
+
+H, p = kruskal(olivarez_p, balibago_p, banlic_p)
+print(f"  Across Locations: H = {H:.4f}, p = {p:.4f}")
+if p < 0.05:
+    print("  → Locations differ significantly")
+else:
+    print("  → No significant difference across locations")
+print()
+
+nodrl_p = df[df['Algorithm'] == 'No DRL']['Pedestrian_Time_Loss']
+dqn_p = df[df['Algorithm'] == 'DQN']['Pedestrian_Time_Loss']
+a2c_p = df[df['Algorithm'] == 'A2C']['Pedestrian_Time_Loss']
+ddpg_p = df[df['Algorithm'] == 'DDPG']['Pedestrian_Time_Loss']
+
+H, p = kruskal(nodrl_p, dqn_p, a2c_p, ddpg_p)
+print(f"  Across Algorithms: H = {H:.4f}, p = {p:.4f}")
+if p < 0.05:
+    print("  → Algorithms differ significantly")
+else:
+    print("  → No significant difference across algorithms")
+print()
+
+# Post-hoc for Pedestrian
+print("Post-hoc Tukey HSD (Pedestrian Time Loss - Location):")
+tukey_p_loc = pairwise_tukeyhsd(df['Pedestrian_Time_Loss'], df['Location'], alpha=0.05)
+print(tukey_p_loc)
+print()
+
+# ============================================================================
+# EFFECT SIZES
+# ============================================================================
+
+print("="*80)
+print("PART 5: EFFECT SIZE ANALYSIS (Cohen's d)")
+print("="*80)
+print()
+
+def cohens_d(group1, group2):
+    n1, n2 = len(group1), len(group2)
+    var1, var2 = np.var(group1, ddof=1), np.var(group2, ddof=1)
+    pooled_std = np.sqrt(((n1-1)*var1 + (n2-1)*var2) / (n1+n2-2))
+    return (np.mean(group1) - np.mean(group2)) / pooled_std
+
+print("VEHICLE TIME LOSS - Algorithm Comparisons:")
+print("(Small: 0.2, Medium: 0.5, Large: 0.8)")
+d = cohens_d(a2c_v.values, nodrl_v.values)
+print(f"  A2C vs No DRL:  d = {d:.3f}")
+d = cohens_d(dqn_v.values, nodrl_v.values)
+print(f"  DQN vs No DRL:  d = {d:.3f}")
+d = cohens_d(ddpg_v.values, nodrl_v.values)
+print(f"  DDPG vs No DRL: d = {d:.3f}")
+print()
+
+print("PEDESTRIAN TIME LOSS - Algorithm Comparisons:")
+d = cohens_d(a2c_p.values, nodrl_p.values)
+print(f"  A2C vs No DRL:  d = {d:.3f}")
+d = cohens_d(dqn_p.values, nodrl_p.values)
+print(f"  DQN vs No DRL:  d = {d:.3f}")
+d = cohens_d(ddpg_p.values, nodrl_p.values)
+print(f"  DDPG vs No DRL: d = {d:.3f}")
+print()
+
+# ============================================================================
+# COEFFICIENT OF VARIATION
+# ============================================================================
+
+print("="*80)
+print("PART 6: COEFFICIENT OF VARIATION (Consistency)")
+print("="*80)
+print()
+
+print("VEHICLE TIME LOSS - CV by Algorithm:")
+cv_v = df.groupby('Algorithm')['Vehicle_Time_Loss'].agg(['mean', 'std'])
+cv_v['CV (%)'] = (cv_v['std'] / cv_v['mean']) * 100
+print(cv_v.sort_values('CV (%)'))
+print()
+
+print("PEDESTRIAN TIME LOSS - CV by Algorithm:")
+cv_p = df.groupby('Algorithm')['Pedestrian_Time_Loss'].agg(['mean', 'std'])
+cv_p['CV (%)'] = (cv_p['std'] / cv_p['mean']) * 100
+print(cv_p.sort_values('CV (%)'))
+print()
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+
+print("="*80)
+print("SUMMARY FOR YOUR THESIS")
+print("="*80)
+print()
+
+print("""
+KEY FINDINGS:
+
+1. VEHICLE TIME LOSS:
+   - Check the ANOVA/Kruskal-Wallis results above
+   - Look for significant Location and Algorithm effects
+   - Note which specific pairs differ (Tukey HSD)
+
+2. PEDESTRIAN TIME LOSS:
+   - Check the ANOVA/Kruskal-Wallis results above
+   - Compare with vehicle results - do patterns match?
+   - Note if algorithms trade off vehicle vs pedestrian performance
+
+3. CONSISTENCY (CV%):
+   - Lower CV = more reliable algorithm
+   - Compare across vehicle and pedestrian metrics
+
+RECOMMENDED THESIS NARRATIVE:
+
+"To compare DRL algorithm performance across the three study intersections, 
+separate two-way ANOVAs were conducted for vehicle time loss and pedestrian 
+time loss, with Location and Algorithm as independent variables. Given that 
+Shapiro-Wilk tests revealed non-normal distributions (p < 0.05), Kruskal-Wallis 
+tests were used as the primary analyses.
+
+[INSERT VEHICLE RESULTS FROM ABOVE]
+[INSERT PEDESTRIAN RESULTS FROM ABOVE]
+[COMPARE VEHICLE VS PEDESTRIAN PATTERNS]
+[DISCUSS TRADE-OFFS AND ALGORITHM-SPECIFIC BEHAVIORS]"
+
+""")
+
+print("Analysis complete!")
