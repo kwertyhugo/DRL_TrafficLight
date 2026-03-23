@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-03-21 01:08:21 by Eclipse SUMO sumo Version 1.24.0
+<!-- generated on 2026-03-23 20:50:11 by Eclipse SUMO sumo Version 1.24.0
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -32,7 +32,7 @@
     </report>
 
     <traci_server>
-        <remote-port value="53015"/>
+        <remote-port value="64240"/>
     </traci_server>
 
     <gui_only>
@@ -43,14 +43,14 @@
 -->
 
 <statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
-    <performance clockBegin="37847.93" clockEnd="38143.75" clockDuration="295.82" traciDuration="50.07" realTimeFactor="14.29" vehicleUpdatesPerSecond="15091.41" personUpdatesPerSecond="3900.23" begin="0.00" end="4227.30" duration="4227.30"/>
+    <performance clockBegin="281561.45" clockEnd="281871.54" clockDuration="310.10" traciDuration="40.99" realTimeFactor="19.65" vehicleUpdatesPerSecond="26856.04" personUpdatesPerSecond="4547.90" begin="0.00" end="6092.10" duration="6092.10"/>
     <vehicles loaded="1430" inserted="1430" running="0" waiting="0"/>
-    <teleports total="0" jam="0" yield="0" wrongLane="0"/>
-    <safety collisions="0" emergencyStops="0" emergencyBraking="12"/>
-    <persons loaded="597" running="0" jammed="77"/>
+    <teleports total="39" jam="29" yield="10" wrongLane="0"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="13"/>
+    <persons loaded="597" running="0" jammed="93"/>
     <personTeleports total="0" abortWait="0" wrongDest="0"/>
-    <vehicleTripStatistics count="1430" routeLength="2600.29" speed="10.97" duration="312.19" waitingTime="141.42" timeLoss="179.85" departDelay="0.05" departDelayWaiting="-1.00" totalTravelTime="446429.60" totalDepartDelay="71.30"/>
-    <pedestrianStatistics number="597" routeLength="79.17" duration="193.26" timeLoss="136.19"/>
+    <vehicleTripStatistics count="1430" routeLength="2606.57" speed="8.71" duration="582.38" waitingTime="394.33" timeLoss="448.67" departDelay="0.96" departDelayWaiting="-1.00" totalTravelTime="832800.40" totalDepartDelay="1372.00"/>
+    <pedestrianStatistics number="597" routeLength="79.17" duration="236.23" timeLoss="179.17"/>
     <rideStatistics number="0"/>
     <transportStatistics number="0"/>
 </statistics>
