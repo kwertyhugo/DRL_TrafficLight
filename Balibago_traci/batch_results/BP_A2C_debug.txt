@@ -1,0 +1,516 @@
+A2C Baseline Batch Test Debug Log
+Action Space: (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+Neutral action index: 5 (adjustment = 0)
+North: 8-phase, state=12 (8 queue + 4 OH), norm /2000
+South: 6-phase, state=8  (5 queue + 3 OH), norm /1000
+======================================================================
+
+======================================================================
+Normal 1
+
+  Results for Normal 1:
+    Average Jam Length (Overall)    : 2.18 m
+    Average Jam Length (North)      : 3.11 m
+    Average Jam Length (South)      : 0.69 m
+    Average Throughput (per min)    : 21.68 veh/min
+    Throughput (per hr)             : 1285.0 veh/hr
+    Average North Queue             : 411.41
+    Average South Queue             : 16.73
+    Average Total Queue             : 428.14
+    Mean Veh. Time Loss             : 94.89 s
+    Mean Ped. Time Loss             : 140.06 s
+    North decisions: 57, unique actions: 1/11, distribution: {4: 57}
+    South decisions: 113, unique actions: 1/11, distribution: {0: 113}
+
+======================================================================
+Normal 2
+
+  Results for Normal 2:
+    Average Jam Length (Overall)    : 2.08 m
+    Average Jam Length (North)      : 2.95 m
+    Average Jam Length (South)      : 0.68 m
+    Average Throughput (per min)    : 20.19 veh/min
+    Throughput (per hr)             : 1206.5 veh/hr
+    Average North Queue             : 374.75
+    Average South Queue             : 17.57
+    Average Total Queue             : 392.32
+    Mean Veh. Time Loss             : 97.99 s
+    Mean Ped. Time Loss             : 178.51 s
+    North decisions: 61, unique actions: 1/11, distribution: {4: 61}
+    South decisions: 120, unique actions: 1/11, distribution: {0: 120}
+
+======================================================================
+Normal 3
+
+  Results for Normal 3:
+    Average Jam Length (Overall)    : 1.79 m
+    Average Jam Length (North)      : 2.62 m
+    Average Jam Length (South)      : 0.46 m
+    Average Throughput (per min)    : 19.75 veh/min
+    Throughput (per hr)             : 1172.3 veh/hr
+    Average North Queue             : 329.67
+    Average South Queue             : 12.05
+    Average Total Queue             : 341.72
+    Mean Veh. Time Loss             : 96.14 s
+    Mean Ped. Time Loss             : 184.80 s
+    North decisions: 65, unique actions: 1/11, distribution: {4: 65}
+    South decisions: 127, unique actions: 1/11, distribution: {0: 127}
+
+======================================================================
+Normal 4
+
+  Results for Normal 4:
+    Average Jam Length (Overall)    : 1.96 m
+    Average Jam Length (North)      : 2.82 m
+    Average Jam Length (South)      : 0.58 m
+    Average Throughput (per min)    : 20.50 veh/min
+    Throughput (per hr)             : 1229.8 veh/hr
+    Average North Queue             : 348.68
+    Average South Queue             : 14.89
+    Average Total Queue             : 363.57
+    Mean Veh. Time Loss             : 97.82 s
+    Mean Ped. Time Loss             : 159.38 s
+    North decisions: 61, unique actions: 1/11, distribution: {4: 61}
+    South decisions: 119, unique actions: 1/11, distribution: {0: 119}
+
+======================================================================
+Normal 5
+
+  Results for Normal 5:
+    Average Jam Length (Overall)    : 2.21 m
+    Average Jam Length (North)      : 3.20 m
+    Average Jam Length (South)      : 0.62 m
+    Average Throughput (per min)    : 22.07 veh/min
+    Throughput (per hr)             : 1310.7 veh/hr
+    Average North Queue             : 381.19
+    Average South Queue             : 15.28
+    Average Total Queue             : 396.47
+    Mean Veh. Time Loss             : 119.95 s
+    Mean Ped. Time Loss             : 151.73 s
+    North decisions: 57, unique actions: 1/11, distribution: {4: 57}
+    South decisions: 113, unique actions: 1/11, distribution: {0: 113}
+
+======================================================================
+Normal 6
+
+  Results for Normal 6:
+    Average Jam Length (Overall)    : 1.87 m
+    Average Jam Length (North)      : 2.71 m
+    Average Jam Length (South)      : 0.54 m
+    Average Throughput (per min)    : 19.93 veh/min
+    Throughput (per hr)             : 1187.5 veh/hr
+    Average North Queue             : 350.26
+    Average South Queue             : 15.31
+    Average Total Queue             : 365.56
+    Mean Veh. Time Loss             : 95.47 s
+    Mean Ped. Time Loss             : 154.65 s
+    North decisions: 61, unique actions: 1/11, distribution: {4: 61}
+    South decisions: 120, unique actions: 1/11, distribution: {0: 120}
+
+======================================================================
+Normal 7
+
+  Results for Normal 7:
+    Average Jam Length (Overall)    : 1.86 m
+    Average Jam Length (North)      : 2.62 m
+    Average Jam Length (South)      : 0.65 m
+    Average Throughput (per min)    : 20.10 veh/min
+    Throughput (per hr)             : 1200.1 veh/hr
+    Average North Queue             : 297.93
+    Average South Queue             : 17.52
+    Average Total Queue             : 315.45
+    Mean Veh. Time Loss             : 91.09 s
+    Mean Ped. Time Loss             : 152.91 s
+    North decisions: 61, unique actions: 1/11, distribution: {4: 61}
+    South decisions: 120, unique actions: 1/11, distribution: {0: 120}
+
+======================================================================
+Normal 8
+
+  Results for Normal 8:
+    Average Jam Length (Overall)    : 2.15 m
+    Average Jam Length (North)      : 3.07 m
+    Average Jam Length (South)      : 0.68 m
+    Average Throughput (per min)    : 21.82 veh/min
+    Throughput (per hr)             : 1294.4 veh/hr
+    Average North Queue             : 371.42
+    Average South Queue             : 19.05
+    Average Total Queue             : 390.48
+    Mean Veh. Time Loss             : 96.45 s
+    Mean Ped. Time Loss             : 131.95 s
+    North decisions: 57, unique actions: 1/11, distribution: {4: 57}
+    South decisions: 112, unique actions: 1/11, distribution: {0: 112}
+
+======================================================================
+Normal 9
+
+  Results for Normal 9:
+    Average Jam Length (Overall)    : 1.92 m
+    Average Jam Length (North)      : 2.73 m
+    Average Jam Length (South)      : 0.61 m
+    Average Throughput (per min)    : 20.82 veh/min
+    Throughput (per hr)             : 1243.4 veh/hr
+    Average North Queue             : 327.25
+    Average South Queue             : 17.64
+    Average Total Queue             : 344.89
+    Mean Veh. Time Loss             : 96.32 s
+    Mean Ped. Time Loss             : 159.66 s
+    North decisions: 61, unique actions: 1/11, distribution: {4: 61}
+    South decisions: 120, unique actions: 1/11, distribution: {0: 120}
+
+======================================================================
+Normal 10
+
+  Results for Normal 10:
+    Average Jam Length (Overall)    : 2.25 m
+    Average Jam Length (North)      : 3.23 m
+    Average Jam Length (South)      : 0.67 m
+    Average Throughput (per min)    : 22.04 veh/min
+    Throughput (per hr)             : 1319.4 veh/hr
+    Average North Queue             : 381.75
+    Average South Queue             : 20.09
+    Average Total Queue             : 401.84
+    Mean Veh. Time Loss             : 96.06 s
+    Mean Ped. Time Loss             : 139.72 s
+    North decisions: 57, unique actions: 1/11, distribution: {4: 57}
+    South decisions: 114, unique actions: 1/11, distribution: {0: 114}
+
+======================================================================
+Slow 1
+
+  Results for Slow 1:
+    Average Jam Length (Overall)    : 2.96 m
+    Average Jam Length (North)      : 4.21 m
+    Average Jam Length (South)      : 0.96 m
+    Average Throughput (per min)    : 29.14 veh/min
+    Throughput (per hr)             : 1742.6 veh/hr
+    Average North Queue             : 511.80
+    Average South Queue             : 26.93
+    Average Total Queue             : 538.73
+    Mean Veh. Time Loss             : 99.90 s
+    Mean Ped. Time Loss             : 333.94 s
+    North decisions: 86, unique actions: 1/11, distribution: {4: 86}
+    South decisions: 170, unique actions: 1/11, distribution: {0: 170}
+
+======================================================================
+Slow 2
+
+  Results for Slow 2:
+    Average Jam Length (Overall)    : 2.73 m
+    Average Jam Length (North)      : 3.86 m
+    Average Jam Length (South)      : 0.93 m
+    Average Throughput (per min)    : 26.97 veh/min
+    Throughput (per hr)             : 1614.1 veh/hr
+    Average North Queue             : 479.78
+    Average South Queue             : 27.41
+    Average Total Queue             : 507.19
+    Mean Veh. Time Loss             : 99.13 s
+    Mean Ped. Time Loss             : 380.31 s
+    North decisions: 91, unique actions: 1/11, distribution: {4: 91}
+    South decisions: 178, unique actions: 1/11, distribution: {0: 178}
+
+======================================================================
+Slow 3
+
+  Results for Slow 3:
+    Average Jam Length (Overall)    : 2.72 m
+    Average Jam Length (North)      : 3.85 m
+    Average Jam Length (South)      : 0.91 m
+    Average Throughput (per min)    : 25.97 veh/min
+    Throughput (per hr)             : 1550.7 veh/hr
+    Average North Queue             : 479.60
+    Average South Queue             : 22.92
+    Average Total Queue             : 502.52
+    Mean Veh. Time Loss             : 99.31 s
+    Mean Ped. Time Loss             : 390.22 s
+    North decisions: 93, unique actions: 1/11, distribution: {4: 93}
+    South decisions: 185, unique actions: 1/11, distribution: {0: 185}
+
+======================================================================
+Slow 4
+
+  Results for Slow 4:
+    Average Jam Length (Overall)    : 2.69 m
+    Average Jam Length (North)      : 3.86 m
+    Average Jam Length (South)      : 0.83 m
+    Average Throughput (per min)    : 26.52 veh/min
+    Throughput (per hr)             : 1582.7 veh/hr
+    Average North Queue             : 477.05
+    Average South Queue             : 22.81
+    Average Total Queue             : 499.85
+    Mean Veh. Time Loss             : 97.30 s
+    Mean Ped. Time Loss             : 402.87 s
+    North decisions: 92, unique actions: 1/11, distribution: {4: 92}
+    South decisions: 180, unique actions: 1/11, distribution: {0: 180}
+
+======================================================================
+Slow 5
+
+  Results for Slow 5:
+    Average Jam Length (Overall)    : 1.54 m
+    Average Jam Length (North)      : 2.20 m
+    Average Jam Length (South)      : 0.50 m
+    Average Throughput (per min)    : 16.00 veh/min
+    Throughput (per hr)             : 957.2 veh/hr
+    Average North Queue             : 262.37
+    Average South Queue             : 13.80
+    Average Total Queue             : 276.17
+    Mean Veh. Time Loss             : 98.77 s
+    Mean Ped. Time Loss             : 2453.09 s
+    North decisions: 161, unique actions: 1/11, distribution: {4: 161}
+    South decisions: 316, unique actions: 1/11, distribution: {0: 316}
+
+======================================================================
+Slow 6
+
+  Results for Slow 6:
+    Average Jam Length (Overall)    : 1.46 m
+    Average Jam Length (North)      : 2.10 m
+    Average Jam Length (South)      : 0.42 m
+    Average Throughput (per min)    : 14.54 veh/min
+    Throughput (per hr)             : 871.7 veh/hr
+    Average North Queue             : 242.50
+    Average South Queue             : 10.91
+    Average Total Queue             : 253.41
+    Mean Veh. Time Loss             : 97.25 s
+    Mean Ped. Time Loss             : 2790.78 s
+    North decisions: 171, unique actions: 1/11, distribution: {4: 171}
+    South decisions: 337, unique actions: 1/11, distribution: {0: 337}
+
+======================================================================
+Slow 7
+
+  Results for Slow 7:
+    Average Jam Length (Overall)    : 2.55 m
+    Average Jam Length (North)      : 3.62 m
+    Average Jam Length (South)      : 0.83 m
+    Average Throughput (per min)    : 26.01 veh/min
+    Throughput (per hr)             : 1551.9 veh/hr
+    Average North Queue             : 410.38
+    Average South Queue             : 21.58
+    Average Total Queue             : 431.95
+    Mean Veh. Time Loss             : 99.24 s
+    Mean Ped. Time Loss             : 404.22 s
+    North decisions: 92, unique actions: 1/11, distribution: {4: 92}
+    South decisions: 180, unique actions: 1/11, distribution: {0: 180}
+
+======================================================================
+Slow 8
+
+  Results for Slow 8:
+    Average Jam Length (Overall)    : 2.42 m
+    Average Jam Length (North)      : 3.48 m
+    Average Jam Length (South)      : 0.73 m
+    Average Throughput (per min)    : 22.77 veh/min
+    Throughput (per hr)             : 1357.2 veh/hr
+    Average North Queue             : 403.33
+    Average South Queue             : 18.71
+    Average Total Queue             : 422.05
+    Mean Veh. Time Loss             : 100.30 s
+    Mean Ped. Time Loss             : 1085.83 s
+    North decisions: 111, unique actions: 1/11, distribution: {4: 111}
+    South decisions: 218, unique actions: 1/11, distribution: {0: 218}
+
+======================================================================
+Slow 9
+
+  Results for Slow 9:
+    Average Jam Length (Overall)    : 2.37 m
+    Average Jam Length (North)      : 3.36 m
+    Average Jam Length (South)      : 0.79 m
+    Average Throughput (per min)    : 23.23 veh/min
+    Throughput (per hr)             : 1393.2 veh/hr
+    Average North Queue             : 402.74
+    Average South Queue             : 23.01
+    Average Total Queue             : 425.75
+    Mean Veh. Time Loss             : 99.61 s
+    Mean Ped. Time Loss             : 703.64 s
+    North decisions: 109, unique actions: 1/11, distribution: {4: 109}
+    South decisions: 214, unique actions: 1/11, distribution: {0: 214}
+
+======================================================================
+Slow 10
+
+  Results for Slow 10:
+    Average Jam Length (Overall)    : 3.03 m
+    Average Jam Length (North)      : 4.28 m
+    Average Jam Length (South)      : 1.02 m
+    Average Throughput (per min)    : 27.50 veh/min
+    Throughput (per hr)             : 1641.6 veh/hr
+    Average North Queue             : 483.57
+    Average South Queue             : 24.40
+    Average Total Queue             : 507.97
+    Mean Veh. Time Loss             : 119.29 s
+    Mean Ped. Time Loss             : 414.18 s
+    North decisions: 91, unique actions: 1/11, distribution: {4: 91}
+    South decisions: 179, unique actions: 1/11, distribution: {0: 179}
+
+======================================================================
+Jam 1
+
+  Results for Jam 1:
+    Average Jam Length (Overall)    : 3.73 m
+    Average Jam Length (North)      : 5.23 m
+    Average Jam Length (South)      : 1.33 m
+    Average Throughput (per min)    : 36.55 veh/min
+    Throughput (per hr)             : 2183.2 veh/hr
+    Average North Queue             : 595.47
+    Average South Queue             : 33.45
+    Average Total Queue             : 628.92
+    Mean Veh. Time Loss             : 113.38 s
+    Mean Ped. Time Loss             : 426.23 s
+    North decisions: 101, unique actions: 1/11, distribution: {4: 101}
+    South decisions: 198, unique actions: 1/11, distribution: {0: 198}
+
+======================================================================
+Jam 2
+
+  Results for Jam 2:
+    Average Jam Length (Overall)    : 3.67 m
+    Average Jam Length (North)      : 5.09 m
+    Average Jam Length (South)      : 1.38 m
+    Average Throughput (per min)    : 33.36 veh/min
+    Throughput (per hr)             : 1994.3 veh/hr
+    Average North Queue             : 581.94
+    Average South Queue             : 31.69
+    Average Total Queue             : 613.64
+    Mean Veh. Time Loss             : 134.72 s
+    Mean Ped. Time Loss             : 544.32 s
+    North decisions: 109, unique actions: 1/11, distribution: {4: 109}
+    South decisions: 215, unique actions: 1/11, distribution: {0: 215}
+
+======================================================================
+Jam 3
+
+  Results for Jam 3:
+    Average Jam Length (Overall)    : 2.16 m
+    Average Jam Length (North)      : 3.09 m
+    Average Jam Length (South)      : 0.66 m
+    Average Throughput (per min)    : 20.47 veh/min
+    Throughput (per hr)             : 1227.7 veh/hr
+    Average North Queue             : 393.97
+    Average South Queue             : 16.29
+    Average Total Queue             : 410.27
+    Mean Veh. Time Loss             : 104.06 s
+    Mean Ped. Time Loss             : 4294.11 s
+    North decisions: 181, unique actions: 1/11, distribution: {4: 181}
+    South decisions: 357, unique actions: 1/11, distribution: {0: 357}
+
+======================================================================
+Jam 4
+
+  Results for Jam 4:
+    Average Jam Length (Overall)    : 3.32 m
+    Average Jam Length (North)      : 4.69 m
+    Average Jam Length (South)      : 1.14 m
+    Average Throughput (per min)    : 32.17 veh/min
+    Throughput (per hr)             : 1929.1 veh/hr
+    Average North Queue             : 519.22
+    Average South Queue             : 28.17
+    Average Total Queue             : 547.40
+    Mean Veh. Time Loss             : 111.41 s
+    Mean Ped. Time Loss             : 515.72 s
+    North decisions: 113, unique actions: 1/11, distribution: {4: 113}
+    South decisions: 223, unique actions: 1/11, distribution: {0: 223}
+
+======================================================================
+Jam 5
+
+  Results for Jam 5:
+    Average Jam Length (Overall)    : 2.00 m
+    Average Jam Length (North)      : 2.82 m
+    Average Jam Length (South)      : 0.70 m
+    Average Throughput (per min)    : 20.18 veh/min
+    Throughput (per hr)             : 1208.5 veh/hr
+    Average North Queue             : 358.02
+    Average South Queue             : 16.57
+    Average Total Queue             : 374.58
+    Mean Veh. Time Loss             : 129.40 s
+    Mean Ped. Time Loss             : 2884.12 s
+    North decisions: 181, unique actions: 1/11, distribution: {4: 181}
+    South decisions: 356, unique actions: 1/11, distribution: {0: 356}
+
+======================================================================
+Jam 6
+
+  Results for Jam 6:
+    Average Jam Length (Overall)    : 2.63 m
+    Average Jam Length (North)      : 3.69 m
+    Average Jam Length (South)      : 0.94 m
+    Average Throughput (per min)    : 25.25 veh/min
+    Throughput (per hr)             : 1509.1 veh/hr
+    Average North Queue             : 426.97
+    Average South Queue             : 22.11
+    Average Total Queue             : 449.08
+    Mean Veh. Time Loss             : 108.17 s
+    Mean Ped. Time Loss             : 1177.17 s
+    North decisions: 147, unique actions: 1/11, distribution: {4: 147}
+    South decisions: 288, unique actions: 1/11, distribution: {0: 288}
+
+======================================================================
+Jam 7
+
+  Results for Jam 7:
+    Average Jam Length (Overall)    : 3.20 m
+    Average Jam Length (North)      : 4.55 m
+    Average Jam Length (South)      : 1.04 m
+    Average Throughput (per min)    : 31.37 veh/min
+    Throughput (per hr)             : 1879.4 veh/hr
+    Average North Queue             : 548.56
+    Average South Queue             : 23.10
+    Average Total Queue             : 571.66
+    Mean Veh. Time Loss             : 108.94 s
+    Mean Ped. Time Loss             : 824.20 s
+    North decisions: 117, unique actions: 1/11, distribution: {4: 117}
+    South decisions: 232, unique actions: 1/11, distribution: {0: 232}
+
+======================================================================
+Jam 8
+
+  Results for Jam 8:
+    Average Jam Length (Overall)    : 3.24 m
+    Average Jam Length (North)      : 4.57 m
+    Average Jam Length (South)      : 1.11 m
+    Average Throughput (per min)    : 32.26 veh/min
+    Throughput (per hr)             : 1930.0 veh/hr
+    Average North Queue             : 561.28
+    Average South Queue             : 26.76
+    Average Total Queue             : 588.04
+    Mean Veh. Time Loss             : 116.31 s
+    Mean Ped. Time Loss             : 949.78 s
+    North decisions: 116, unique actions: 1/11, distribution: {4: 116}
+    South decisions: 228, unique actions: 1/11, distribution: {0: 228}
+
+======================================================================
+Jam 9
+
+  Results for Jam 9:
+    Average Jam Length (Overall)    : 3.42 m
+    Average Jam Length (North)      : 4.73 m
+    Average Jam Length (South)      : 1.31 m
+    Average Throughput (per min)    : 31.91 veh/min
+    Throughput (per hr)             : 1913.0 veh/hr
+    Average North Queue             : 561.57
+    Average South Queue             : 26.90
+    Average Total Queue             : 588.47
+    Mean Veh. Time Loss             : 115.01 s
+    Mean Ped. Time Loss             : 557.61 s
+    North decisions: 117, unique actions: 1/11, distribution: {4: 117}
+    South decisions: 229, unique actions: 1/11, distribution: {0: 229}
+
+======================================================================
+Jam 10
+
+  Results for Jam 10:
+    Average Jam Length (Overall)    : 3.53 m
+    Average Jam Length (North)      : 4.89 m
+    Average Jam Length (South)      : 1.34 m
+    Average Throughput (per min)    : 33.06 veh/min
+    Throughput (per hr)             : 1983.0 veh/hr
+    Average North Queue             : 597.69
+    Average South Queue             : 31.03
+    Average Total Queue             : 628.71
+    Mean Veh. Time Loss             : 119.49 s
+    Mean Ped. Time Loss             : 490.76 s
+    North decisions: 109, unique actions: 1/11, distribution: {4: 109}
+    South decisions: 215, unique actions: 1/11, distribution: {0: 215}

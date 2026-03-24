@@ -1,37 +1,27 @@
 """
-run_Balibago_BP_A2C_batch_test.py
+finaltest_A2C_baseline_integrated.py
 
-Runs all 30 Balibago demand_test route files through the A2C BASELINE
-simulation in test mode and writes:
-    Balibago_traci/batch_results/BP_A2C_Results.xlsx
+Integrates the WORKING simulation loop from TestbaselineA2C.py into
+the 30-run batch framework of run_Balibago_BP_A2C_batch_test.py.
 
-Matches TestbaselineA2C.py exactly:
-  - baselinePed.sumocfg
-  - North agent: state=12 (8 queue + 4 phase), norm /2000, 8-phase cycle
-  - South agent: state=8  (5 queue + 3 phase), norm /1000, 6-phase cycle
-  - Both use actionSpace = (-25..+25, 11 actions)
-  - step_counter < 576000 cap
-  - Metric interval: every 60 s
-
-Models loaded from:
-  Balibago_traci/models_A2C_baseline/North_A2CAgent_Baseline.keras
-  Balibago_traci/models_A2C_baseline/South_A2CAgent_Baseline.keras
-
-Metrics per run:
-  - Mean Veh. Time Loss (s)    — <tripinfo timeLoss>
-  - Mean Ped. Time Loss (s)    — <personinfo timeLoss>
-  - Mean Queue Length (m)      — avg jam across 13 detectors, every 60 s
-  - Throughput (veh/hr)        — vehicles cleared, normalised to per-hour
-  - Mean North Queue (m)       — avg jam e2_0–e2_7
-  - Mean South Queue (m)       — avg jam e2_8–e2_12
+Key differences from the signalized (SP) version:
+  - baselinePed.sumocfg (not signalizedPed.sumocfg)
+  - NO pedestrian subscriptions / junction subscriptions
+  - North state: 8 queue (no ped) + 4 phase OH = 12  (norm /2000, 8-phase)
+  - South state: 5 queue (no ped) + 3 phase OH =  8  (norm /1000, 6-phase)
+  - South cycle: 6 phases  (not 8)
+  - South base durations: {0:30, 2:30, 4:45}
+  - Models from models_A2C_baseline/
 """
 
 import os
 import sys
+import csv
 import xml.etree.ElementTree as ET
 import numpy as np
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from collections import Counter
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -47,31 +37,31 @@ from keras.models import load_model
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-SUMOCFG        = 'Balibago_traci/baselinePed.sumocfg'
-DEMAND_DIR     = 'Balibago_traci/demand_test'
-OUTPUT_DIR     = 'Balibago_traci/batch_results/BP_A2C'
-XLSX_OUT       = 'Balibago_traci/batch_results/BP_A2C_Results.xlsx'
+SUMOCFG          = 'Balibago_traci/baselinePed.sumocfg'
+DEMAND_DIR       = 'Balibago_traci/demand_test'
+OUTPUT_DIR       = 'Balibago_traci/batch_results/BP_A2C'
+XLSX_OUT         = 'Balibago_traci/batch_results/BP_A2C_Results.xlsx'
+DEBUG_LOG        = 'Balibago_traci/batch_results/BP_A2C_debug.txt'
 NORTH_MODEL_PATH = 'Balibago_traci/models_A2C_baseline/North_A2CAgent_Baseline.keras'
 SOUTH_MODEL_PATH = 'Balibago_traci/models_A2C_baseline/South_A2CAgent_Baseline.keras'
-STEP_LENGTH    = 0.1
-MAX_STEPS      = 576000
-METRIC_STEPS   = int(60 / STEP_LENGTH)
+STEP_LENGTH      = 0.1
+MAX_STEPS        = 576000
+METRIC_STEPS     = int(60 / STEP_LENGTH)   # 1-minute observation intervals
 
 DETECTOR_IDS   = [f"e2_{i}" for i in range(13)]
 DETECTOR_COUNT = 13
 NORTH_IDS      = [f"e2_{i}" for i in range(8)]
 SOUTH_IDS      = [f"e2_{i}" for i in range(8, 13)]
 
-ACTION_SPACE   = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+ACTION_SPACE   = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)  # index 5 = neutral (0)
 
-# North: 8-phase, South: 6-phase
 NORTH_TL     = "4902876117"
 NORTH_PHASES = 8
 NORTH_BASE   = {0: 45, 2: 130, 4: 30, 6: 90}
+
 SOUTH_TL     = "12188714"
-SOUTH_PHASES = 6
+SOUTH_PHASES = 6                            # baseline: 6-phase south
 SOUTH_BASE   = {0: 30, 2: 30, 4: 45}
-YELLOW_DUR   = 5
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(XLSX_OUT), exist_ok=True)
@@ -79,35 +69,38 @@ os.makedirs(os.path.dirname(XLSX_OUT), exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load models
 # ---------------------------------------------------------------------------
-print(f"\n{'='*65}")
-for path, label in [(NORTH_MODEL_PATH,"North"), (SOUTH_MODEL_PATH,"South")]:
+print(f"\n{'='*70}")
+print("Loading Trained A2C Baseline Models")
+print('='*70)
+for path, label in [(NORTH_MODEL_PATH, "North"), (SOUTH_MODEL_PATH, "South")]:
     if not os.path.exists(path):
         sys.exit(f"ERROR: {label} model not found at {path}")
 north_model = load_model(NORTH_MODEL_PATH)
 south_model = load_model(SOUTH_MODEL_PATH)
-print(f"  North model loaded: {NORTH_MODEL_PATH}")
-print(f"  South model loaded: {SOUTH_MODEL_PATH}")
-print(f"{'='*65}")
+print(f"  North Agent loaded: {NORTH_MODEL_PATH}")
+print(f"  South Agent loaded: {SOUTH_MODEL_PATH}")
+print('='*70)
 
 # ---------------------------------------------------------------------------
-# Test plan
+# Test plan  (10 normal + 10 slow + 10 jam = 30 runs)
 # ---------------------------------------------------------------------------
 TEST_PLAN = []
 for scenario in ["normal", "slow", "jam"]:
     for i in range(1, 11):
         TEST_PLAN.append({
-            "label":     f"{scenario.capitalize()} {i}",
-            "scenario":  scenario,
-            "rou_file":  os.path.join(DEMAND_DIR, f"flows_{scenario}_traffic_{i:02d}.rou.xml"),
-            "trips_out": os.path.join(OUTPUT_DIR, f"BP_A2C_trips_{scenario}_{i:02d}.xml"),
-            "stats_out": os.path.join(OUTPUT_DIR, f"BP_A2C_stats_{scenario}_{i:02d}.xml"),
+            "label":       f"{scenario.capitalize()} {i}",
+            "scenario":    scenario,
+            "rou_file":    os.path.join(DEMAND_DIR, f"flows_{scenario}_traffic_{i:02d}.rou.xml"),
+            "trips_out":   os.path.join(OUTPUT_DIR,  f"BP_A2C_trips_{scenario}_{i:02d}.xml"),
+            "stats_out":   os.path.join(OUTPUT_DIR,  f"BP_A2C_stats_{scenario}_{i:02d}.xml"),
+            "metrics_csv": os.path.join(OUTPUT_DIR,  f"BP_A2C_metrics_{scenario}_{i:02d}.csv"),
         })
 
 # ---------------------------------------------------------------------------
-# Subscriptions
+# Subscriptions — baseline has NO junction/pedestrian subscriptions
 # ---------------------------------------------------------------------------
 
-def subscribe_detectors():
+def _subscribe_all_detectors():
     ctx_vars = [traci.constants.VAR_TYPE, traci.constants.VAR_WAITING_TIME]
     met_vars = [traci.constants.JAM_LENGTH_METERS, traci.constants.VAR_INTERVAL_NUMBER]
     for det in DETECTOR_IDS:
@@ -115,58 +108,49 @@ def subscribe_detectors():
         traci.lanearea.subscribe(det, met_vars)
 
 # ---------------------------------------------------------------------------
-# State / action helpers — exact match to TestbaselineA2C.py
+# State helpers — exact match to TestbaselineA2C.py
+# No pedestrian term; south uses num_classes=3 (6-phase / 2 = 3 green phases)
 # ---------------------------------------------------------------------------
 
-def weighted_waits(det_id):
+def _weighted_waits(det_id):
     data = traci.lanearea.getContextSubscriptionResults(det_id)
-    if not data: return 0
-    wmap = {"car":1.0,"jeep":1.5,"bus":2.2,"truck":2.5,"motorcycle":0.3,"tricycle":0.5}
-    return sum(d.get(traci.constants.VAR_WAITING_TIME,0)
-               * wmap.get(d.get(traci.constants.VAR_TYPE,"car"),1.0)
-               for d in data.values())
+    if not data:
+        return 0
+    weights = {"car": 1.0, "jeep": 1.5, "bus": 2.2,
+               "truck": 2.5, "motorcycle": 0.3, "tricycle": 0.5}
+    sumWait = 0
+    for d in data.values():
+        v_type   = d.get(traci.constants.VAR_TYPE, "car")
+        waitTime = d.get(traci.constants.VAR_WAITING_TIME, 0)
+        sumWait += waitTime * weights.get(v_type, 1.0)
+    return sumWait
 
-def north_queue():
-    return [weighted_waits(f"e2_{i}") for i in range(8)]
+def _northIntersection_queue():
+    """North: 8 detectors, NO pedestrian term (baseline)."""
+    return [_weighted_waits(f"e2_{i}") for i in range(8)]
 
-def south_queue():
-    return [weighted_waits(f"e2_{i}") for i in range(8, 13)]
+def _southIntersection_queue():
+    """South: 5 detectors, NO pedestrian term (baseline)."""
+    return [_weighted_waits(f"e2_{i}") for i in range(8, 13)]
 
 def predict_action(model, state):
-    probs = model.predict(np.expand_dims(state, axis=0), verbose=0)[0]
-    return int(np.argmax(probs))
+    """Greedy action from trained model — no exploration."""
+    state_batch = np.expand_dims(state, axis=0)
+    action_probs = model.predict(state_batch, verbose=0)[0]
+    return int(np.argmax(action_probs))
 
-def get_north_state(phase):
-    q = np.array(north_queue()) / 2000.0
-    ph = to_categorical(phase // 2, num_classes=4).flatten()
-    return np.concatenate([q, ph]).astype(np.float32)   # size 12
+# ---------------------------------------------------------------------------
+# Metrics CSV saver
+# ---------------------------------------------------------------------------
 
-def get_south_state(phase):
-    q = np.array(south_queue()) / 1000.0
-    ph = to_categorical(phase // 2, num_classes=3).flatten()
-    return np.concatenate([q, ph]).astype(np.float32)   # size 8
-
-def apply_north_phase(action_idx, current_phase):
-    next_phase = (current_phase + 1) % NORTH_PHASES
-    traci.trafficlight.setPhase(NORTH_TL, next_phase)
-    if next_phase % 2 == 1:
-        dur = YELLOW_DUR
-    else:
-        base = NORTH_BASE.get(next_phase, 30)
-        dur  = max(5, min(180, base + ACTION_SPACE[action_idx]))
-    traci.trafficlight.setPhaseDuration(NORTH_TL, dur)
-    return next_phase, float(dur)
-
-def apply_south_phase(action_idx, current_phase):
-    next_phase = (current_phase + 1) % SOUTH_PHASES
-    traci.trafficlight.setPhase(SOUTH_TL, next_phase)
-    if next_phase % 2 == 1:
-        dur = YELLOW_DUR
-    else:
-        base = SOUTH_BASE.get(next_phase, 30)
-        dur  = max(5, min(180, base + ACTION_SPACE[action_idx]))
-    traci.trafficlight.setPhaseDuration(SOUTH_TL, dur)
-    return next_phase, float(dur)
+def save_metrics_csv(filename, metrics_list):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Time_min', 'Avg_Jam_Length_m', 'Throughput_veh_per_min',
+                         'North_Queue', 'South_Queue', 'Total_Queue',
+                         'North_Jam_Length_m', 'South_Jam_Length_m'])
+        writer.writerows(metrics_list)
 
 # ---------------------------------------------------------------------------
 # Tripinfo parser
@@ -180,13 +164,15 @@ def parse_tripinfo(path):
     veh, ped = [], []
     for tag in root:
         tl = tag.get("timeLoss")
-        if tl is None: continue
+        if tl is None:
+            continue
         (veh if tag.tag == "tripinfo" else ped).append(float(tl))
-    return (sum(veh)/len(veh) if veh else 0.0,
-            sum(ped)/len(ped) if ped else 0.0)
+    return (sum(veh) / len(veh) if veh else 0.0,
+            sum(ped) / len(ped) if ped else 0.0)
 
 # ---------------------------------------------------------------------------
-# Single run
+# Single simulation run
+# Loop structure mirrors TestbaselineA2C.py exactly
 # ---------------------------------------------------------------------------
 
 def run_simulation(test):
@@ -200,86 +186,196 @@ def run_simulation(test):
         '--tripinfo-output',    test["trips_out"],
         '--no-warnings',        'true',
     ]
-    print(f"\n{'='*65}\n  Running: {test['label']}\n{'='*65}")
+    print(f"\n{'='*70}\n  Running: {test['label']}\n{'='*70}")
     traci.start(sumo_cmd)
-    subscribe_detectors()
+    _subscribe_all_detectors()
+    # NOTE: No junction subscriptions — baseline has no pedestrians
 
-    n_phase, n_dur = 0, float(NORTH_BASE[0])
-    s_phase, s_dur = 0, float(SOUTH_BASE[0])
-    n_act = s_act = 5     # default: index of 0 in ACTION_SPACE
+    # ── Phase state (mirrors TestbaselineA2C.py exactly) ─────────────────────
+    northCurrentPhase         = 0
+    northCurrentPhaseDuration = 30.0
+    southCurrentPhase         = 0
+    southCurrentPhaseDuration = 30.0
 
-    step = 0
-    jam_total = north_jam_total = south_jam_total = 0.0
-    tp_total  = 0
-    obs       = 0
+    step_counter             = 0
+    metric_observation_count = 0
+    throughput_total         = 0
+    jam_length_total         = 0.0
+    total_queue_north        = 0.0
+    total_queue_south        = 0.0
+    north_jam_length_total   = 0.0
+    south_jam_length_total   = 0.0
 
-    while traci.simulation.getMinExpectedNumber() > 0 and step < MAX_STEPS:
-        step += 1
-        n_dur -= STEP_LENGTH
-        s_dur -= STEP_LENGTH
+    metrics_timeline = []
+    north_actions    = []
+    south_actions    = []
 
-        # North decision
-        north_needs = (n_dur <= 0) and (n_phase % 2 == 0)
-        south_needs = (s_dur <= 0) and (s_phase % 2 == 0)
+    while traci.simulation.getMinExpectedNumber() > 0 and step_counter < MAX_STEPS:
+        step_counter              += 1
+        northCurrentPhaseDuration -= STEP_LENGTH
+        southCurrentPhaseDuration -= STEP_LENGTH
 
-        if north_needs:
-            n_act = predict_action(north_model, get_north_state(n_phase))
-        elif n_dur <= 0:
-            n_act = 5   # yellow — neutral action
+        north_decision_needed = (northCurrentPhaseDuration <= 0) and (northCurrentPhase % 2 == 0)
+        south_decision_needed = (southCurrentPhaseDuration <= 0) and (southCurrentPhase % 2 == 0)
 
-        if south_needs:
-            s_act = predict_action(south_model, get_south_state(s_phase))
-        elif s_dur <= 0:
-            s_act = 5
+        next_action_N_idx = None
+        next_action_S_idx = None
 
-        if n_dur <= 0:
-            n_phase, n_dur = apply_north_phase(n_act, n_phase)
-        if s_dur <= 0:
-            s_phase, s_dur = apply_south_phase(s_act, s_phase)
+        # ── North agent decision ─────────────────────────────────────────────
+        # State: 8 queue + 4 phase OH = 12, norm /2000
+        if north_decision_needed:
+            queue        = np.array(_northIntersection_queue())
+            norm_q_north = queue / 2000.0
+            n_phase_oh   = to_categorical(northCurrentPhase // 2, num_classes=4).flatten()
+            obs_north    = np.concatenate([norm_q_north, n_phase_oh]).astype(np.float32)
+            next_action_N_idx = predict_action(north_model, obs_north)
+            north_actions.append(next_action_N_idx)
+        elif northCurrentPhaseDuration <= 0:
+            next_action_N_idx = 5  # neutral — yellow transition
 
-        if step % METRIC_STEPS == 0:
-            obs += 1
-            jam = north_jam = south_jam = 0.0
-            tp = 0
-            for det in DETECTOR_IDS:
-                r = traci.lanearea.getSubscriptionResults(det)
-                if r:
-                    jl = r.get(traci.constants.JAM_LENGTH_METERS, 0)
-                    tp += r.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
-                    jam += jl
-                    if det in NORTH_IDS:
-                        north_jam += jl
-                    else:
-                        south_jam += jl
-            jam_total       += jam / DETECTOR_COUNT
-            north_jam_total += north_jam / len(NORTH_IDS)
-            south_jam_total += south_jam / len(SOUTH_IDS)
-            tp_total        += tp
+        # ── South agent decision ─────────────────────────────────────────────
+        # State: 5 queue + 3 phase OH = 8, norm /1000, num_classes=3 (6-phase/2)
+        if south_decision_needed:
+            queue        = np.array(_southIntersection_queue())
+            norm_q_south = queue / 1000.0
+            s_phase_oh   = to_categorical(southCurrentPhase // 2, num_classes=3).flatten()
+            obs_south    = np.concatenate([norm_q_south, s_phase_oh]).astype(np.float32)
+            next_action_S_idx = predict_action(south_model, obs_south)
+            south_actions.append(next_action_S_idx)
+        elif southCurrentPhaseDuration <= 0:
+            next_action_S_idx = 5  # neutral — yellow transition
+
+        # ── Apply north phase transition (8-phase cycle) ─────────────────────
+        if northCurrentPhaseDuration <= 0:
+            northCurrentPhase = (northCurrentPhase + 1) % NORTH_PHASES
+            traci.trafficlight.setPhase(NORTH_TL, northCurrentPhase)
+
+            if northCurrentPhase % 2 == 1:
+                northCurrentPhaseDuration = 5.0
+            else:
+                duration_adj = ACTION_SPACE[next_action_N_idx]
+                base = NORTH_BASE.get(northCurrentPhase, 30)
+                northCurrentPhaseDuration = float(max(5, min(180, base + duration_adj)))
+
+            traci.trafficlight.setPhaseDuration(NORTH_TL, northCurrentPhaseDuration)
+
+        # ── Apply south phase transition (6-phase cycle) ─────────────────────
+        if southCurrentPhaseDuration <= 0:
+            southCurrentPhase = (southCurrentPhase + 1) % SOUTH_PHASES
+            traci.trafficlight.setPhase(SOUTH_TL, southCurrentPhase)
+
+            if southCurrentPhase % 2 == 1:
+                southCurrentPhaseDuration = 5.0
+            else:
+                duration_adj = ACTION_SPACE[next_action_S_idx]
+                base = SOUTH_BASE.get(southCurrentPhase, 30)
+                southCurrentPhaseDuration = float(max(5, min(180, base + duration_adj)))
+
+            traci.trafficlight.setPhaseDuration(SOUTH_TL, southCurrentPhaseDuration)
+
+        # ── Collect per-minute metrics ────────────────────────────────────────
+        if step_counter % METRIC_STEPS == 0:
+            jam_length       = 0.0
+            throughput       = 0
+            north_jam_length = 0.0
+            south_jam_length = 0.0
+            metric_observation_count += 1
+
+            for i, det_id in enumerate(DETECTOR_IDS):
+                det_stats = traci.lanearea.getSubscriptionResults(det_id)
+                if not det_stats:
+                    continue
+                det_jam        = det_stats.get(traci.constants.JAM_LENGTH_METERS, 0)
+                det_throughput = det_stats.get(traci.constants.VAR_INTERVAL_NUMBER, 0)
+                jam_length    += det_jam
+                throughput    += det_throughput
+                if i < 8:
+                    north_jam_length += det_jam
+                else:
+                    south_jam_length += det_jam
+
+            jam_length   /= DETECTOR_COUNT
+            jam_length_total          += jam_length
+            throughput_total          += throughput
+
+            north_jam_length /= len(NORTH_IDS)
+            south_jam_length /= len(SOUTH_IDS)
+            north_jam_length_total    += north_jam_length
+            south_jam_length_total    += south_jam_length
+
+            north_queue = sum(_northIntersection_queue())
+            south_queue = sum(_southIntersection_queue())
+            total_queue_north         += north_queue
+            total_queue_south         += south_queue
+
+            time_min = step_counter * STEP_LENGTH / 60.0
+            metrics_timeline.append([
+                f"{time_min:.1f}",
+                f"{jam_length:.2f}",
+                f"{throughput:.2f}",
+                f"{north_queue:.2f}",
+                f"{south_queue:.2f}",
+                f"{north_queue + south_queue:.2f}",
+                f"{north_jam_length:.2f}",
+                f"{south_jam_length:.2f}",
+            ])
 
         traci.simulationStep()
 
-    sim_s = step * STEP_LENGTH
+    sim_s = step_counter * STEP_LENGTH
     traci.close()
 
-    mean_queue    = jam_total       / obs if obs else 0.0
-    mean_n_queue  = north_jam_total / obs if obs else 0.0
-    mean_s_queue  = south_jam_total / obs if obs else 0.0
-    throughput_hr = tp_total / (sim_s / 3600.0) if sim_s > 0 else 0.0
+    # ── Compute run averages ──────────────────────────────────────────────────
+    n = metric_observation_count if metric_observation_count > 0 else 1
+    avg_jam         = jam_length_total       / n
+    avg_throughput  = throughput_total       / n
+    avg_queue_north = total_queue_north      / n
+    avg_queue_south = total_queue_south      / n
+    avg_north_jam   = north_jam_length_total / n
+    avg_south_jam   = south_jam_length_total / n
+
+    throughput_hr = (throughput_total / (sim_s / 3600.0)) if sim_s > 0 else 0.0
     mean_veh_tl, mean_ped_tl = parse_tripinfo(test["trips_out"])
 
-    print(f"  Queue:{mean_queue:.2f}m | N:{mean_n_queue:.2f} S:{mean_s_queue:.2f} | "
-          f"VehTL:{mean_veh_tl:.2f}s | PedTL:{mean_ped_tl:.2f}s | TP:{throughput_hr:.1f}veh/hr")
-    return mean_veh_tl, mean_ped_tl, mean_queue, throughput_hr, mean_n_queue, mean_s_queue
+    # ── Print + debug log ─────────────────────────────────────────────────────
+    n_action_dist = Counter(north_actions)
+    s_action_dist = Counter(south_actions)
+    debug_msg = (
+        f"\n  Results for {test['label']}:\n"
+        f"    Average Jam Length (Overall)    : {avg_jam:.2f} m\n"
+        f"    Average Jam Length (North)      : {avg_north_jam:.2f} m\n"
+        f"    Average Jam Length (South)      : {avg_south_jam:.2f} m\n"
+        f"    Average Throughput (per min)    : {avg_throughput:.2f} veh/min\n"
+        f"    Throughput (per hr)             : {throughput_hr:.1f} veh/hr\n"
+        f"    Average North Queue             : {avg_queue_north:.2f}\n"
+        f"    Average South Queue             : {avg_queue_south:.2f}\n"
+        f"    Average Total Queue             : {avg_queue_north + avg_queue_south:.2f}\n"
+        f"    Mean Veh. Time Loss             : {mean_veh_tl:.2f} s\n"
+        f"    Mean Ped. Time Loss             : {mean_ped_tl:.2f} s\n"
+        f"    North decisions: {len(north_actions)}, unique actions: {len(set(north_actions))}/11, "
+        f"distribution: {dict(n_action_dist)}\n"
+        f"    South decisions: {len(south_actions)}, unique actions: {len(set(south_actions))}/11, "
+        f"distribution: {dict(s_action_dist)}"
+    )
+    print(debug_msg)
+
+    with open(DEBUG_LOG, 'a') as f:
+        f.write(f"\n{'='*70}\n{test['label']}\n{debug_msg}\n")
+
+    save_metrics_csv(test["metrics_csv"], metrics_timeline)
+    print(f"    Saved metrics CSV to {test['metrics_csv']}")
+
+    return mean_veh_tl, mean_ped_tl, avg_jam, throughput_hr, avg_queue_north, avg_queue_south
 
 # ---------------------------------------------------------------------------
-# Excel builder  (same structure as SP NoDRL)
+# Excel builder  (unchanged from BP_A2C batch script)
 # ---------------------------------------------------------------------------
 
-SCEN_CLR = {"normal":"D6E4F7","slow":"FFF2CC","jam":"FCE4D6"}
+SCEN_CLR = {"normal": "D6E4F7", "slow": "FFF2CC", "jam": "FCE4D6"}
 HDR_CLR  = "2E4057"
 thin = Side(style="thin", color="AAAAAA")
 BDR  = Border(left=thin, right=thin, top=thin, bottom=thin)
-COLS    = ["A","B","C","D","E","F","G"]
+COLS    = ["A", "B", "C", "D", "E", "F", "G"]
 WIDTHS  = [18, 22, 22, 22, 20, 20, 20]
 HEADERS = ["Run",
            "Mean Veh. Time Loss (s)", "Mean Ped. Time Loss (s)",
@@ -356,15 +452,14 @@ def build_xlsx(results, title, subtitle):
         c.alignment = _c(); c.border = BDR
     ws.row_dimensions[row].height = 16; row += 1
 
-    for scen in ["normal","slow","jam"]:
+    for scen in ["normal", "slow", "jam"]:
         s, e = s_start.get(scen), s_end.get(scen)
         if not s or not e: continue
         fill = PatternFill("solid", fgColor=SCEN_CLR[scen])
         c = ws.cell(row=row, column=1, value=f"{scen.capitalize()} Traffic")
         c.font = _bf(); c.fill = fill; c.alignment = _l(); c.border = BDR
-        for col, letter in enumerate(["B","C","D","E","F","G"], 2):
-            c = ws.cell(row=row, column=col,
-                        value=f"=AVERAGE({letter}{s+1}:{letter}{e})")
+        for col, letter in enumerate(["B", "C", "D", "E", "F", "G"], 2):
+            c = ws.cell(row=row, column=col, value=f"=AVERAGE({letter}{s+1}:{letter}{e})")
             c.font = _bf(); c.fill = fill; c.alignment = _c()
             c.border = BDR; c.number_format = "0.00"
         ws.row_dimensions[row].height = 14; row += 1
@@ -378,9 +473,9 @@ def build_xlsx(results, title, subtitle):
     ws[f"A{row}"].border = BDR; ws.row_dimensions[row].height = 16; row += 1
 
     all_rows = []
-    for scen in ["normal","slow","jam"]:
+    for scen in ["normal", "slow", "jam"]:
         s, e = s_start.get(scen), s_end.get(scen)
-        if s and e: all_rows.extend(range(s+1, e+1))
+        if s and e: all_rows.extend(range(s + 1, e + 1))
 
     for col, letter in enumerate(COLS, 1):
         c = ws.cell(row=row, column=col)
@@ -400,32 +495,46 @@ def build_xlsx(results, title, subtitle):
 # ---------------------------------------------------------------------------
 
 def main():
+    with open(DEBUG_LOG, 'w') as f:
+        f.write("A2C Baseline Batch Test Debug Log\n")
+        f.write(f"Action Space: {ACTION_SPACE}\n")
+        f.write(f"Neutral action index: 5 (adjustment = 0)\n")
+        f.write(f"North: 8-phase, state=12 (8 queue + 4 OH), norm /2000\n")
+        f.write(f"South: 6-phase, state=8  (5 queue + 3 OH), norm /1000\n")
+        f.write("="*70 + "\n")
+
     results = []
     for i, test in enumerate(TEST_PLAN, 1):
         print(f"\n[{i}/{len(TEST_PLAN)}] {test['label']}")
         if not os.path.isfile(test["rou_file"]):
-            print(f"  SKIP — not found: {test['rou_file']}")
-            results.append({"label":test["label"],"scenario":test["scenario"],
-                             "mean_veh_tl":None,"mean_ped_tl":None,"queue":None,
-                             "throughput":None,"north_queue":None,"south_queue":None})
+            print(f"  SKIP — route file not found: {test['rou_file']}")
+            results.append({"label": test["label"], "scenario": test["scenario"],
+                             "mean_veh_tl": None, "mean_ped_tl": None,
+                             "queue": None, "throughput": None,
+                             "north_queue": None, "south_queue": None})
             continue
         try:
             vt, pt, ql, tp, nq, sq = run_simulation(test)
-            results.append({"label":test["label"],"scenario":test["scenario"],
-                             "mean_veh_tl":round(vt,4),"mean_ped_tl":round(pt,4),
-                             "queue":round(ql,4),"throughput":round(tp,4),
-                             "north_queue":round(nq,4),"south_queue":round(sq,4)})
+            results.append({"label": test["label"], "scenario": test["scenario"],
+                             "mean_veh_tl": round(vt, 4), "mean_ped_tl": round(pt, 4),
+                             "queue": round(ql, 4), "throughput": round(tp, 4),
+                             "north_queue": round(nq, 4), "south_queue": round(sq, 4)})
         except Exception as e:
             print(f"  ERROR: {e}")
-            results.append({"label":test["label"],"scenario":test["scenario"],
-                             "mean_veh_tl":None,"mean_ped_tl":None,"queue":None,
-                             "throughput":None,"north_queue":None,"south_queue":None})
+            import traceback
+            traceback.print_exc()
+            results.append({"label": test["label"], "scenario": test["scenario"],
+                             "mean_veh_tl": None, "mean_ped_tl": None,
+                             "queue": None, "throughput": None,
+                             "north_queue": None, "south_queue": None})
 
-    wb = build_xlsx(results,
-                    "Balibago Baseline Pedestrian — A2C Batch Test Results",
-                    "30 Runs  |  10 Normal  •  10 Slow  •  10 Jam  |  A2C trained model (test mode)")
+    wb = build_xlsx(
+        results,
+        "Balibago Baseline Pedestrian — A2C Batch Test Results",
+        "30 Runs  |  10 Normal  •  10 Slow  •  10 Jam  |  A2C baseline (integrated loop)"
+    )
     wb.save(XLSX_OUT)
-    print(f"\n{'='*65}\n  Saved: {XLSX_OUT}\n{'='*65}")
+    print(f"\n{'='*70}\n  Saved Excel: {XLSX_OUT}\n  Debug log:   {DEBUG_LOG}\n{'='*70}")
 
 if __name__ == "__main__":
     main()

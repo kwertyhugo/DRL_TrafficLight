@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-03-24 15:28:54 by Eclipse SUMO sumo Version 1.24.0
+<sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="Balibago_traci/network/balibago_baseline.net.xml"/>
+        <route-files value="Balibago_traci/demand_test\flows_slow_traffic_01.rou.xml"/>
+        <additional-files value="Balibago_traci/additionals/balibago.poly.xml,Balibago_traci/ additionals/balibago.add.xml"/>
+    </input>
+
+    <output>
+        <tripinfo-output value="Balibago_traci/batch_results/BP_DDPG\BP_DDPG_trips_slow_01.xml"/>
+        <statistic-output value="Balibago_traci/batch_results/BP_DDPG\BP_DDPG_stats_slow_01.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+        <end value="10800"/>
+        <step-length value="0.1"/>
+    </time>
+
+    <processing>
+        <lateral-resolution value="0.1"/>
+        <collision.action value="none"/>
+        <collision.check-junctions value="false"/>
+        <collision.mingap-factor value="0"/>
+    </processing>
+
+    <report>
+        <no-warnings value="true"/>
+    </report>
+
+    <traci_server>
+        <remote-port value="64452"/>
+    </traci_server>
+
+    <gui_only>
+        <delay value="0"/>
+    </gui_only>
+
+</sumoConfiguration>
+-->
+
+<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
+    <performance clockBegin="348685.03" clockEnd="348890.27" clockDuration="205.24" traciDuration="86.63" realTimeFactor="51.48" vehicleUpdatesPerSecond="5972.44" personUpdatesPerSecond="63672.96" begin="0.00" end="10565.10" duration="10565.10"/>
+    <vehicles loaded="543" inserted="543" running="0" waiting="0"/>
+    <teleports total="8" jam="2" yield="6" wrongLane="0"/>
+    <safety collisions="0" emergencyStops="0" emergencyBraking="11"/>
+    <persons loaded="653" running="0" jammed="560"/>
+    <personTeleports total="0" abortWait="0" wrongDest="0"/>
+    <vehicleTripStatistics count="543" routeLength="1759.84" speed="9.84" duration="225.75" waitingTime="88.27" timeLoss="119.25" departDelay="0.05" departDelayWaiting="-1.00" totalTravelTime="122580.70" totalDepartDelay="26.50"/>
+    <pedestrianStatistics number="653" routeLength="460.96" duration="2001.30" timeLoss="1669.69"/>
+    <rideStatistics number="0"/>
+    <transportStatistics number="0"/>
+</statistics>
