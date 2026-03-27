@@ -1,0 +1,4 @@
+Scenario,Veh_Count,Veh_Mean (s),Veh_Std (s),Ped_Count,Ped_Mean (s),Ped_Std (s)
+Normal,670,48.26,50.0,300,91.85,52.81
+Slow,1354,262.16,417.45,600,99.68,59.6
+Jam/Heavy,0,,,0,,

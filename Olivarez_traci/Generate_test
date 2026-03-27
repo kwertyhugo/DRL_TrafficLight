@@ -1,0 +1,189 @@
+"""
+generate_demand_variants.py
+Generates 30 route XML files (10 normal, 10 slow, 10 jam) with slightly varied
+probabilities placed in the demand_test/ folder.
+"""
+
+import os
+import random
+
+random.seed(42)
+
+OUTPUT_DIR = "Olivarez_traci/demand_test"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# ---------------------------------------------------------------------------
+# Base scenario parameters
+# ---------------------------------------------------------------------------
+# Each scenario defines:
+#   ped_pph     – personsPerHour for all 4 personFlows
+#   jam_end     – end time for pf_1 (jam uses a short burst for pf_1)
+#   flows       – dict of flow_id -> base probability
+#   variation   – ±fraction applied randomly to each probability
+# ---------------------------------------------------------------------------
+
+VTYPES_BLOCK = """\
+    <vType id="ped" vClass="pedestrian" 
+        impatience="0.2" 
+        mDriveAfterRedTime="-1" 
+        guiShape="pedestrian"/>
+
+    <vTypeDistribution id="AguinaldoHighway">
+        <vType id="car" vClass="passenger" 
+            probability="0.413"
+            guiShape="passenger"/>
+
+        <vType id="jeep" vClass="bus" 
+            probability="0.17"
+            guiShape="passenger/van" 
+            length="8" 
+            width="2" 
+            mass="500" 
+            maxSpeed="100" 
+            desiredMaxSpeed="60" 
+            personCapacity="20"/>
+
+        <vType id="bus" vClass="bus" 
+            probability="0.06"
+            guiShape="bus"/>
+
+        <vType id="truck" vClass="truck" 
+            probability="0.13"
+            guiShape="truck"/>
+
+        <vType id="motorcycle" vClass="motorcycle" 
+            probability="0.1135"
+            width="0.8"
+            minGap="0.5" 
+            guiShape="motorcycle"/>
+
+        <vType id="tricycle" vClass="motorcycle" 
+            probability="0.1135"
+            guiShape="motorcycle" 
+            width="1.5" 
+            accel="2" 
+            maxSpeed="50" 
+            personCapacity="4"/>
+    </vTypeDistribution>"""
+
+PERSON_FLOWS_TEMPLATE = """\
+    <!-- biñan bayan to olivarez -->
+    <personFlow id="pf_1" type="ped" begin="0.00" end="{pf1_end}" personsPerHour="{pph}" departPos="25">
+        <personTrip from="145894807#1" to="-777627655"/>
+    </personFlow>
+
+    <!-- commuters to olivarez -->
+    <personFlow id="pf_2" type="ped" begin="0.00" end="3600.00" personsPerHour="{pph}" departPos="25">
+        <personTrip from="-1119486605" to="-777627655"/>
+    </personFlow>
+
+    <!-- oli to gma terminal and others -->
+    <personFlow id="pf_3" type="ped" begin="0.00" end="3600.00" personsPerHour="{pph}" departPos="25">
+        <personTrip from="777627654" to="-894583375"/>
+        <personTrip from="777627654" to="140483221#1"/>
+    </personFlow>
+
+    <!-- perps -->
+    <personFlow id="pf_4" type="ped" begin="0.00" end="3600.00" personsPerHour="{pph}" departPos="25">
+        <personTrip from="-793339796#1" to="793339796#1"/>
+        <personTrip from="793339796#1" to="-793339796#1"/>
+    </personFlow>"""
+
+FLOW_ROUTES = [
+    # (flow_id, from_edge, to_edge, scale_group)
+    # scale_group: "A" uses base, "A_half" uses base/2 — mirrors the ratio in originals
+    ("A1_1", "-793339796#2", "-145894807#0",  "half"),
+    ("A2_1", "-793339796#2", "-440471861#0",  "full"),
+    ("A3_1", "-793339796#2", "-140483224#1",  "full"),
+    ("B1_1", "-361257727#0",  "-793339796#2", "b"),
+    ("B2_1", "-361257727#0",  "-440471861#0", "b"),
+    ("B3_1", "-361257727#0",  "-140483224#1", "b"),
+    ("C1_1", "440471861#0",   "-793339796#2", "full"),
+    ("C2_1", "440471861#0",   "-145894807#0", "half"),
+    ("C3_1", "440471861#0",   "-140483224#1", "full"),
+    ("D1_1", "140483224#1",   "-793339796#2", "full"),
+    ("D2_1", "140483224#1",   "-145894807#0", "half"),
+    ("D3_1", "140483224#1",   "-440471861#0", "full"),
+]
+
+# Base probabilities per scenario (full / half / b)
+SCENARIOS = {
+    "normal": {
+        "pph_base": 80,
+        "pf1_end": "3600.00",
+        "probs": {"full": 0.0175, "half": 0.00875, "b": 0.00729},
+        "variation": 0.08,   # ±8%
+    },
+    "slow": {
+        "pph_base": 160,
+        "pf1_end": "3600.00",
+        "probs": {"full": 0.03167, "half": 0.01583, "b": 0.01319},
+        "variation": 0.08,
+    },
+    "jam": {
+        "pph_base": 240,
+        "pf1_end": "360.00",
+        "probs": {"full": 0.05417, "half": 0.02708, "b": 0.02257},
+        "variation": 0.08,
+    },
+}
+
+
+def vary(base, variation):
+    """Return base value perturbed by up to ±variation fraction."""
+    delta = base * variation
+    return round(base + random.uniform(-delta, delta), 5)
+
+
+def build_xml(scenario_name, run_index):
+    cfg = SCENARIOS[scenario_name]
+    variation = cfg["variation"]
+    pph = cfg["pph_base"] + random.randint(-8, 8)   # ±8 persons/hour
+    pf1_end = cfg["pf1_end"]
+
+    person_block = PERSON_FLOWS_TEMPLATE.format(
+        pph=pph,
+        pf1_end=pf1_end,
+    )
+
+    flow_lines = []
+    for flow_id, from_edge, to_edge, group in FLOW_ROUTES:
+        base_p = cfg["probs"][group]
+        p = vary(base_p, variation)
+        flow_lines.append(
+            f'    <flow id="{flow_id}" type="AguinaldoHighway" begin="0.00" end="3600.00" '
+            f'probability="{p}" from="{from_edge}" to="{to_edge}" '
+            f'departLane="best" departSpeed="max"/>'
+        )
+
+    flows_block = "\n".join(flow_lines)
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- {scenario_name.upper()} TRAFFIC - Variant {run_index} -->
+<!-- Generated by generate_demand_variants.py -->
+
+<routes>
+{VTYPES_BLOCK}
+
+{person_block}
+
+{flows_block}
+
+</routes>
+"""
+    return xml
+
+
+generated = []
+for scenario in ["normal", "slow", "jam"]:
+    for i in range(1, 11):
+        filename = f"flows_{scenario}_traffic_{i:02d}.rou.xml"
+        filepath = os.path.join(OUTPUT_DIR, filename)
+        xml_content = build_xml(scenario, i)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(xml_content)
+        generated.append(filepath)
+        print(f"  Generated: {filepath}")
+
+print(f"\nDone. {len(generated)} route files written to '{OUTPUT_DIR}/'")

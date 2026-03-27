@@ -100,7 +100,7 @@ def run_scenario(scenario):
     """Run a single scenario and return its results."""
 
     Sumo_config = [
-        'sumo',
+        'sumo-gui',
         '-c', 'Balibago_traci/baselinePed.sumocfg',
         '--route-files', scenario['route_file'],
         '--step-length', '0.1',

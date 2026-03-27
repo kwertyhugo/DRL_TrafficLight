@@ -1,0 +1,203 @@
+"""
+generate_banlic_demand_variants.py
+
+Generates 30 route XML files (10 normal, 10 slow, 10 jam) with slightly
+varied probabilities/pph placed in Banlic-Mamatid_traci/demand_test/
+
+Vehicle type mix (car/jeep/bus/truck/motorcycle/tricycle) is never changed.
+Only flow probabilities and personFlow pph are perturbed ±8%.
+"""
+
+import os
+import random
+
+random.seed(77)
+
+OUTPUT_DIR = "Banlic-Mamatid_traci/demand_test"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# ---------------------------------------------------------------------------
+# Fixed vType + vTypeDistribution block (never changes)
+# ---------------------------------------------------------------------------
+VTYPES_BLOCK = """\
+    <vType id="ped" vClass="pedestrian" 
+        impatience="0.2" 
+        mDriveAfterRedTime="-1" 
+        guiShape="pedestrian"/>
+
+    <vTypeDistribution id="AguinaldoHighway">
+        <vType id="car" vClass="passenger" 
+            probability="0.413"
+            guiShape="passenger"/>
+
+        <vType id="jeep" vClass="bus" 
+            probability="0.17"
+            guiShape="passenger/van" 
+            length="8" 
+            width="2" 
+            mass="500" 
+            maxSpeed="100" 
+            desiredMaxSpeed="60" 
+            personCapacity="20"/>
+
+        <vType id="bus" vClass="bus" 
+            probability="0.06"
+            guiShape="bus"/>
+
+        <vType id="truck" vClass="truck" 
+            probability="0.13"
+            guiShape="truck"/>
+
+        <vType id="motorcycle" vClass="motorcycle" 
+            probability="0.1135"
+            width="0.8"
+            minGap="0.5" 
+            guiShape="motorcycle"/>
+
+        <vType id="tricycle" vClass="motorcycle" 
+            probability="0.1135"
+            guiShape="motorcycle" 
+            width="1.5" 
+            accel="2" 
+            maxSpeed="50" 
+            personCapacity="4"/>
+    </vTypeDistribution>"""
+
+# ---------------------------------------------------------------------------
+# personFlow definitions — (id, from_edge, to_edge)
+# ---------------------------------------------------------------------------
+PERSON_FLOWS = [
+    ("SavemoretoPalengke",  "-549232953#2",   "-1346113028#6"),
+    ("SavemoretoJeepPila",  "-549232953#2",   "-549232953#0"),
+    ("SavemoretoInasal",    "-549232953#2",   "549232953#2"),
+    ("PalengketoSavemore",  "-1346113028#6",  "-549232953#2"),
+    ("PalengketoJeepPila",  "-1346113028#6",  "-549232953#0"),
+    ("PalengketoInasal",    "-1346113028#6",  "549232953#2"),
+    ("JeepPilatoSavemore",  "-549232953#0",   "-549232953#2"),
+    ("JeepPilatoPalengke",  "-549232953#0",   "-1346113028#6"),
+    ("JeepPilatoInasal",    "-549232953#0",   "549232953#2"),
+    ("InasaltoSavemore",    "549232953#2",    "-549232953#2"),
+    ("InasaltoPalengke",    "549232953#2",    "-1346113028#6"),
+    ("InasaltoJeepPila",    "549232953#2",    "-549232953#0"),
+]
+
+# ---------------------------------------------------------------------------
+# Vehicle flow definitions — (id, from_edge, to_edge, base_prob_key)
+# ---------------------------------------------------------------------------
+# Base probabilities stored per scenario; each flow references a key
+VEHICLE_FLOWS = [
+    # From Sta Rosa
+    ("StaRosatoBanlic-Mamatid", "-549232953#10",  "-1346113028#0",  "SR_BM"),
+    ("StaRosatoCalamba",         "-549232953#10",  "-32425220#0",    "SR_CA"),
+    ("StaRosatoNeighborhood",    "-549232953#10",  "32425190#1",     "SR_NB"),
+    # From Banlic-Mamatid
+    ("Banlic-MamatidtoStaRosa",       "1346113028#0",  "549232953#10",   "BM_SR"),
+    ("Banlic-MamatidtoCalamba",       "1346113028#0",  "-32425220#0",    "BM_CA"),
+    ("Banlic-MamatidtoNeighborhood",  "1346113028#0",  "32425190#1",     "BM_NB"),
+    # From Calamba
+    ("CalambatoStaRosa",         "32425220#0",    "549232953#10",   "CA_SR"),
+    ("CalambatoBanlic-Mamatid",  "32425220#0",    "-1346113028#0",  "CA_BM"),
+    ("CalambatoNeighborhood",    "32425220#0",    "32425190#1",     "CA_NB"),
+    # From Neighborhood
+    ("NeighborhoodtoStaRosa",         "-32425190#1",  "549232953#10",   "NB_SR"),
+    ("NeighborhoodtoBanlic-Mamatid",  "-32425190#1",  "-1346113028#0",  "NB_BM"),
+    ("NeighborhoodtoCalamba",         "-32425190#1",  "-32425220#0",    "NB_CA"),
+]
+
+# ---------------------------------------------------------------------------
+# Scenario base parameters
+# ---------------------------------------------------------------------------
+SCENARIOS = {
+    "normal": {
+        "pph_base":  25,
+        "variation": 0.08,
+        "label":     "NORMAL TRAFFIC",
+        "probs": {
+            "SR_BM": 0.02316, "SR_CA": 0.03474, "SR_NB": 0.00772,
+            "BM_SR": 0.01969, "BM_CA": 0.01969, "BM_NB": 0.00438,
+            "CA_SR": 0.03474, "CA_BM": 0.02316, "CA_NB": 0.00772,
+            "NB_SR": 0.00547, "NB_BM": 0.00365, "NB_CA": 0.00547,
+        },
+    },
+    "slow": {
+        "pph_base":  50,
+        "variation": 0.08,
+        "label":     "SLOW TRAFFIC",
+        "probs": {
+            "SR_BM": 0.04544, "SR_CA": 0.06816, "SR_NB": 0.01515,
+            "BM_SR": 0.03863, "BM_CA": 0.03863, "BM_NB": 0.00859,
+            "CA_SR": 0.06816, "CA_BM": 0.04544, "CA_NB": 0.01515,
+            "NB_SR": 0.01073, "NB_BM": 0.00716, "NB_CA": 0.01073,
+        },
+    },
+    "jam": {
+        "pph_base":  75,
+        "variation": 0.08,
+        "label":     "TRAFFIC JAM",
+        "probs": {
+            "SR_BM": 0.07169, "SR_CA": 0.10753, "SR_NB": 0.02390,
+            "BM_SR": 0.06095, "BM_CA": 0.06095, "BM_NB": 0.01355,
+            "CA_SR": 0.10753, "CA_BM": 0.07169, "CA_NB": 0.02390,
+            "NB_SR": 0.01693, "NB_BM": 0.01130, "NB_CA": 0.01693,
+        },
+    },
+}
+
+
+def vary(base, variation):
+    delta = base * variation
+    return round(base + random.uniform(-delta, delta), 5)
+
+
+def build_xml(scenario_name, run_index):
+    cfg = SCENARIOS[scenario_name]
+    variation = cfg["variation"]
+
+    # --- personFlows ---
+    ped_lines = []
+    for pf_id, from_e, to_e in PERSON_FLOWS:
+        pph = max(1, round(cfg["pph_base"] + random.uniform(
+            -cfg["pph_base"] * variation,
+             cfg["pph_base"] * variation)))
+        ped_lines.append(
+            f'    <personFlow id="{pf_id}" type="ped" begin="0.00" end="3600.00" '
+            f'personsPerHour="{pph}" departPos="0">\n'
+            f'        <personTrip from="{from_e}" to="{to_e}"/>\n'
+            f'    </personFlow>'
+        )
+
+    # --- vehicle flows ---
+    veh_lines = []
+    for fid, from_e, to_e, prob_key in VEHICLE_FLOWS:
+        p = vary(cfg["probs"][prob_key], variation)
+        veh_lines.append(
+            f'    <flow id="{fid}" type="AguinaldoHighway" begin="0.00" end="3600.00" '
+            f'probability="{p}" from="{from_e}" to="{to_e}" '
+            f'departLane="best" departSpeed="max"/>'
+        )
+
+    xml = (
+        f'<?xml version="1.0" encoding="UTF-8"?>\n\n'
+        f'<!-- {cfg["label"]} - Variant {run_index} -->\n'
+        f'<!-- Generated by generate_banlic_demand_variants.py -->\n\n'
+        f'<routes>\n'
+        f'{VTYPES_BLOCK}\n\n'
+        f'    <!--Pedestrians-->\n'
+        + "\n".join(ped_lines) + "\n\n"
+        + "\n".join(veh_lines) + "\n\n"
+        f'</routes>\n'
+    )
+    return xml
+
+
+generated = []
+for scenario in ["normal", "slow", "jam"]:
+    for i in range(1, 11):
+        filename = f"flows_{scenario}_traffic_{i:02d}.rou.xml"
+        filepath = os.path.join(OUTPUT_DIR, filename)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(build_xml(scenario, i))
+        generated.append(filepath)
+        print(f"  Generated: {filepath}")
+
+print(f"\nDone. {len(generated)} route files written to '{OUTPUT_DIR}/'")

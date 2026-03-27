@@ -1,0 +1,206 @@
+"""
+generate_balibago_demand_variants.py
+
+Generates 30 route XML files (10 normal, 10 slow, 10 jam) with slightly
+varied probabilities/pph placed in Balibago_traci/demand_test/
+
+Vehicle type mix (car/jeep/bus/truck/motorcycle/tricycle) is never changed.
+Only flow probabilities and personFlow pph are perturbed ±8%.
+"""
+
+import os
+import random
+
+random.seed(99)
+
+OUTPUT_DIR = "Balibago_traci/demand_test"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+# ---------------------------------------------------------------------------
+# Fixed vType + vTypeDistribution block (never changes)
+# ---------------------------------------------------------------------------
+VTYPES_BLOCK = """\
+    <vType id="ped" vClass="pedestrian" 
+        impatience="0.2" 
+        mDriveAfterRedTime="-1" 
+        guiShape="pedestrian"/>
+
+    <vType id="car" vClass="passenger" 
+        probability="0.413"
+        guiShape="passenger"/>
+
+    <vType id="jeep" vClass="bus" 
+        probability="0.17"
+        guiShape="passenger/van" 
+        length="8" 
+        width="2" 
+        mass="500" 
+        maxSpeed="100" 
+        desiredMaxSpeed="60" 
+        personCapacity="20"/>
+
+    <vType id="bus" vClass="bus" 
+        probability="0.06"
+        guiShape="bus"/>
+
+    <vType id="truck" vClass="truck" 
+        probability="0.13"
+        guiShape="truck"/>
+
+    <vType id="motorcycle" vClass="motorcycle" 
+        probability="0.1135"
+        width="0.8"
+        minGap="0.5" 
+        guiShape="motorcycle"/>
+
+    <vType id="tricycle" vClass="motorcycle" 
+        probability="0.1135"
+        guiShape="motorcycle" 
+        width="1.5" 
+        accel="2" 
+        maxSpeed="50" 
+        personCapacity="4"/>
+
+    <vTypeDistribution id="PublicTranspo" vTypes="jeep bus tricycle"/>
+    <vTypeDistribution id="AguinaldoHighway" vTypes="car jeep bus truck motorcycle tricycle"/>"""
+
+# ---------------------------------------------------------------------------
+# personFlow definitions — (id, from_edge, to_edge)
+# ---------------------------------------------------------------------------
+PERSON_FLOWS = [
+    ("JollibeetoPalengke", "32083309#6",   "32083256"),
+    ("JollibeetoSTI",      "32083309#6",   "1287979763"),
+    ("JollibeetoTarget",   "32083309#6",   "323641561#0"),
+    ("JollibeetoPureGold", "32083309#6",   "777622118"),
+    ("PalengketoJollibee", "32083256",     "32083309#6"),
+    ("PalengketoSTI",      "32083256",     "1287979763"),
+    ("PalengketoTarget",   "32083256",     "323641561#0"),
+    ("PalengketoPuregold", "32083256",     "777622118"),
+    ("STItoSakayan",       "1287979763",   "32083256"),
+    ("TargettoSakayan",    "323641561#0",  "32083256"),
+    ("PuregoldtoSakayan",  "777622118",    "32083256"),
+]
+
+# ---------------------------------------------------------------------------
+# vehicle flow definitions — (id, vtype_dist, from, to, via_or_None)
+# ---------------------------------------------------------------------------
+VEHICLE_FLOWS = [
+    # From Biñan
+    ("BiñantoBalibago",  "PublicTranspo",    "553887793#0",  "-32083237#0",   "39469992#3"),
+    ("BiñantoNuvali",    "AguinaldoHighway", "553887793#0",  "145507700#3",   None),
+    ("BiñantoCalamba",   "AguinaldoHighway", "553887793#0",  "-185930141#0",  None),
+    ("BiñantoStaRosa",   "AguinaldoHighway", "553887793#0",  "-92878383#0",   None),
+    # From Balibago
+    ("BalibagotoBiñan",   "PublicTranspo",   "145507698",    "-553887793#0",  "777619922#1 89908334 32083216#2 1081562671"),
+    ("BalibagotoStaRosa", "PublicTranspo",   "145507698",    "-92878383#0",   "777619922#1 89908334 32083216#2 1081562671"),
+    ("BalibagotoCalamba", "PublicTranspo",   "145507698",    "-185930141#0",  "777619922#1 89908334 32083216#2 -186159871#1"),
+    ("BalibagotoNuvali",  "PublicTranspo",   "777619905",    "145507700#3",   "145507698"),
+    # From StaRosa
+    ("StaRosatoCalamba",  "AguinaldoHighway","92878383#0",   "-185930141#0",  None),
+    ("StaRosatoBalibago", "PublicTranspo",   "92878383#0",   "-32083237#0",   "39469992#3"),
+    ("StaRosatoBiñan",    "AguinaldoHighway","92878383#0",   "-553887793#0",  None),
+    ("StaRosatoNuvali",   "AguinaldoHighway","92878383#0",   "145507700#3",   None),
+    # From Nuvali
+    ("NuvalitoBalibago",  "PublicTranspo",   "-145507700#3", "32083201#1",    "145507703 32082965 32083262"),
+    ("NuvalitoBiñan",     "AguinaldoHighway","-145507700#3", "-553887793#0",  None),
+    ("NuvalitoStaRosa",   "AguinaldoHighway","-145507700#3", "-92878383#0",   "-1413610384"),
+    ("NuvalitoCalamba",   "AguinaldoHighway","-145507700#3", "-185930141#0",  None),
+    # From Calamba
+    ("CalambatoBalibago", "PublicTranspo",   "185930141#0",  "89908334",      "185601451#0"),
+    ("CalambatoStaRosa",  "AguinaldoHighway","185930141#0",  "-92878383#0",   None),
+    ("CalambatoNuvali",   "AguinaldoHighway","185930141#0",  "145507700#3",   None),
+    ("CalambatoBiñan",    "AguinaldoHighway","185930141#0",  "-553887793#0",  None),
+]
+
+# ---------------------------------------------------------------------------
+# Scenario base parameters
+# ---------------------------------------------------------------------------
+SCENARIOS = {
+    "normal": {
+        "pph_base": 30,
+        "prob_base": 0.00355,
+        "variation": 0.08,
+        "label": "NORMAL TRAFFIC",
+        # jam has per-flow pph variation — normal/slow use uniform pph
+        "jam_pph": None,
+    },
+    "slow": {
+        "pph_base": 60,
+        "prob_base": 0.0080,
+        "variation": 0.08,
+        "label": "SLOW TRAFFIC",
+        "jam_pph": None,
+    },
+    "jam": {
+        # Base pph per flow matching original jam file (74,75,90,75,73,85,90,75,75,90,75)
+        "pph_base": None,
+        "pph_per_flow": [74, 75, 90, 75, 73, 85, 90, 75, 75, 90, 75],
+        "prob_base": 0.0120,
+        "variation": 0.08,
+        "label": "TRAFFIC JAM",
+        "jam_pph": True,
+    },
+}
+
+
+def vary(base, variation):
+    delta = base * variation
+    return round(base + random.uniform(-delta, delta), 5)
+
+
+def build_xml(scenario_name, run_index):
+    cfg = SCENARIOS[scenario_name]
+    variation = cfg["variation"]
+
+    # --- personFlows ---
+    ped_lines = []
+    for idx, (pf_id, from_e, to_e) in enumerate(PERSON_FLOWS):
+        if cfg["jam_pph"]:
+            base_pph = cfg["pph_per_flow"][idx]
+        else:
+            base_pph = cfg["pph_base"]
+        pph = max(1, round(base_pph + random.uniform(-base_pph * variation,
+                                                       base_pph * variation)))
+        ped_lines.append(
+            f'    <personFlow id="{pf_id}" type="ped" begin="0.00" end="3600.00" '
+            f'personsPerHour="{pph}" departPos="25">\n'
+            f'        <personTrip from="{from_e}" to="{to_e}"/>\n'
+            f'    </personFlow>'
+        )
+
+    # --- vehicle flows ---
+    veh_lines = []
+    for (fid, vdist, from_e, to_e, via) in VEHICLE_FLOWS:
+        p = vary(cfg["prob_base"], variation)
+        via_attr = f' via="{via}"' if via else ""
+        veh_lines.append(
+            f'    <flow id="{fid}" type="{vdist}" begin="0.00" end="3600.00" '
+            f'from="{from_e}" to="{to_e}"{via_attr} probability="{p}" '
+            f'departLane="best" departSpeed="max"/>'
+        )
+
+    xml = (
+        f'<?xml version="1.0" encoding="UTF-8"?>\n\n'
+        f'<!-- {cfg["label"]} - Variant {run_index} -->\n'
+        f'<!-- Generated by generate_balibago_demand_variants.py -->\n\n'
+        f'<routes>\n'
+        f'{VTYPES_BLOCK}\n\n'
+        f'    <!-- Pedestrians -->\n'
+        + "\n".join(ped_lines) + "\n\n"
+        + "\n".join(veh_lines) + "\n\n"
+        f'</routes>\n'
+    )
+    return xml
+
+
+generated = []
+for scenario in ["normal", "slow", "jam"]:
+    for i in range(1, 11):
+        filename = f"flows_{scenario}_traffic_{i:02d}.rou.xml"
+        filepath = os.path.join(OUTPUT_DIR, filename)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(build_xml(scenario, i))
+        generated.append(filepath)
+        print(f"  Generated: {filepath}")
+
+print(f"\nDone. {len(generated)} route files written to '{OUTPUT_DIR}/'")

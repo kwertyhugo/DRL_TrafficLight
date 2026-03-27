@@ -49,7 +49,7 @@ else:
     sys.exit("Please declare environment variable 'SUMO_HOME'")
 
 Sumo_config = [
-    'sumo',
+    'sumo-gui',
     '-c', r'Olivarez_traci\baselinePed.sumocfg',
     '--route-files', r'Olivarez_traci\demand\flows_traffic_jam.rou.xml',
     '--step-length', '0.1',
