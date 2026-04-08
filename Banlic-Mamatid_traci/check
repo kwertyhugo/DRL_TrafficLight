@@ -1,0 +1,130 @@
+import os
+import sys
+import numpy as np
+from keras.models import load_model
+from keras.utils import to_categorical
+
+print("\n" + "=" * 70)
+print("QUICK ACTION CHECK - A2C Model vs Fixed Timing")
+print("=" * 70)
+
+# Load model
+model_path = './Banlic-Mamatid_traci/models_A2C/Main_A2CAgent_Signalized.keras'
+
+if not os.path.exists(model_path):
+    print(f"❌ Model not found at {model_path}")
+    print("Please train the model first!")
+    sys.exit(1)
+
+model = load_model(model_path)
+print(f"✓ Loaded model from {model_path}\n")
+
+# Action space
+actionSpace = (-25, -20, -15, -10, -5, 0, 5, 10, 15, 20, 25)
+
+# Fixed timing (NoDRL)
+fixed_durations = {0: 30, 2: 30, 4: 45, 6: 60, 8: 25}
+
+print("=" * 70)
+print("Testing what actions the model selects for different scenarios")
+print("=" * 70)
+
+# Test scenarios: [queue values for 6 detectors] + phase
+test_cases = [
+    ("Light traffic, Phase 0", [100, 80, 90, 70, 85, 75], 0),
+    ("Heavy traffic, Phase 0", [800, 900, 850, 920, 880, 910], 0),
+    ("Light traffic, Phase 2", [100, 80, 90, 70, 85, 75], 2),
+    ("Heavy traffic, Phase 2", [800, 900, 850, 920, 880, 910], 2),
+    ("Light traffic, Phase 4", [100, 80, 90, 70, 85, 75], 4),
+    ("Heavy traffic, Phase 4", [800, 900, 850, 920, 880, 910], 4),
+    ("Mixed traffic, Phase 6", [300, 600, 400, 700, 350, 650], 6),
+    ("Very heavy, Phase 6", [1500, 1600, 1700, 1800, 1650, 1750], 6),
+    ("Light traffic, Phase 8", [100, 80, 90, 70, 85, 75], 8),
+    ("Heavy traffic, Phase 8", [800, 900, 850, 920, 880, 910], 8),
+]
+
+print(f"\n{'Scenario':<30} {'Phase':<7} {'Fixed':<10} {'A2C Action':<12} {'Adjustment':<12} {'Final Duration':<15}")
+print("-" * 100)
+
+action_distribution = []
+
+for scenario, queue_values, phase in test_cases:
+    # Prepare state for A2C model
+    queue = np.array(queue_values, dtype=np.float32)
+    norm_queue = queue / 1000.0  # Same normalization as training
+    phase_oh = to_categorical(phase // 2, num_classes=5).flatten()
+    state = np.concatenate([norm_queue, phase_oh]).astype(np.float32)
+    
+    # Get A2C action
+    state_batch = np.expand_dims(state, axis=0)
+    action_probs = model.predict(state_batch, verbose=0)[0]
+    action_idx = np.argmax(action_probs)
+    action_distribution.append(action_idx)
+    
+    # Calculate final duration
+    fixed_duration = fixed_durations[phase]
+    adjustment = actionSpace[action_idx]
+    final_duration = max(5, min(180, fixed_duration + adjustment))
+    
+    # Comparison
+    action_str = f"{action_idx} ({adjustment:+d}s)"
+    
+    print(f"{scenario:<30} {phase:<7} {fixed_duration:<10} {action_str:<12} {adjustment:+4d}s       {final_duration:>3d}s")
+
+print("-" * 100)
+
+# Analysis
+print("\n" + "=" * 70)
+print("ANALYSIS")
+print("=" * 70)
+
+unique_actions = len(set(action_distribution))
+most_common_action = max(set(action_distribution), key=action_distribution.count)
+action_5_count = action_distribution.count(5)  # Action 5 = 0 adjustment (no change)
+
+print(f"\nUnique actions selected: {unique_actions} out of 11 possible")
+print(f"Most common action: {most_common_action} (adjustment: {actionSpace[most_common_action]:+d}s)")
+print(f"Times action 5 selected (0 adjustment): {action_5_count}/{len(test_cases)}")
+
+if unique_actions == 1:
+    print("\n❌ PROBLEM: Model always selects the SAME action!")
+    print("   This means the model has NOT learned anything.")
+    print("   It will perform identically to fixed timing.")
+elif action_5_count == len(test_cases):
+    print("\n❌ PROBLEM: Model always selects 0 adjustment!")
+    print("   This means it's essentially using fixed timing.")
+    print("   Results will be identical to NoDRL baseline.")
+elif unique_actions < 3:
+    print("\n⚠️  WARNING: Model uses very few actions.")
+    print("   Limited adaptability - may perform similarly to fixed timing.")
+else:
+    print("\n✓ Model shows varied behavior across scenarios")
+    print("  It's adapting timing based on traffic conditions.")
+    
+    # Check if it responds to congestion
+    light_actions = [action_distribution[i] for i in [0, 2, 4, 8]]
+    heavy_actions = [action_distribution[i] for i in [1, 3, 5, 9]]
+    
+    avg_light = np.mean([actionSpace[a] for a in light_actions])
+    avg_heavy = np.mean([actionSpace[a] for a in heavy_actions])
+    
+    print(f"\n  Average adjustment for light traffic: {avg_light:+.1f}s")
+    print(f"  Average adjustment for heavy traffic: {avg_heavy:+.1f}s")
+    
+    if avg_heavy > avg_light + 5:
+        print("  ✓ Model correctly extends green time for heavy traffic")
+    elif avg_light > avg_heavy + 5:
+        print("  ✓ Model correctly shortens green time for light traffic")
+    else:
+        print("  ⚠️  Model doesn't show clear response to congestion levels")
+
+print("\n" + "=" * 70)
+print("Action Distribution:")
+print("=" * 70)
+for i in range(11):
+    count = action_distribution.count(i)
+    if count > 0:
+        bar = "█" * count
+        print(f"Action {i:2d} ({actionSpace[i]:+3d}s): {bar} ({count})")
+
+print("\n" + "=" * 70)

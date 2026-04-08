@@ -1,0 +1,123 @@
+import pandas as pd
+import numpy as np
+from scipy.stats import shapiro, kruskal
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+import warnings
+warnings.filterwarnings('ignore')
+
+# ============================================================================
+# LOAD DATA (Extracted from your uploaded CSVs)
+# ============================================================================
+data_records = [
+    # Olivarez BP & SP
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Vehicle_TL': 68.74, 'Pedestrian_TL': 84.49},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Vehicle_TL': 56.75, 'Pedestrian_TL': 18.20},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Vehicle_TL': 38.09, 'Pedestrian_TL': 14.86},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Vehicle_TL': 95.66, 'Pedestrian_TL': 93.59},
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Vehicle_TL': 65.15, 'Pedestrian_TL': 74.03},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Vehicle_TL': 76.08, 'Pedestrian_TL': 21.25},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Vehicle_TL': 64.31, 'Pedestrian_TL': 18.98},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Vehicle_TL': 65.35, 'Pedestrian_TL': 91.69},
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 107.20, 'Pedestrian_TL': 20.14},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 168.17, 'Pedestrian_TL': 22.83},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 195.44, 'Pedestrian_TL': 19.81},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 133.26, 'Pedestrian_TL': 80.69},
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Normal_SP', 'Vehicle_TL': 68.74, 'Pedestrian_TL': 86.69},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Normal_SP', 'Vehicle_TL': 28.89, 'Pedestrian_TL': 32.34},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Normal_SP', 'Vehicle_TL': 29.08, 'Pedestrian_TL': 31.80},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Normal_SP', 'Vehicle_TL': 38.85, 'Pedestrian_TL': 50.76},
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Slow_SP', 'Vehicle_TL': 120.40, 'Pedestrian_TL': 90.39},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Slow_SP', 'Vehicle_TL': 44.90, 'Pedestrian_TL': 34.14},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Slow_SP', 'Vehicle_TL': 54.36, 'Pedestrian_TL': 33.90},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Slow_SP', 'Vehicle_TL': 54.81, 'Pedestrian_TL': 49.80},
+    {'Location': 'Olivarez', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 68.74, 'Pedestrian_TL': 82.66},
+    {'Location': 'Olivarez', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 203.12, 'Pedestrian_TL': 31.82},
+    {'Location': 'Olivarez', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 224.76, 'Pedestrian_TL': 35.13},
+    {'Location': 'Olivarez', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 237.69, 'Pedestrian_TL': 37.68},
+
+    # Balibago BP & SP
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Vehicle_TL': 96.44, 'Pedestrian_TL': 156.66},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Vehicle_TL': 261.94, 'Pedestrian_TL': 159.97},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Vehicle_TL': 95.14, 'Pedestrian_TL': 161.83},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Vehicle_TL': 79.98, 'Pedestrian_TL': 140.74},
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Vehicle_TL': 101.46, 'Pedestrian_TL': 362.69},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Vehicle_TL': 369.97, 'Pedestrian_TL': 1600.11},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Vehicle_TL': 101.05, 'Pedestrian_TL': 395.29},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Vehicle_TL': 85.77, 'Pedestrian_TL': 27.52},
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 103.92, 'Pedestrian_TL': 3909.62},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 992.55, 'Pedestrian_TL': 4041.65},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 115.16, 'Pedestrian_TL': 457.41},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 104.20, 'Pedestrian_TL': 2345.07},
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Normal_SP', 'Vehicle_TL': 105.0, 'Pedestrian_TL': 69.21},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Normal_SP', 'Vehicle_TL': 103.10, 'Pedestrian_TL': 71.07},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Normal_SP', 'Vehicle_TL': 103.48, 'Pedestrian_TL': 67.97},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Normal_SP', 'Vehicle_TL': 86.59, 'Pedestrian_TL': 86.59},
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Slow_SP', 'Vehicle_TL': 105.50, 'Pedestrian_TL': 1098.2},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Slow_SP', 'Vehicle_TL': 116.58, 'Pedestrian_TL': 482.49},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Slow_SP', 'Vehicle_TL': 114.23, 'Pedestrian_TL': 90.42},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Slow_SP', 'Vehicle_TL': 87.45, 'Pedestrian_TL': 2114.59},
+    {'Location': 'Balibago', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 122.91, 'Pedestrian_TL': 2570.66},
+    {'Location': 'Balibago', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 158.11, 'Pedestrian_TL': 397.98},
+    {'Location': 'Balibago', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 172.12, 'Pedestrian_TL': 273.36},
+    {'Location': 'Balibago', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam_SP', 'Vehicle_TL': 126.64, 'Pedestrian_TL': 2096.66},
+
+    # Banlic SP
+    {'Location': 'Banlic', 'Algorithm': 'No DRL', 'Scenario': 'Normal', 'Vehicle_TL': 70.79, 'Pedestrian_TL': 128.16},
+    {'Location': 'Banlic', 'Algorithm': 'DQN', 'Scenario': 'Normal', 'Vehicle_TL': 96.54, 'Pedestrian_TL': 160.17},
+    {'Location': 'Banlic', 'Algorithm': 'A2C', 'Scenario': 'Normal', 'Vehicle_TL': 48.26, 'Pedestrian_TL': 98.92},
+    {'Location': 'Banlic', 'Algorithm': 'DDPG', 'Scenario': 'Normal', 'Vehicle_TL': 64.24, 'Pedestrian_TL': 169.70},
+    {'Location': 'Banlic', 'Algorithm': 'No DRL', 'Scenario': 'Slow', 'Vehicle_TL': 111.58, 'Pedestrian_TL': 140.67},
+    {'Location': 'Banlic', 'Algorithm': 'DQN', 'Scenario': 'Slow', 'Vehicle_TL': 88.25, 'Pedestrian_TL': 118.25},
+    {'Location': 'Banlic', 'Algorithm': 'A2C', 'Scenario': 'Slow', 'Vehicle_TL': 262.16, 'Pedestrian_TL': 99.68},
+    {'Location': 'Banlic', 'Algorithm': 'DDPG', 'Scenario': 'Slow', 'Vehicle_TL': 338.04, 'Pedestrian_TL': 157.62},
+    {'Location': 'Banlic', 'Algorithm': 'No DRL', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 643.49, 'Pedestrian_TL': 142.94},
+    {'Location': 'Banlic', 'Algorithm': 'DQN', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 440.6, 'Pedestrian_TL': 160.98},
+    {'Location': 'Banlic', 'Algorithm': 'A2C', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 685.76, 'Pedestrian_TL': 101.18},
+    {'Location': 'Banlic', 'Algorithm': 'DDPG', 'Scenario': 'Traffic Jam', 'Vehicle_TL': 609.01, 'Pedestrian_TL': 170.25},
+]
+
+df = pd.DataFrame(data_records)
+
+def run_full_analysis(metric_name, col_name):
+    print(f"\n{'='*80}")
+    print(f"COMPREHENSIVE ANALYSIS: {metric_name}")
+    print(f"{'='*80}")
+
+    # --- PART 1: DESCRIPTIVE STATISTICS ---
+    print("\n[1] DESCRIPTIVE STATISTICS:")
+    stats = df.groupby('Algorithm')[col_name].agg(['count', 'mean', 'std', 'min', 'max'])
+    stats['CV%'] = (stats['std'] / stats['mean']) * 100
+    print(stats.round(2))
+
+    # --- PART 2: NORMALITY ---
+    print("\n[2] NORMALITY TEST (Shapiro-Wilk):")
+    for loc in df['Location'].unique():
+        stat, p = shapiro(df[df['Location'] == loc][col_name])
+        print(f"  {loc:12s}: p={p:.4f} ({'Normal' if p > 0.05 else 'NOT Normal'})")
+
+    # --- PART 3: ANOVA ---
+    print("\n[3] TWO-WAY ANOVA (Location * Algorithm):")
+    formula = f'{col_name} ~ C(Location) + C(Algorithm) + C(Location):C(Algorithm)'
+    model = ols(formula, data=df).fit()
+    anova_table = sm.stats.anova_lm(model, typ=2)
+    
+    # Calculate Eta-Squared (Effect Size)
+    anova_table['eta_sq'] = anova_table['sum_sq'] / sum(anova_table['sum_sq'])
+    print(anova_table.round(4))
+
+    # --- PART 4: KRUSKAL-WALLIS ---
+    print("\n[4] KRUSKAL-WALLIS TEST (Algorithm):")
+    groups = [group[col_name].values for name, group in df.groupby('Algorithm')]
+    h_stat, p_val = kruskal(*groups)
+    print(f"  H-stat: {h_stat:.4f}, p-value: {p_val:.4f}")
+
+    # --- PART 5: TUKEY HSD ---
+    print("\n[5] POST-HOC TUKEY HSD (Algorithm):")
+    posthoc = pairwise_tukeyhsd(df[col_name], df['Algorithm'], alpha=0.05)
+    print(posthoc.summary())
+
+# Run for both
+run_full_analysis("VEHICLE TIME LOSS", "Vehicle_TL")
+run_full_analysis("PEDESTRIAN TIME LOSS", "Pedestrian_TL")
